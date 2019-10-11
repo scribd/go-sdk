@@ -30,3 +30,24 @@ const (
 	Trace Level = "trace"
 )
 
+// Logger is the interface that defines the API/contract exposed by the
+// SDK Logger.
+type Logger interface {
+	// Panicf logs a message at level Panic.
+	Panicf(format string, args ...interface{})
+	// Fatalf logs a message at level Fatal.
+	Fatalf(format string, args ...interface{})
+	// Errorf logs a message at level Error.
+	Errorf(format string, args ...interface{})
+	// Warnf logs a message at level Warning.
+	Warnf(format string, args ...interface{})
+	// Infof logs a message at level Info.
+	Infof(format string, args ...interface{})
+	// Debugf logs a message at level Debug.
+	Debugf(format string, args ...interface{})
+	// Trace logs a message at level Trace.
+	Tracef(format string, args ...interface{})
+
+	WithFields(keyValues Fields) Logger
+}
+
