@@ -64,3 +64,7 @@ type Config struct {
 	FileLevel         string
 	FileLocation      string
 }
+
+func NewLogger(config Config) (Logger, error) {
+	return newLogrus(config)
+}
