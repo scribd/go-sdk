@@ -18,10 +18,10 @@ type logrusLogger struct {
 }
 
 const (
-	// Key name for logging time of event
+	// Key name for logging time of event.
 	fieldKeyTime = "timestamp"
 
-	// Key name for logging event message
+	// Key name for logging event message.
 	fieldKeyMsg = "message"
 )
 
