@@ -51,3 +51,16 @@ type Logger interface {
 	WithFields(keyValues Fields) Logger
 }
 
+// Config stores the configuration for the logger.
+// For some loggers there can only be one level across writers, for such
+// the level of Console is picked by default.
+type Config struct {
+	ConsoleEnabled    bool
+	ConsoleJSONFormat bool
+	ConsoleLevel      string
+	Environment       string
+	FileEnabled       bool
+	FileJSONFormat    bool
+	FileLevel         string
+	FileLocation      string
+}
