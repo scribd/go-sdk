@@ -25,6 +25,22 @@ const (
 	fieldKeyMsg = "message"
 )
 
+const (
+	// fileMaxSize is the maximum size in megabytes of the log file
+	// before it gets rotated. It defaults to 100 megabytes.
+	fileMaxSize = 100
+	// fileWillCompress determines if the rotated log files should
+	// be compressed using gzip.
+	fileWillCompress = true
+	// fileMaxAge is the maximum number of days to retain old log
+	// files based on the timestamp encoded in their filename. Note
+	// that a day is defined as 24 hours and may not exactly
+	// correspond to calendar days due to daylight savings, leap
+	// seconds, etc. The default is not to remove old log files
+	// based on age.
+	fileMaxAge = 28
+)
+
 func getFormatter(isJSON bool) logrus.Formatter {
 	fieldMap := logrus.FieldMap{
 		logrus.FieldKeyTime: fieldKeyTime,
@@ -58,9 +74,9 @@ func newLogrus(config Config) (Logger, error) {
 	stdOutHandler := os.Stdout
 	fileHandler := &lumberjack.Logger{
 		Filename: fmt.Sprintf(config.FileLocation, config.Environment),
-		MaxSize:  100,
-		Compress: true,
-		MaxAge:   28,
+		MaxSize:  fileMaxSize,
+		Compress: fileWillCompress,
+		MaxAge:   fileMaxAge,
 	}
 
 	lLogger := &logrus.Logger{
@@ -116,7 +132,7 @@ func (l *logrusLogger) Fatalf(format string, args ...interface{}) {
 }
 
 func (l *logrusLogger) Panicf(format string, args ...interface{}) {
-	l.logger.Paniclf(format, args...)
+	l.logger.Panicf(format, args...)
 }
 
 func (l *logrusLogger) WithFields(fields Fields) Logger {
