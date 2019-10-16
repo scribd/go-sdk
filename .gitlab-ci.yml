@@ -7,6 +7,7 @@ variables:
 # Doc: https://docs.gitlab.com/ee/ci/yaml/README.html#stages
 stages:
   - build
+  - check
 
 # Builds a docker image
 # Doc: https://docs.gitlab.com/ee/ci/yaml/README.html#stage
@@ -16,3 +17,15 @@ build:image:
     - docker build --pull --build-arg GIT_COMMIT=$CI_COMMIT_SHA --tag $CI_IMAGE_NAME:$CI_COMMIT_SHA .
     - docker tag $CI_IMAGE_NAME:$CI_COMMIT_SHA $CI_IMAGE_NAME:$CI_COMMIT_REF_SLUG
     - docker push $CI_IMAGE_NAME:$CI_COMMIT_REF_SLUG
+
+# Checks whether the application formatting is correct
+# Doc: https://docs.gitlab.com/ee/ci/yaml/README.html#stage
+check:fmt:
+  stage: check
+  image: $CI_IMAGE_NAME:$CI_COMMIT_REF_SLUG
+  script:
+    - make fmt-check
+  dependencies:
+    - build:image
+  tags:
+    - docker
