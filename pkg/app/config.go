@@ -5,6 +5,8 @@ import (
 	"path"
 	"time"
 
+	cbuilder "git.lo/microservices/sdk/go-sdk/internal/pkg/configuration/builder"
+
 	"github.com/spf13/viper"
 )
 
@@ -23,20 +25,17 @@ func NewDefaultConfig() (*Config, error) {
 
 // NewConfig sets up the app configuration, setting default values and configurations.
 func NewConfig(configPath string, configName string) (*Config, error) {
-	conf := &Config{
-		vConf: viper.New(),
+	conf := &Config{}
+	viperBuilder := cbuilder.New().
+		ConfigPath(configPath).
+		ConfigName(configName)
+
+	vConf, err := viperBuilder.Build()
+	if err != nil {
+		return nil, err
 	}
 
-	conf.vConf.AddConfigPath(configPath)
-	conf.vConf.SetConfigName(configName)
-	conf.vConf.SetConfigType("yaml")
-	conf.vConf.SetEnvPrefix("APP")
-	conf.vConf.AutomaticEnv()
-
-	if err := conf.vConf.ReadInConfig(); err != nil {
-		return conf, err
-	}
-
+	conf.vConf = vConf
 	return conf, nil
 }
 
