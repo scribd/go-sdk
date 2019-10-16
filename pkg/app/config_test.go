@@ -19,7 +19,7 @@ func TestNewConfig(t *testing.T) {
 			want:       true,
 		},
 		{
-			name:       "InvalidFile",
+			name:       "NonexistentFile",
 			configName: "nonexsistent",
 			want:       true,
 		},
