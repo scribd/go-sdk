@@ -15,7 +15,7 @@ type Config struct {
 func NewConfig() (*Config, error) {
 	config := &Config{}
 
-	appConfig, err := app.NewConfig()
+	appConfig, err := app.NewDefaultConfig()
 	if err != nil {
 		return config, err
 	}
