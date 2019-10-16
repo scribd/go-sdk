@@ -35,7 +35,7 @@ func NewConfig() (*Config, error) {
 
 	err := vConf.Unmarshal(config)
 	if err != nil {
-		return config, fmt.Errorf("Unable to decode into struct: %s", err.Error)
+		return config, fmt.Errorf("Unable to decode into struct: %s", err.Error())
 	}
 
 	return config, nil
