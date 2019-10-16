@@ -1,0 +1,18 @@
+# Define global variables
+# Doc: https://docs.gitlab.com/ee/ci/yaml/README.html#variables
+variables:
+  CI_IMAGE_NAME: "docker.artifacts.lo/$CI_PROJECT_PATH"
+
+# Define pipeline stages
+# Doc: https://docs.gitlab.com/ee/ci/yaml/README.html#stages
+stages:
+  - build
+
+# Builds a docker image
+# Doc: https://docs.gitlab.com/ee/ci/yaml/README.html#stage
+build:image:
+  stage: build
+  script:
+    - docker build --pull --build-arg GIT_COMMIT=$CI_COMMIT_SHA --tag $CI_IMAGE_NAME:$CI_COMMIT_SHA .
+    - docker tag $CI_IMAGE_NAME:$CI_COMMIT_SHA $CI_IMAGE_NAME:$CI_COMMIT_REF_SLUG
+    - docker push $CI_IMAGE_NAME:$CI_COMMIT_REF_SLUG
