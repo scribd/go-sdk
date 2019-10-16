@@ -2,8 +2,8 @@ package server
 
 import (
 	"fmt"
-	"os"
-	"path"
+
+	cbuilder "git.lo/microservices/sdk/go-sdk/internal/pkg/configuration/builder"
 
 	"github.com/spf13/viper"
 )
@@ -20,21 +20,14 @@ var vConf *viper.Viper
 // NewConfig returns a new ServerConfig instance
 func NewConfig() (*Config, error) {
 	config := &Config{}
+	viperBuilder := cbuilder.New().ConfigName("server")
 
-	vConf = viper.New()
-
-	vConf.SetConfigType("yaml")
-	vConf.SetConfigName("server")
-	vConf.AddConfigPath(path.Join(os.Getenv("APP_ROOT"), "config"))
-	vConf.SetEnvPrefix("APP")
-	vConf.AutomaticEnv()
-
-	if err := vConf.ReadInConfig(); err != nil {
+	vConf, err := viperBuilder.Build()
+	if err != nil {
 		return config, err
 	}
 
-	err := vConf.Unmarshal(config)
-	if err != nil {
+	if err = vConf.Unmarshal(config); err != nil {
 		return config, fmt.Errorf("Unable to decode into struct: %s", err.Error())
 	}
 
