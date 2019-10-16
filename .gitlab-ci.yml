@@ -8,6 +8,7 @@ variables:
 stages:
   - build
   - check
+  - test
 
 # Builds a docker image
 # Doc: https://docs.gitlab.com/ee/ci/yaml/README.html#stage
@@ -27,5 +28,17 @@ check:fmt:
     - make fmt-check
   dependencies:
     - build:image
+  tags:
+    - docker
+
+# Runs the tests
+# Doc: https://docs.gitlab.com/ee/ci/yaml/README.html#stage
+run:tests:
+  stage: test
+  image: $CI_IMAGE_NAME:$CI_COMMIT_REF_SLUG
+  script:
+    - make test
+  dependencies:
+    - check:fmt
   tags:
     - docker
