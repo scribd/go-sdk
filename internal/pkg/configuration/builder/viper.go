@@ -39,6 +39,12 @@ func (vb *ViperBuilder) ConfigName(name string) *ViperBuilder {
 	return vb
 }
 
+// SetDefault sets a default value for a configuration key.
+func (vb *ViperBuilder) SetDefault(key string, value string) *ViperBuilder {
+	vb.vConf.SetDefault(key, value)
+	return vb
+}
+
 // Build builds the Viper config and returns it.
 func (vb *ViperBuilder) Build() (*viper.Viper, error) {
 	if err := vb.vConf.ReadInConfig(); err != nil {
