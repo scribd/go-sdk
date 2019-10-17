@@ -73,7 +73,7 @@ func newLogrus(config Config) (Logger, error) {
 
 	stdOutHandler := os.Stdout
 	fileHandler := &lumberjack.Logger{
-		Filename: fmt.Sprintf(config.FileLocation, config.Environment),
+		Filename: fmt.Sprintf(config.FileLocation, config.FileName),
 		MaxSize:  fileMaxSize,
 		Compress: fileWillCompress,
 		MaxAge:   fileMaxAge,

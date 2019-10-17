@@ -1,6 +1,5 @@
 // logger includes a configurable logger that enforces Structured Logging,
-// Environment aware formatters, File or Console output and de-facto
-// standard logging levels.
+// formatters, File or Console output and de-facto standard logging levels.
 
 package logger
 
@@ -49,20 +48,6 @@ type Logger interface {
 	Tracef(format string, args ...interface{})
 
 	WithFields(keyValues Fields) Logger
-}
-
-// Config stores the configuration for the logger.
-// For some loggers there can only be one level across writers, for such
-// the level of Console is picked by default.
-type Config struct {
-	ConsoleEnabled    bool
-	ConsoleJSONFormat bool
-	ConsoleLevel      string
-	Environment       string
-	FileEnabled       bool
-	FileJSONFormat    bool
-	FileLevel         string
-	FileLocation      string
 }
 
 func NewLogger(config Config) (Logger, error) {
