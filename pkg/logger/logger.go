@@ -1,6 +1,5 @@
 // logger includes a configurable logger that enforces Structured Logging,
-// Environment aware formatters, File or Console output and de-facto
-// standard logging levels.
+// formatters, File or Console output and de-facto standard logging levels.
 
 package logger
 
