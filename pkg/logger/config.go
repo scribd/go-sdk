@@ -6,8 +6,6 @@ import (
 	"path"
 
 	cbuilder "git.lo/microservices/sdk/go-sdk/internal/pkg/configuration/builder"
-
-	"github.com/spf13/viper"
 )
 
 // Config stores the configuration for the logger.
@@ -23,8 +21,6 @@ type Config struct {
 	FileLocation      string `mapstructure:"file_location"`
 	FileName          string `mapstructure:"file_name"`
 }
-
-var vConf *viper.Viper
 
 // NewConfig returns a new ServerConfig instance
 func NewConfig() (*Config, error) {
