@@ -50,6 +50,6 @@ type Logger interface {
 	WithFields(keyValues Fields) Logger
 }
 
-func NewLogger(config Config) (Logger, error) {
+func NewLogger(config *Config) (Logger, error) {
 	return newLogrus(config)
 }

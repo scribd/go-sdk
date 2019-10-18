@@ -6,8 +6,6 @@ import (
 	"path"
 
 	cbuilder "git.lo/microservices/sdk/go-sdk/internal/pkg/configuration/builder"
-
-	"github.com/spf13/viper"
 )
 
 // Config stores the configuration for the logger.
@@ -24,21 +22,18 @@ type Config struct {
 	FileName          string `mapstructure:"file_name"`
 }
 
-var vConf *viper.Viper
-
 // NewConfig returns a new ServerConfig instance
 func NewConfig() (*Config, error) {
 	config := &Config{}
-	viperBuilder := cbuilder.
-		New().
-		ConfigName("logger").
-		SetDefault("file_location", path.Join(os.Getenv("APP_ROOT"), "log")).
-		SetDefault("file_name", os.Getenv("APP_ENV"))
+	viperBuilder := cbuilder.New().ConfigName("logger")
 
 	vConf, err := viperBuilder.Build()
 	if err != nil {
 		return config, err
 	}
+
+	vConf.SetDefault("file_location", path.Join(os.Getenv("APP_ROOT"), "log"))
+	vConf.SetDefault("file_name", os.Getenv("APP_ENV"))
 
 	if err = vConf.Unmarshal(config); err != nil {
 		return config, fmt.Errorf("Unable to decode into struct: %s", err.Error())

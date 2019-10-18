@@ -60,7 +60,7 @@ func getFormatter(isJSON bool) logrus.Formatter {
 	}
 }
 
-func newLogrus(config Config) (Logger, error) {
+func newLogrus(config *Config) (Logger, error) {
 	logLevel := config.ConsoleLevel
 	if logLevel == "" {
 		logLevel = config.FileLevel
