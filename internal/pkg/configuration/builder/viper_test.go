@@ -7,8 +7,6 @@ import (
 )
 
 func TestViperBuilder(t *testing.T) {
-	b := New().ConfigPath("testdata")
-
 	t.Run("Build", func(t *testing.T) {
 		cases := []struct {
 			name       string
@@ -39,7 +37,9 @@ func TestViperBuilder(t *testing.T) {
 
 		for _, c := range cases {
 			t.Run(c.name, func(t *testing.T) {
-				b = b.ConfigName(c.configName)
+				b := New().
+					ConfigPath("testdata").
+					ConfigName(c.configName)
 
 				_, err := b.Build()
 				gotError := err != nil
