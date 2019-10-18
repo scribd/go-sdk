@@ -9,7 +9,8 @@ import (
 
 // ViperBuilder is a builder to streamline Viper configuration and building.
 type ViperBuilder struct {
-	vConf *viper.Viper
+	vConf    *viper.Viper
+	defaults map[string]string
 }
 
 // New initializes and returns a new ViperBuilder.
@@ -40,16 +41,26 @@ func (vb *ViperBuilder) ConfigName(name string) *ViperBuilder {
 }
 
 // SetDefault sets a default value for a configuration key.
+// Any default value set will be available in the `viper.Viper` configuration
+// instance that is returned after calling the `Build()` function.
 func (vb *ViperBuilder) SetDefault(key string, value string) *ViperBuilder {
-	vb.vConf.SetDefault(key, value)
+	vb.defaults[key] = value
 	return vb
 }
 
 // Build builds the Viper config and returns it.
+// Any default value should be set using the `SetDefault()` function of
+// a `ViperBuilder` instance, before calling `Build()`.
 func (vb *ViperBuilder) Build() (*viper.Viper, error) {
 	if err := vb.vConf.ReadInConfig(); err != nil {
 		return nil, err
 	}
 
-	return vb.vConf.Sub(vb.vConf.GetString("APP_ENV")), nil
+	vb.vConf = vb.vConf.Sub(vb.vConf.GetString("APP_ENV"))
+
+	for key, val := range vb.defaults {
+		vb.vConf.SetDefault(key, val)
+	}
+
+	return vb.vConf, nil
 }
