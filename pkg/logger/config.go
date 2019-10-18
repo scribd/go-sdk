@@ -19,7 +19,7 @@ type Config struct {
 	ConsoleLevel      string `mapstructure:"console_level"`
 	FileEnabled       bool   `mapstructure:"file_enabled"`
 	FileJSONFormat    bool   `mapstructure:"file_json_format"`
-	FileLevel         string `mapstructure:"level"`
+	FileLevel         string `mapstructure:"file_level"`
 	FileLocation      string `mapstructure:"file_location"`
 	FileName          string `mapstructure:"file_name"`
 }
