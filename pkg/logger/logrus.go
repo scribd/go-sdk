@@ -60,7 +60,7 @@ func getFormatter(isJSON bool) logrus.Formatter {
 	}
 }
 
-func newLogrus(config *Config) (Logger, error) {
+func newLogrusLogger(config *Config) (*logrus.Logger, error) {
 	logLevel := config.ConsoleLevel
 	if logLevel == "" {
 		logLevel = config.FileLevel
@@ -102,9 +102,14 @@ func newLogrus(config *Config) (Logger, error) {
 		lLogger.SetFormatter(getFormatter(config.FileJSONFormat))
 	}
 
+	return lLogger, nil
+}
+
+func newLogrus(config *Config) (Logger, error) {
+	lLogger, err := newLogrusLogger(config)
 	return &logrusLogger{
 		logger: lLogger,
-	}, nil
+	}, err
 }
 
 func (l *logrusLogger) Tracef(format string, args ...interface{}) {
