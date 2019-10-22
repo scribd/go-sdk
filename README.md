@@ -11,6 +11,7 @@ SDK, the Go version.
         - [Predefined application-agnostic configurations](#predefined-application-agnostic-configurations)
         - [Custom application-specific configurations](#custom-application-specific-configurations)
     - [Environment-awareness](#environment-awareness)
+- [Using the `go-sdk` in isolation](#using-the-go-sdk-in-isolation)
 - [Developing the SDK](#developing-the-sdk)
     - [Building the docker environment](#building-the-docker-environment)
     - [Running the docker environment](#running-the-docker-environment)
@@ -141,6 +142,57 @@ respective section from the YAML file. For example, when the application is
 loaded in `development` environment, `go-sdk` will automatically load the
 values from the `development` section. This convention is applied to all
 configurations supported by `go-sdk`.
+
+## Using the `go-sdk` in isolation
+
+The `go-sdk` is a standalone Go module. This means that it can be imported and
+used in virtually any Go project. Still, there are four conventions that the
+`go-sdk` enforces which **must be present** in the host application:
+1. The presence of the `APP_ENV` environment variable, used for
+   [environment-awareness](#environment-awareness),
+2. Support of a single file format (YAML) for storing configurations,
+3. Support of only a single path to store the configuration, `config/` in the
+   application root, and
+4. The presence of the `APP_ROOT` environment variable, set to the absolute
+   path of the application that it's used in. This is used to locate the
+   `config` directory on disk and load the enclosed YAML files.
+
+A good way to approach initialization of the `go-sdk` in your application can be
+seen in the `go-chassis` itself:
+
+```go
+// internal/pkg/sdk/sdk.go
+package sdk
+
+import (
+	"log"
+
+	sdkconfig "git.lo/microservices/sdk/go-sdk/pkg/configuration"
+	sdklogger "git.lo/microservices/sdk/go-sdk/pkg/logger"
+)
+
+var (
+	// Config is SDK-powered application configuration.
+	Config *sdkconfig.Config
+	// Logger is SDK-powered application logger.
+	Logger sdklogger.Logger
+	err    error
+)
+
+func init() {
+	if Config, err = sdkconfig.NewConfig(); err != nil {
+		log.Fatalf("Failed to load SDK config: %s", err.Error())
+	}
+
+	if Logger, err = sdklogger.NewLogger(Config.Logger); err != nil {
+		log.Fatalf("Failed to load SDK logger: %s", err.Error())
+	}
+}
+```
+
+**Please note** that while using the `go-sdk` in isolation is possible, it is
+**highly recommended** to use it in combination with the `go-chassis` for the
+best development, debugging and maintenance experience.
 
 ## Developing the SDK
 
