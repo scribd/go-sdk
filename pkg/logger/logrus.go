@@ -1,9 +1,9 @@
 package logger
 
 import (
-	"fmt"
 	"io"
 	"os"
+	"path"
 
 	"github.com/sirupsen/logrus"
 	lumberjack "gopkg.in/natefinch/lumberjack.v2"
@@ -73,7 +73,7 @@ func newLogrus(config *Config) (Logger, error) {
 
 	stdOutHandler := os.Stdout
 	fileHandler := &lumberjack.Logger{
-		Filename: fmt.Sprintf(config.FileLocation, config.FileName),
+		Filename: path.Join(config.FileLocation, config.FileName),
 		MaxSize:  fileMaxSize,
 		Compress: fileWillCompress,
 		MaxAge:   fileMaxAge,
