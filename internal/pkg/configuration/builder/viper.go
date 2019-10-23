@@ -17,7 +17,7 @@ type ViperBuilder struct {
 func New() *ViperBuilder {
 	vConf := viper.New()
 
-	vConf.SetDefault("APP_ENV", "development")
+	vConf.SetDefault("ENV", "development")
 	vConf.AddConfigPath(path.Join(os.Getenv("APP_ROOT"), "config"))
 	vConf.SetConfigType("yaml")
 	vConf.SetEnvPrefix("APP")
