@@ -10,7 +10,8 @@ SDK, the Go version.
     - [Application Configuration](#application-configuration)
         - [Predefined application-agnostic configurations](#predefined-application-agnostic-configurations)
         - [Custom application-specific configurations](#custom-application-specific-configurations)
-    - [Environment-awareness](#environment-awareness)
+        - [Environment-awareness](#environment-awareness)
+        - [Using application configuration in tests](#using-application-configuration-in-tests)
 - [Using the `go-sdk` in isolation](#using-the-go-sdk-in-isolation)
 - [Developing the SDK](#developing-the-sdk)
     - [Building the docker environment](#building-the-docker-environment)
@@ -142,6 +143,80 @@ respective section from the YAML file. For example, when the application is
 loaded in `development` environment, `go-sdk` will automatically load the
 values from the `development` section. This convention is applied to all
 configurations supported by `go-sdk`.
+
+#### Using application configuration in tests
+
+When an application is using the SDK to load configurations, that includes
+loading application configurations in test environment as well. This means that
+due to its [environment-aware](#environment-awareness) nature, by default the
+SDK will load the configuration from the YAML files in the `test` namespace.
+
+This provides two ways to configure your application for testing:
+1. By adding a `test` namespace to the respective YAML file and adding the test
+   configuration there, or
+2. Using the provided structs and their setters/getters from the test files
+   themselves.
+
+Adding a `test` namespace to any configuration file, looks like:
+
+```yaml
+# config/logger.yml
+common: &common
+  console_enabled: true
+  console_json_format: true
+  console_level: "info"
+  file_enabled: false
+  file_json_format: true
+  file_level: "trace"
+
+development:
+  <<: *common
+
+test:
+  <<: *common
+  console_level: "debug"
+  file_enabled: true
+  file_level: "debug"
+
+staging:
+  <<: *common
+
+production:
+  <<: *common
+```
+
+Given the configuration above, the SDK will load out-of-the-box the `test`
+configuration and apply it to the logger.
+
+In cases where we want to modify the configuration of an application in a test
+file, we can simply use the constructor that `go-sdk` provides:
+
+```go
+package main
+
+import (
+    "testing"
+
+    sdkconfig "git.lo/microservices/sdk/go-sdk/pkg/configuration"
+}
+
+var (
+    // Config is SDK-powered application configuration.
+    Config *sdkconfig.Config
+)
+
+func SomeTest(t *testing.T) {
+    if Config, err = sdkconfig.NewConfig(); err != nil {
+        log.Fatalf("Failed to load SDK config: %s", err.Error())
+    }
+
+    // Change application settings
+    Config.App.Set("key", "value")
+
+    // Continue with testing...
+    setting := Config.App.GetString("key") // returns "value"
+}
+```
 
 ## Using the `go-sdk` in isolation
 
