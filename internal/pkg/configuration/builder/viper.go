@@ -56,7 +56,7 @@ func (vb *ViperBuilder) Build() (*viper.Viper, error) {
 		return nil, err
 	}
 
-	vb.vConf = vb.vConf.Sub(vb.vConf.GetString("APP_ENV"))
+	vb.vConf = vb.vConf.Sub(vb.vConf.GetString("ENV"))
 
 	for key, val := range vb.defaults {
 		vb.vConf.SetDefault(key, val)
