@@ -1,7 +1,7 @@
 all: test
 
 test: ## Run the tests.
-	go test ./... -v
+	APP_ENV=test go test ./... -v
 
 fmt: ## Run gofmt.
 	go fmt ./...
