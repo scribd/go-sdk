@@ -84,6 +84,11 @@ func (c *Config) GetDuration(key string) time.Duration {
 	return c.vConf.GetDuration(key)
 }
 
+// Set sets a value to a key.
+func (c *Config) Set(key string, value interface{}) {
+	c.vConf.Set(key, value)
+}
+
 // IsSet checks if the key has assigned value.
 func (c *Config) IsSet(key string) bool {
 	return c.vConf.IsSet(key)
