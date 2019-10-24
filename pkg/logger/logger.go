@@ -3,6 +3,10 @@
 
 package logger
 
+import (
+	"bytes"
+)
+
 type Level string
 
 const (
@@ -50,6 +54,16 @@ type Logger interface {
 	WithFields(keyValues Fields) Logger
 }
 
+// NewLogger returns a Logger instance with the given configuration.
 func NewLogger(config *Config) (Logger, error) {
 	return newLogrus(config)
+}
+
+// NewTestLogger returns a Logger instance that will write into the bytes buffer
+// passed as parameter.
+// NewTestLogger is recommended only for testing.
+func NewTestLogger(config *Config, out *bytes.Buffer) (Logger, error) {
+	l, err := newLogrusLogger(config)
+	l.Out = out
+	return &logrusLogger{logger: l}, err
 }

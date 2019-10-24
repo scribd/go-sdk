@@ -20,17 +20,15 @@ const (
 func logAndAssertContent(
 	t *testing.T,
 	config *Config,
-	log func(*logrusLogger),
+	log func(Logger),
 	withExpectedContent bool,
 ) {
 	var buffer bytes.Buffer
 
-	l, err := newLogrusLogger(config)
+	lLogger, err := NewTestLogger(config, &buffer)
 	assert.Nil(t, err)
 
-	l.Out = &buffer
-
-	log(&logrusLogger{logger: l})
+	log(lLogger)
 
 	content := buffer.String()
 	withActualContent := content != ""
@@ -40,18 +38,16 @@ func logAndAssertContent(
 func logAndAssertJSONFields(
 	t *testing.T,
 	config *Config,
-	log func(*logrusLogger),
+	log func(Logger),
 	assertions func(fields Fields),
 ) {
 	var buffer bytes.Buffer
 	var fields Fields
 
-	l, err := newLogrusLogger(config)
+	lLogger, err := NewTestLogger(config, &buffer)
 	assert.Nil(t, err)
 
-	l.Out = &buffer
-
-	log(&logrusLogger{logger: l})
+	log(lLogger)
 
 	err = json.Unmarshal(buffer.Bytes(), &fields)
 	assert.Nil(t, err)
@@ -62,17 +58,15 @@ func logAndAssertJSONFields(
 func logAndAssertTextFields(
 	t *testing.T,
 	config *Config,
-	log func(*logrusLogger),
+	log func(Logger),
 	assertions func(fields map[string]string),
 ) {
 	var buffer bytes.Buffer
 
-	l, err := newLogrusLogger(config)
+	lLogger, err := NewTestLogger(config, &buffer)
 	assert.Nil(t, err)
 
-	l.Out = &buffer
-
-	log(&logrusLogger{logger: l})
+	log(lLogger)
 
 	fields := make(map[string]string)
 	for _, kv := range strings.Split(strings.TrimRight(buffer.String(), "\n"), " ") {
@@ -113,13 +107,13 @@ func TestInfoLevelWithJSONFields(t *testing.T) {
 	logAndAssertJSONFields(
 		t,
 		logConfigForTest(withJSON),
-		func(log *logrusLogger) {
+		func(log Logger) {
 			log.Infof(messageContent)
 		},
 		func(fields Fields) {
 			assert.Nil(t, fields["msg"])
 			assert.Equal(t, "info", fields["level"])
-			assert.True(t, fields[fieldKeyTime] != "")
+			assert.NotEmpty(t, fields[fieldKeyTime])
 			assert.Equal(t, messageContent, fields[fieldKeyMsg])
 		},
 	)
@@ -132,13 +126,13 @@ func TestInfoLevelWithTextFields(t *testing.T) {
 	logAndAssertTextFields(
 		t,
 		logConfigForTest(withoutJSON),
-		func(log *logrusLogger) {
+		func(log Logger) {
 			log.Infof(messageContent)
 		},
 		func(fields map[string]string) {
-			assert.Equal(t, "", fields["msg"])
+			assert.Empty(t, fields["msg"])
 			assert.Equal(t, "info", fields["level"])
-			assert.True(t, fields[fieldKeyTime] != "")
+			assert.NotEmpty(t, fields[fieldKeyTime])
 			assert.Equal(t, messageContent, fields[fieldKeyMsg])
 		},
 	)
@@ -155,7 +149,7 @@ func TestLevelConfiguration(t *testing.T) {
 	testCases := []struct {
 		name                string
 		config              *Config
-		log                 func(log *logrusLogger)
+		log                 func(log Logger)
 		withExpectedContent bool
 	}{
 		{
@@ -165,7 +159,7 @@ func TestLevelConfiguration(t *testing.T) {
 				ConsoleJSONFormat: withJSON,
 				ConsoleLevel:      "trace",
 			},
-			log: func(l *logrusLogger) {
+			log: func(l Logger) {
 				l.Debugf(messageContent)
 			},
 			withExpectedContent: true,
@@ -177,7 +171,7 @@ func TestLevelConfiguration(t *testing.T) {
 				ConsoleJSONFormat: withJSON,
 				ConsoleLevel:      "warn",
 			},
-			log: func(l *logrusLogger) {
+			log: func(l Logger) {
 				l.Infof(messageContent)
 			},
 			withExpectedContent: false,
