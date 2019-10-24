@@ -63,7 +63,7 @@ The list of predefined top-level configurations:
 * `Logger`, containing the application logger configuration, expects a
   `config/logger.yml` configuration file.
 * `Database`, containing the application database configuration, expects a
-  `config/database.yml` configuration file. (TBD)
+  `config/database.yml` configuration file.
 * `Redis`, containing the application Redis configuration, expects a
   `config/redis.yml` configuration file. (TBD)
 * <insert new configuration here>
