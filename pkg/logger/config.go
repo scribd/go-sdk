@@ -22,6 +22,19 @@ type Config struct {
 	FileName          string `mapstructure:"file_name"`
 }
 
+// fileName returns the (default) name for the log files.
+// The file name will be the environment name with the `.log`
+// extension; if the APP_ENV is empty the default name will be `log.log`
+func fileName() string {
+	fileName := "log"
+
+	if val, ok := os.LookupEnv("APP_ENV"); ok && val != "" {
+		fileName = val
+	}
+
+	return fmt.Sprintf("%s.log", fileName)
+}
+
 // NewConfig returns a new ServerConfig instance
 func NewConfig() (*Config, error) {
 	config := &Config{}
@@ -33,7 +46,7 @@ func NewConfig() (*Config, error) {
 	}
 
 	vConf.SetDefault("file_location", path.Join(os.Getenv("APP_ROOT"), "log"))
-	vConf.SetDefault("file_name", fmt.Sprintf("%s.log", os.Getenv("APP_ENV")))
+	vConf.SetDefault("file_name", fileName())
 
 	if err = vConf.Unmarshal(config); err != nil {
 		return config, fmt.Errorf("Unable to decode into struct: %s", err.Error())
