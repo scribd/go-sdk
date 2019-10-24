@@ -50,6 +50,7 @@ type Logger interface {
 	WithFields(keyValues Fields) Logger
 }
 
+// NewLogger returns a Logger instance with the given configuration.
 func NewLogger(config *Config) (Logger, error) {
 	return newLogrus(config)
 }
