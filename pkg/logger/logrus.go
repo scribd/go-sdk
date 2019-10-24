@@ -1,6 +1,7 @@
 package logger
 
 import (
+	"bytes"
 	"io"
 	"os"
 	"path"
@@ -107,6 +108,16 @@ func newLogrusLogger(config *Config) (*logrus.Logger, error) {
 
 func newLogrus(config *Config) (Logger, error) {
 	lLogger, err := newLogrusLogger(config)
+
+	return &logrusLogger{
+		logger: lLogger,
+	}, err
+}
+
+func newTestLogrus(config *Config, out *bytes.Buffer) (Logger, error) {
+	lLogger, err := newLogrusLogger(config)
+	lLogger.Out = out
+
 	return &logrusLogger{
 		logger: lLogger,
 	}, err
