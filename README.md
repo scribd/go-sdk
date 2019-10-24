@@ -12,6 +12,12 @@ SDK, the Go version.
         - [Custom application-specific configurations](#custom-application-specific-configurations)
         - [Environment-awareness](#environment-awareness)
         - [Using application configuration in tests](#using-application-configuration-in-tests)
+    - [Logger](#logger)
+        - [Initialization and default configuration](#initialization-and-default-configuration)
+        - [Environment-awareness](#environment-awareness-1)
+        - [Log levels](#log-levels)
+        - [Structured logging](#structured-logging)
+        - [Formatting and handlers](#formatting-and-handlers)
 - [Using the `go-sdk` in isolation](#using-the-go-sdk-in-isolation)
 - [Developing the SDK](#developing-the-sdk)
     - [Building the docker environment](#building-the-docker-environment)
@@ -34,7 +40,7 @@ SDK, the Go version.
 The SDK provides the following out-of-the-box functionality:
 
 * Application Configuration & Environment-awareness
-* <insert package here>
+* Logger
 
 ### Application Configuration
 
@@ -217,6 +223,163 @@ func SomeTest(t *testing.T) {
     setting := Config.App.GetString("key") // returns "value"
 }
 ```
+
+### Logger
+
+`go-sdk` ships with a logger, configured with sane defaults out-of-the-box.
+Under the hood, it uses the popular
+[logrus](https://github.com/sirupsen/logrus) as a logger, in combination with
+[lumberjack](https://github.com/natefinch/lumberjack) for log rolling. It
+supports log levels, formatting (plain or JSON), structured logging and
+storing the output to a file and/or `STDOUT`.
+
+#### Initialization and default configuration
+
+`go-sdk` comes with a configuration built-in for the logger. That means that
+initializing a new logger is as easy as:
+
+```go
+package main
+
+import (
+	"log"
+
+	sdklogger "git.lo/microservices/sdk/go-sdk/pkg/logger"
+)
+
+var (
+	// Logger is SDK-powered application logger.
+	Logger sdklogger.Logger
+	err    error
+)
+
+func main() {
+	if loggerConfig, err := sdklogger.NewConfig(); err != nil {
+		log.Fatalf("Failed to initialize SDK logger configuration: %s", err.Error())
+	}
+
+	if Logger, err = sdklogger.NewLogger(loggerConfig); err != nil {
+		log.Fatalf("Failed to load SDK logger: %s", err.Error())
+	}
+}
+```
+
+The logger initialized with the default configuration will use the `log/`
+directory in the root of the project to save the log files, with the name of
+the current application environment and a `.log` extension.
+
+#### Environment-awareness
+
+Much like with the application configuration, the logger follows the convention
+of loading a YAML file placed in the `config/logger.yml` file. This means that
+any project which imports the `logger` package from `go-sdk` can place the
+logger configuration in their `config/logger.yml` file and the `go-sdk` will
+load that configuration when initializing the logger.
+
+Since the logger is also environment-aware, it will assume the presence of the
+`APP_ENV` environment variable and use it to set the name of the log file to
+the environment name. For example, an application running with
+`APP_ENV=development` will have its log entries in `log/development.log` by
+default.
+
+Also, it expects the respective `logger.yml` file to be environment namespaced.
+For example:
+
+```yaml
+# config/logger.yml
+common: &common
+  console_enabled: true
+  console_json_format: false
+  console_level: "debug"
+  file_enabled: true
+  file_json_format: false
+  file_level: "debug"
+
+development:
+  <<: *common
+  file_enabled: false
+
+test:
+  <<: *common
+  console_enabled: false
+
+staging:
+  <<: *common
+  console_json_format: true
+  console_level: "debug"
+  file_enabled: false
+
+production:
+  <<: *common
+  console_json_format: true
+  console_level: "info"
+  file_enabled: false
+```
+
+Given the configuration above, the logger package will load out-of-the-box the
+configuration for the respective environment and apply it to the logger
+instance.
+
+#### Log levels
+
+The SDK's logger follows best practices when it comes to logging levels. It
+exposes multiple log levels, in order from lowest to highest:
+
+* Trace, invoked with `logger.Tracef`
+* Debug, invoked with `logger.Debugf`
+* Info, invoked with `logger.Infof`
+* Warn, invoked with `logger.Warnf`
+* Error, invoked with `logger.Errorf`
+* Fatal, invoked with `logger.Fatalf`
+* Panic, invoked with `logger.Panicf`
+
+Each of these log levels will produce log entries, while two of them have
+additional functionality:
+
+* `logger.Fatalf` will add a log entry and exit the program with error code 1
+  (i.e. `exit(1)`)
+* `logger.Panicf` will add a log entry and invoke `panic` with all of the
+  arguments passed to the `Panicf` call
+
+#### Structured logging
+
+Loggers created using the `go-sdk` logger package, define a list of hardcoded
+fields that every log entry will be consisted of. This is done by design, with
+the goal of a uniform log line structure across all Go services that use the
+`go-sdk`.
+
+While adding more fields is easy to do, by using the `logger.WithFields`
+function, removing the three default fields from the log lines is, by design,
+very hard to do and highly discouraged.
+
+The list of fields are:
+
+* `level`, indicating the log level of the log line
+* `message`, representing the actual log message
+* `timestamp`, the date & time of the log entry in ISO 8601 UTC format
+
+#### Formatting and handlers
+
+The logger ships with two different formats: a plaintext and JSON format. This
+means that the log entries can have a simple plaintext format, or a JSON
+format. These options are configurable using the `ConsoleJSONFormat` and
+`FileJSONFormat` attributes of the logger `Config`.
+
+An example of the plain text format:
+
+```
+timestamp="2019-10-23T15:28:54Z" level=info message="GET  HTTP/1.1 200"
+```
+
+An example of the JSON format:
+
+```json
+{"level":"info","message":"GET  HTTP/1.1 200","timestamp":"2019-10-23T15:29:26Z"}
+```
+
+The logger handles the log entries and can store them in a file or send them to
+`STDOUT`. These options are configurable using the `ConsoleEnabled` and
+`FileEnabled` attributes of the logger `Config`.
 
 ## Using the `go-sdk` in isolation
 
