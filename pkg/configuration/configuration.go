@@ -2,15 +2,17 @@ package configuration
 
 import (
 	app "git.lo/microservices/sdk/go-sdk/pkg/app"
+	database "git.lo/microservices/sdk/go-sdk/pkg/database"
 	logger "git.lo/microservices/sdk/go-sdk/pkg/logger"
 	server "git.lo/microservices/sdk/go-sdk/pkg/server"
 )
 
 // Config is an app-wide configuration
 type Config struct {
-	App    *app.Config
-	Server *server.Config
-	Logger *logger.Config
+	App      *app.Config
+	Database *database.Config
+	Logger   *logger.Config
+	Server   *server.Config
 }
 
 // NewConfig returns a new Config instance
@@ -18,6 +20,11 @@ func NewConfig() (*Config, error) {
 	config := &Config{}
 
 	appConfig, err := app.NewDefaultConfig()
+	if err != nil {
+		return config, err
+	}
+
+	dbConfig, err := database.NewConfig()
 	if err != nil {
 		return config, err
 	}
@@ -33,6 +40,7 @@ func NewConfig() (*Config, error) {
 	}
 
 	config.App = appConfig
+	config.Database = dbConfig
 	config.Logger = loggerConfig
 	config.Server = serverConfig
 
