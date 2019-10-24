@@ -25,7 +25,7 @@ func logAndAssertContent(
 ) {
 	var buffer bytes.Buffer
 
-	lLogger, err := NewTestLogger(config, &buffer)
+	lLogger, err := newTestLogrus(config, &buffer)
 	assert.Nil(t, err)
 
 	log(lLogger)
@@ -44,7 +44,7 @@ func logAndAssertJSONFields(
 	var buffer bytes.Buffer
 	var fields Fields
 
-	lLogger, err := NewTestLogger(config, &buffer)
+	lLogger, err := newTestLogrus(config, &buffer)
 	assert.Nil(t, err)
 
 	log(lLogger)
@@ -63,7 +63,7 @@ func logAndAssertTextFields(
 ) {
 	var buffer bytes.Buffer
 
-	lLogger, err := NewTestLogger(config, &buffer)
+	lLogger, err := newTestLogrus(config, &buffer)
 	assert.Nil(t, err)
 
 	log(lLogger)
