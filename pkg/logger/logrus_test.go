@@ -113,7 +113,7 @@ func TestInfoLevelWithJSONFields(t *testing.T) {
 		func(fields Fields) {
 			assert.Nil(t, fields["msg"])
 			assert.Equal(t, "info", fields["level"])
-			assert.True(t, fields[fieldKeyTime] != "")
+			assert.NotEmpty(t, fields[fieldKeyTime])
 			assert.Equal(t, messageContent, fields[fieldKeyMsg])
 		},
 	)
@@ -130,9 +130,9 @@ func TestInfoLevelWithTextFields(t *testing.T) {
 			log.Infof(messageContent)
 		},
 		func(fields map[string]string) {
-			assert.Equal(t, "", fields["msg"])
+			assert.Empty(t, fields["msg"])
 			assert.Equal(t, "info", fields["level"])
-			assert.True(t, fields[fieldKeyTime] != "")
+			assert.NotEmpty(t, fields[fieldKeyTime])
 			assert.Equal(t, messageContent, fields[fieldKeyMsg])
 		},
 	)
