@@ -63,7 +63,5 @@ func NewLogger(config *Config) (Logger, error) {
 // passed as parameter.
 // NewTestLogger is recommended only for testing.
 func NewTestLogger(config *Config, out *bytes.Buffer) (Logger, error) {
-	l, err := newLogrusLogger(config)
-	l.Out = out
-	return &logrusLogger{logger: l}, err
+	return newTestLogrus(config, out)
 }
