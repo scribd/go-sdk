@@ -60,3 +60,39 @@ func TestNewConfig(t *testing.T) {
 		})
 	}
 }
+
+func TestFileName(t *testing.T) {
+	testCases := []struct {
+		name     string
+		env      string
+		expected string
+	}{
+		{
+			name:     "WhenTheAppEnvIsTest",
+			env:      "test",
+			expected: "test.log",
+		},
+		{
+			name:     "WhenTheAppEnvIsFoo",
+			env:      "foo",
+			expected: "foo.log",
+		},
+		{
+			name:     "WhenTheAppEnvIsEmpty",
+			env:      "",
+			expected: "log.log",
+		},
+	}
+
+	currentEnv := os.Getenv("APP_ENV")
+	defer os.Setenv("APP_ENV", currentEnv)
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			os.Setenv("APP_ENV", tc.env)
+			actual := fileName()
+
+			assert.Equal(t, tc.expected, actual)
+		})
+	}
+}
