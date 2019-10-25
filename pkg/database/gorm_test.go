@@ -18,7 +18,7 @@ func TestOptions(t *testing.T) {
 		{
 			name:      "WithPresentTimeout",
 			input:     "100s",
-			timeout:   "100s",
+			timeout:   "timeout=100s",
 			charset:   "charset=utf8",
 			parseTime: "parseTime=True",
 			loc:       "loc=Local",
@@ -26,7 +26,7 @@ func TestOptions(t *testing.T) {
 		{
 			name:      "WithBlankTimeout",
 			input:     "",
-			timeout:   "1s",
+			timeout:   "timeout=1s",
 			charset:   "charset=utf8",
 			parseTime: "parseTime=True",
 			loc:       "loc=Local",
