@@ -18,6 +18,7 @@ SDK, the Go version.
         - [Log levels](#log-levels)
         - [Structured logging](#structured-logging)
         - [Formatting and handlers](#formatting-and-handlers)
+        - [Sentry error reporting](#sentry-error-reporting)
 - [Using the `go-sdk` in isolation](#using-the-go-sdk-in-isolation)
 - [Developing the SDK](#developing-the-sdk)
     - [Building the docker environment](#building-the-docker-environment)
@@ -258,7 +259,7 @@ func main() {
 		log.Fatalf("Failed to initialize SDK logger configuration: %s", err.Error())
 	}
 
-	if Logger, err = sdklogger.NewLogger(loggerConfig); err != nil {
+	if Logger, err = sdklogger.NewBuilder(loggerConfig).Build(); err != nil {
 		log.Fatalf("Failed to load SDK logger: %s", err.Error())
 	}
 }
@@ -348,9 +349,20 @@ fields that every log entry will be consisted of. This is done by design, with
 the goal of a uniform log line structure across all Go services that use the
 `go-sdk`.
 
-While adding more fields is easy to do, by using the `logger.WithFields`
-function, removing the three default fields from the log lines is, by design,
-very hard to do and highly discouraged.
+Adding more field is made possible by the `logger.WithFields` function
+and by the `Builder` API:
+
+```go
+fields := map[string]string{ "role": "server" }
+
+if Logger, err = sdklogger.NewBuilder(loggerConfig).SetFields(fields).Build(); err != nil {
+	log.Fatalf("Failed to load SDK logger: %s", err.Error())
+}
+```
+
+While adding more fields is easy to do, removing the three default
+fields from the log lines is, by design, very hard to do and highly
+discouraged.
 
 The list of fields are:
 
@@ -380,6 +392,74 @@ An example of the JSON format:
 The logger handles the log entries and can store them in a file or send them to
 `STDOUT`. These options are configurable using the `ConsoleEnabled` and
 `FileEnabled` attributes of the logger `Config`.
+
+#### Sentry error reporting
+
+The logger can be further instrumented to report error messages to
+[Sentry](https://docs.sentry.io).
+
+The following instructions assume that a project has been
+[setup in Sentry](https://docs.sentry.io/error-reporting/quickstart/?platform=go)
+and that the corresponding DSN, or Data Source Name, is available.
+
+The respective configuration file is `sentry.yml` and it should include
+the following content:
+
+```yaml
+# config/sentry.yml
+common: &common
+  dsn: ""
+
+development:
+  <<: *common
+
+staging:
+  <<: *common
+
+production:
+  <<: *common
+  dsn: "https://<key>@sentry.io/<project>"
+```
+
+The tracking can be enabled from the `Builder` with the `SetTracking`
+function:
+
+```go
+package main
+
+import (
+	"log"
+
+	sdklogger   "git.lo/microservices/sdk/go-sdk/pkg/logger"
+	sdktracking "git.lo/microservices/sdk/go-sdk/pkg/tracking"
+)
+
+var (
+	// Logger is SDK-powered application logger.
+	Logger sdklogger.Logger
+	err    error
+)
+
+func main() {
+	if loggerConfig, err := sdklogger.NewConfig(); err != nil {
+		log.Fatalf("Failed to initialize SDK logger configuration: %s", err.Error())
+	}
+
+	if trackingConfig, err := sdktracking.NewConfig(); err != nil {
+		log.Fatalf("Failed to initialize SDK tracking configuration: %s", err.Error())
+	}
+
+	if Logger, err = sdklogger.NewBuilder(loggerConfig).SetTracking(trackingConfig).Build(); err != nil {
+		log.Fatalf("Failed to load SDK logger: %s", err.Error())
+	}
+```
+
+A logger build with a valid tracking configuration will automatically
+report to Sentry any errors emitted from the following log levels:
+
+- `Error`;
+- `Fatal`;
+- `Panic`;
 
 ## Using the `go-sdk` in isolation
 
@@ -422,7 +502,7 @@ func init() {
 		log.Fatalf("Failed to load SDK config: %s", err.Error())
 	}
 
-	if Logger, err = sdklogger.NewLogger(Config.Logger); err != nil {
+	if Logger, err = sdklogger.NewBuilder(loggerConfig).Build(); err != nil {
 		log.Fatalf("Failed to load SDK logger: %s", err.Error())
 	}
 }
