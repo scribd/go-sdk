@@ -98,13 +98,11 @@ func newLogrusLogger(config *Config) (*logrus.Logger, error) {
 	return lLogger, nil
 }
 
-func newTestLogrus(config *Config, out *bytes.Buffer) (Logger, error) {
+func newTestLogrusLogger(config *Config, out *bytes.Buffer) (*logrus.Logger, error) {
 	lLogger, err := newLogrusLogger(config)
 	lLogger.Out = out
 
-	return &logrusLogger{
-		logger: lLogger,
-	}, err
+	return lLogger, err
 }
 
 // An entry is the final or intermediate Logrus logging entry. It
