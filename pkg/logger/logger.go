@@ -50,7 +50,12 @@ type Logger interface {
 	Debugf(format string, args ...interface{})
 	// Trace logs a message at level Trace.
 	Tracef(format string, args ...interface{})
-
+	// WithFields creates an entry from the logger and adds multiple
+	// fields to it. This is simply a helper for `WithField`,
+	// invoking it once for each field.
+	//
+	// Note that it doesn't log until you call Debug, Print, Info,
+	// Warn, Fatal or Panic on the Entry it returns.
 	WithFields(keyValues Fields) Logger
 }
 
