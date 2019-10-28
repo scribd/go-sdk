@@ -6,6 +6,8 @@ import (
 	"os"
 	"path"
 
+	"git.lo/microservices/sdk/go-sdk/pkg/tracking"
+
 	"github.com/sirupsen/logrus"
 	lumberjack "gopkg.in/natefinch/lumberjack.v2"
 )
@@ -147,4 +149,16 @@ func (l *logrusLogEntry) WithFields(fields Fields) Logger {
 	return &logrusLogEntry{
 		entry: l.entry.WithFields(convertToLogrusFields(fields)),
 	}
+}
+
+// SetTracking configures and enables the error reporting.
+func (l *logrusLogEntry) setTracking(trackingConfig *tracking.Config) error {
+	hook, err := tracking.NewSentryHook(trackingConfig)
+	if err != nil {
+		return err
+	}
+
+	l.entry.Logger.Hooks.Add(hook)
+
+	return nil
 }
