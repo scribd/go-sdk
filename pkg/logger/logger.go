@@ -3,10 +3,6 @@
 
 package logger
 
-import (
-	"bytes"
-)
-
 type Level string
 
 const (
@@ -57,16 +53,4 @@ type Logger interface {
 	// Note that it doesn't log until you call Debug, Print, Info,
 	// Warn, Fatal or Panic on the Entry it returns.
 	WithFields(keyValues Fields) Logger
-}
-
-// NewLogger returns a Logger instance with the given configuration.
-func NewLogger(config *Config) (Logger, error) {
-	return newLogrus(config)
-}
-
-// NewTestLogger returns a Logger instance that will write into the bytes buffer
-// passed as parameter.
-// NewTestLogger is recommended only for testing.
-func NewTestLogger(config *Config, out *bytes.Buffer) (Logger, error) {
-	return newTestLogrus(config, out)
 }
