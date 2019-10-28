@@ -148,11 +148,3 @@ func (l *logrusLogEntry) WithFields(fields Fields) Logger {
 		entry: l.entry.WithFields(convertToLogrusFields(fields)),
 	}
 }
-
-func convertToLogrusFields(fields Fields) logrus.Fields {
-	logrusFields := logrus.Fields{}
-	for index, val := range fields {
-		logrusFields[index] = val
-	}
-	return logrusFields
-}
