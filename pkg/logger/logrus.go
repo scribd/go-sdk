@@ -107,6 +107,12 @@ func newTestLogrus(config *Config, out *bytes.Buffer) (Logger, error) {
 	}, err
 }
 
+// An entry is the final or intermediate Logrus logging entry. It
+// contains all the fields passed with WithField{,s}. It's finally
+// logged when Trace, Debug, Info, Warn, Error, Fatal or Panic is called
+// on it.
+//
+// logrusEntry implements the `Logger` interface.
 type logrusLogEntry struct {
 	entry *logrus.Entry
 }
