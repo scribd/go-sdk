@@ -10,14 +10,6 @@ import (
 	lumberjack "gopkg.in/natefinch/lumberjack.v2"
 )
 
-type logrusLogEntry struct {
-	entry *logrus.Entry
-}
-
-type logrusLogger struct {
-	logger *logrus.Logger
-}
-
 const (
 	// Key name for logging time of event.
 	fieldKeyTime = "timestamp"
@@ -106,14 +98,6 @@ func newLogrusLogger(config *Config) (*logrus.Logger, error) {
 	return lLogger, nil
 }
 
-func newLogrus(config *Config) (Logger, error) {
-	lLogger, err := newLogrusLogger(config)
-
-	return &logrusLogger{
-		logger: lLogger,
-	}, err
-}
-
 func newTestLogrus(config *Config, out *bytes.Buffer) (Logger, error) {
 	lLogger, err := newLogrusLogger(config)
 	lLogger.Out = out
@@ -123,38 +107,8 @@ func newTestLogrus(config *Config, out *bytes.Buffer) (Logger, error) {
 	}, err
 }
 
-func (l *logrusLogger) Tracef(format string, args ...interface{}) {
-	l.logger.Tracef(format, args...)
-}
-
-func (l *logrusLogger) Debugf(format string, args ...interface{}) {
-	l.logger.Debugf(format, args...)
-}
-
-func (l *logrusLogger) Infof(format string, args ...interface{}) {
-	l.logger.Infof(format, args...)
-}
-
-func (l *logrusLogger) Warnf(format string, args ...interface{}) {
-	l.logger.Warnf(format, args...)
-}
-
-func (l *logrusLogger) Errorf(format string, args ...interface{}) {
-	l.logger.Errorf(format, args...)
-}
-
-func (l *logrusLogger) Fatalf(format string, args ...interface{}) {
-	l.logger.Fatalf(format, args...)
-}
-
-func (l *logrusLogger) Panicf(format string, args ...interface{}) {
-	l.logger.Panicf(format, args...)
-}
-
-func (l *logrusLogger) WithFields(fields Fields) Logger {
-	return &logrusLogEntry{
-		entry: l.logger.WithFields(convertToLogrusFields(fields)),
-	}
+type logrusLogEntry struct {
+	entry *logrus.Entry
 }
 
 func (l *logrusLogEntry) Tracef(format string, args ...interface{}) {
