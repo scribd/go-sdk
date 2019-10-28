@@ -25,8 +25,9 @@ func logAndAssertContent(
 ) {
 	var buffer bytes.Buffer
 
-	lLogger, err := newTestLogrus(config, &buffer)
-	assert.Nil(t, err)
+	b := NewBuilder(config)
+	lLogger, err := b.BuildTestLogger(&buffer)
+	require.Nil(t, err)
 
 	log(lLogger)
 
@@ -44,8 +45,9 @@ func logAndAssertJSONFields(
 	var buffer bytes.Buffer
 	var fields Fields
 
-	lLogger, err := newTestLogrus(config, &buffer)
-	assert.Nil(t, err)
+	b := NewBuilder(config)
+	lLogger, err := b.BuildTestLogger(&buffer)
+	require.Nil(t, err)
 
 	log(lLogger)
 
@@ -63,8 +65,9 @@ func logAndAssertTextFields(
 ) {
 	var buffer bytes.Buffer
 
-	lLogger, err := newTestLogrus(config, &buffer)
-	assert.Nil(t, err)
+	b := NewBuilder(config)
+	lLogger, err := b.BuildTestLogger(&buffer)
+	require.Nil(t, err)
 
 	log(lLogger)
 
