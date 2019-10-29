@@ -5,6 +5,7 @@ import (
 	database "git.lo/microservices/sdk/go-sdk/pkg/database"
 	logger "git.lo/microservices/sdk/go-sdk/pkg/logger"
 	server "git.lo/microservices/sdk/go-sdk/pkg/server"
+	tracking "git.lo/microservices/sdk/go-sdk/pkg/tracking"
 )
 
 // Config is an app-wide configuration
@@ -13,6 +14,7 @@ type Config struct {
 	Database *database.Config
 	Logger   *logger.Config
 	Server   *server.Config
+	Tracking *tracking.Config
 }
 
 // NewConfig returns a new Config instance
@@ -39,10 +41,16 @@ func NewConfig() (*Config, error) {
 		return config, err
 	}
 
+	trackingConfig, err := tracking.NewConfig()
+	if err != nil {
+		return config, err
+	}
+
 	config.App = appConfig
 	config.Database = dbConfig
 	config.Logger = loggerConfig
 	config.Server = serverConfig
+	config.Tracking = trackingConfig
 
 	return config, nil
 }
