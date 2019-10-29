@@ -6,17 +6,11 @@ import (
 	"os"
 	"path"
 
+	"git.lo/microservices/sdk/go-sdk/pkg/tracking"
+
 	"github.com/sirupsen/logrus"
 	lumberjack "gopkg.in/natefinch/lumberjack.v2"
 )
-
-type logrusLogEntry struct {
-	entry *logrus.Entry
-}
-
-type logrusLogger struct {
-	logger *logrus.Logger
-}
 
 const (
 	// Key name for logging time of event.
@@ -106,55 +100,21 @@ func newLogrusLogger(config *Config) (*logrus.Logger, error) {
 	return lLogger, nil
 }
 
-func newLogrus(config *Config) (Logger, error) {
-	lLogger, err := newLogrusLogger(config)
-
-	return &logrusLogger{
-		logger: lLogger,
-	}, err
-}
-
-func newTestLogrus(config *Config, out *bytes.Buffer) (Logger, error) {
+func newTestLogrusLogger(config *Config, out *bytes.Buffer) (*logrus.Logger, error) {
 	lLogger, err := newLogrusLogger(config)
 	lLogger.Out = out
 
-	return &logrusLogger{
-		logger: lLogger,
-	}, err
+	return lLogger, err
 }
 
-func (l *logrusLogger) Tracef(format string, args ...interface{}) {
-	l.logger.Tracef(format, args...)
-}
-
-func (l *logrusLogger) Debugf(format string, args ...interface{}) {
-	l.logger.Debugf(format, args...)
-}
-
-func (l *logrusLogger) Infof(format string, args ...interface{}) {
-	l.logger.Infof(format, args...)
-}
-
-func (l *logrusLogger) Warnf(format string, args ...interface{}) {
-	l.logger.Warnf(format, args...)
-}
-
-func (l *logrusLogger) Errorf(format string, args ...interface{}) {
-	l.logger.Errorf(format, args...)
-}
-
-func (l *logrusLogger) Fatalf(format string, args ...interface{}) {
-	l.logger.Fatalf(format, args...)
-}
-
-func (l *logrusLogger) Panicf(format string, args ...interface{}) {
-	l.logger.Panicf(format, args...)
-}
-
-func (l *logrusLogger) WithFields(fields Fields) Logger {
-	return &logrusLogEntry{
-		entry: l.logger.WithFields(convertToLogrusFields(fields)),
-	}
+// An entry is the final or intermediate Logrus logging entry. It
+// contains all the fields passed with WithField{,s}. It's finally
+// logged when Trace, Debug, Info, Warn, Error, Fatal or Panic is called
+// on it.
+//
+// logrusEntry implements the `Logger` interface.
+type logrusLogEntry struct {
+	entry *logrus.Entry
 }
 
 func (l *logrusLogEntry) Tracef(format string, args ...interface{}) {
@@ -191,10 +151,14 @@ func (l *logrusLogEntry) WithFields(fields Fields) Logger {
 	}
 }
 
-func convertToLogrusFields(fields Fields) logrus.Fields {
-	logrusFields := logrus.Fields{}
-	for index, val := range fields {
-		logrusFields[index] = val
+// SetTracking configures and enables the error reporting.
+func (l *logrusLogEntry) setTracking(trackingConfig *tracking.Config) error {
+	hook, err := tracking.NewSentryHook(trackingConfig)
+	if err != nil {
+		return err
 	}
-	return logrusFields
+
+	l.entry.Logger.Hooks.Add(hook)
+
+	return nil
 }
