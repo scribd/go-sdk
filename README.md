@@ -19,6 +19,8 @@ SDK, the Go version.
         - [Structured logging](#structured-logging)
         - [Formatting and handlers](#formatting-and-handlers)
         - [Sentry error reporting](#sentry-error-reporting)
+    - [Database Connection](#database-connection)
+    - [ORM Integration](#orm-integration)
 - [Using the `go-sdk` in isolation](#using-the-go-sdk-in-isolation)
 - [Developing the SDK](#developing-the-sdk)
     - [Building the docker environment](#building-the-docker-environment)
@@ -460,6 +462,52 @@ report to Sentry any errors emitted from the following log levels:
 - `Error`;
 - `Fatal`;
 - `Panic`;
+
+### Database Connection
+
+`go-sdk` ships with a default setup for a database connection, built on top of
+the built-in [database
+configuration](#predefined-application-agnostic-configurations). The
+configuration that is read from the `config/database.yml` file is then used to
+create connection details, which are then used to compose a [data source
+name](https://en.wikipedia.org/wiki/Data_source_name) (DSN), for example:
+
+```
+username:password@tcp(192.168.1.1:8080)/dbname?timeout=10s&charset=utf8&parseTime=True&loc=Local
+```
+
+At the moment, the database connection established using the `go-sdk` can be
+only to a MySQL database. This is subject to change as the `go-sdk` evolves and
+becomes more feature-complete.
+
+### ORM Integration
+
+`go-sdk` comes with an integration with the popular
+[gorm](https://github.com/jinzhu/gorm) as an object-relational mapper (ORM).
+Using the configuration details, namely the [data source
+name](https://en.wikipedia.org/wiki/Data_source_name) (DSN) as their product,
+gorm is able to open a connection and give the `go-sdk` users a preconfigured
+ready-to-use database connection with an ORM attached. This can be done as
+follows:
+
+```go
+package main
+
+import (
+	sdkdb "git.lo/microservices/chassis/go-sdk/pkg/database"
+)
+
+func main() {
+	// Loads the database configuration.
+	dbConfig, err := sdkdb.NewConfig()
+
+	// Establishes a gorm database connection using the connection details.
+	dbConn, err := sdkdb.NewConnection(dbConfig)
+}
+```
+
+The connection details are handled internally by the gorm integration, in other
+words the `NewConnection` function, so they remain opaque for the user.
 
 ## Using the `go-sdk` in isolation
 
