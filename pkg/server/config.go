@@ -20,7 +20,7 @@ var vConf *viper.Viper
 // NewConfig returns a new ServerConfig instance
 func NewConfig() (*Config, error) {
 	config := &Config{}
-	viperBuilder := cbuilder.New().ConfigName("server")
+	viperBuilder := cbuilder.New("server")
 
 	vConf, err := viperBuilder.Build()
 	if err != nil {

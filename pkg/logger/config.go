@@ -38,7 +38,7 @@ func fileName() string {
 // NewConfig returns a new ServerConfig instance
 func NewConfig() (*Config, error) {
 	config := &Config{}
-	viperBuilder := cbuilder.New().ConfigName("logger")
+	viperBuilder := cbuilder.New("logger")
 
 	vConf, err := viperBuilder.Build()
 	if err != nil {

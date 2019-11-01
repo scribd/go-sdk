@@ -14,8 +14,8 @@ type Config struct {
 // NewConfig returns a new TrackingConfig instance
 func NewConfig() (*Config, error) {
 	config := &Config{}
-	viperBuilder := cbuilder.New().ConfigName("sentry")
 
+	viperBuilder := cbuilder.New("sentry")
 	vConf, err := viperBuilder.Build()
 	if err != nil {
 		return config, err

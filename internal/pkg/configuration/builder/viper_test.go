@@ -21,7 +21,7 @@ func TestViperBuilder(t *testing.T) {
 			{
 				name:       "ValidWithoutEnvs",
 				configName: "valid-no-envs",
-				wantError:  false,
+				wantError:  true,
 			},
 			{
 				name:       "InvalidFile",
@@ -29,7 +29,7 @@ func TestViperBuilder(t *testing.T) {
 				wantError:  true,
 			},
 			{
-				name:       "NonexistentFile",
+				name:       "NonExistentFile",
 				configName: "nonexistent",
 				wantError:  true,
 			},
@@ -37,9 +37,7 @@ func TestViperBuilder(t *testing.T) {
 
 		for _, c := range cases {
 			t.Run(c.name, func(t *testing.T) {
-				b := New().
-					ConfigPath("testdata").
-					ConfigName(c.configName)
+				b := New(c.configName).ConfigPath("testdata")
 
 				_, err := b.Build()
 				gotError := err != nil
