@@ -21,7 +21,7 @@ func TestViperBuilder(t *testing.T) {
 			{
 				name:       "ValidWithoutEnvs",
 				configName: "valid-no-envs",
-				wantError:  false,
+				wantError:  true,
 			},
 			{
 				name:       "InvalidFile",
@@ -29,7 +29,7 @@ func TestViperBuilder(t *testing.T) {
 				wantError:  true,
 			},
 			{
-				name:       "NonexistentFile",
+				name:       "NonExistentFile",
 				configName: "nonexistent",
 				wantError:  true,
 			},

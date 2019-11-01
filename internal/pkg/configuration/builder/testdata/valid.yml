@@ -1,2 +1,5 @@
 development:
   foo: bar
+
+test:
+  foo: bar

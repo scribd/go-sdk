@@ -19,7 +19,7 @@ func TestNewConfig(t *testing.T) {
 			want:       true,
 		},
 		{
-			name:       "NonexistentFile",
+			name:       "NonExistentFile",
 			configName: "nonexsistent",
 			want:       true,
 		},
@@ -28,7 +28,6 @@ func TestNewConfig(t *testing.T) {
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
 			_, err := NewConfig("testdata", c.configName)
-
 			got := err != nil
 
 			if c.want != got {
