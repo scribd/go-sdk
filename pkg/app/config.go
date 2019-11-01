@@ -26,9 +26,7 @@ func NewDefaultConfig() (*Config, error) {
 // NewConfig sets up the app configuration, setting default values and configurations.
 func NewConfig(configPath string, configName string) (*Config, error) {
 	conf := &Config{}
-	viperBuilder := cbuilder.New().
-		ConfigPath(configPath).
-		ConfigName(configName)
+	viperBuilder := cbuilder.New(configName).ConfigPath(configPath)
 
 	vConf, err := viperBuilder.Build()
 	if err != nil {

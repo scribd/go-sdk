@@ -11,13 +11,15 @@ import (
 type ViperBuilder struct {
 	vConf    *viper.Viper
 	defaults map[string]string
+	name     string
 }
 
 // New initializes and returns a new ViperBuilder.
-func New() *ViperBuilder {
+func New(name string) *ViperBuilder {
 	vConf := viper.New()
 
 	vConf.SetDefault("ENV", "development")
+	vConf.SetConfigName(name)
 	vConf.AddConfigPath(path.Join(os.Getenv("APP_ROOT"), "config"))
 	vConf.SetConfigType("yaml")
 	vConf.SetEnvPrefix("APP")
@@ -25,18 +27,13 @@ func New() *ViperBuilder {
 
 	return &ViperBuilder{
 		vConf: vConf,
+		name:  name,
 	}
 }
 
 // ConfigPath sets the path argument as the Viper config path.
 func (vb *ViperBuilder) ConfigPath(path string) *ViperBuilder {
 	vb.vConf.AddConfigPath(path)
-	return vb
-}
-
-// ConfigName sets the name argument as the Viper config name.
-func (vb *ViperBuilder) ConfigName(name string) *ViperBuilder {
-	vb.vConf.SetConfigName(name)
 	return vb
 }
 
@@ -57,6 +54,7 @@ func (vb *ViperBuilder) Build() (*viper.Viper, error) {
 	}
 
 	vb.vConf = vb.vConf.Sub(vb.vConf.GetString("ENV"))
+	vb.vConf.SetConfigName(vb.name)
 
 	for key, val := range vb.defaults {
 		vb.vConf.SetDefault(key, val)

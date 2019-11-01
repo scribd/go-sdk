@@ -37,9 +37,7 @@ func TestViperBuilder(t *testing.T) {
 
 		for _, c := range cases {
 			t.Run(c.name, func(t *testing.T) {
-				b := New().
-					ConfigPath("testdata").
-					ConfigName(c.configName)
+				b := New(c.configName).ConfigPath("testdata")
 
 				_, err := b.Build()
 				gotError := err != nil

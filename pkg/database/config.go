@@ -20,7 +20,7 @@ type Config struct {
 // NewConfig returns a new Config instance.
 func NewConfig() (*Config, error) {
 	config := &Config{}
-	viperBuilder := cbuilder.New().ConfigName("database")
+	viperBuilder := cbuilder.New("database")
 
 	vConf, err := viperBuilder.Build()
 	if err != nil {
