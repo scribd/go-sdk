@@ -65,7 +65,7 @@ func (vb *ViperBuilder) Build() (*viper.Viper, error) {
 	}
 
 	_ = vb.vConf.BindEnv("APP_ENV")
-	vb.vConf.SetEnvPrefix(fmt.Sprintf("APP_%s", vb.name))
+	vb.vConf.SetEnvPrefix(fmt.Sprintf("APP_%s", strings.ToUpper(vb.name)))
 	vb.vConf.AutomaticEnv()
 
 	// Bind the ENV values manually.
