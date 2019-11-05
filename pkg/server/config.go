@@ -4,8 +4,6 @@ import (
 	"fmt"
 
 	cbuilder "git.lo/microservices/sdk/go-sdk/internal/pkg/configuration/builder"
-
-	"github.com/spf13/viper"
 )
 
 // Config represents a web server configuration
@@ -14,8 +12,6 @@ type Config struct {
 	GRPCPort string `mapstructure:"grpc_port"`
 	HTTPPort string `mapstructure:"http_port"`
 }
-
-var vConf *viper.Viper
 
 // NewConfig returns a new ServerConfig instance
 func NewConfig() (*Config, error) {
