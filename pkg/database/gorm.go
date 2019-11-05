@@ -15,14 +15,16 @@ func NewConnection(config *Config, environment string) (*gorm.DB, error) {
 
 	connectionDetails := NewConnectionDetails(config)
 
-	if environment == "test" {
+	switch environment {
+	case "test":
 		txdb.Register("txdb", connectionDetails.Dialect, connectionDetails.String())
 		db, err = gorm.Open(connectionDetails.Dialect, "txdb", "tx_1")
-	} else {
+	default:
 		db, err = gorm.Open(connectionDetails.Dialect, connectionDetails.String())
-		if err == nil {
-			db.DB().SetMaxIdleConns(connectionDetails.Pool)
-		}
+	}
+
+	if err == nil {
+		db.DB().SetMaxIdleConns(connectionDetails.Pool)
 	}
 
 	return db, err
