@@ -21,7 +21,7 @@ func New(name string) *ViperBuilder {
 	vConf := viper.New()
 
 	vConf.SetDefault("APP_ENV", "development")
-	vConf.BindEnv("APP_ENV")
+	_ = vConf.BindEnv("APP_ENV")
 	vConf.SetConfigName(name)
 	vConf.AddConfigPath(path.Join(os.Getenv("APP_ROOT"), "config"))
 	vConf.SetConfigType("yaml")
@@ -64,8 +64,8 @@ func (vb *ViperBuilder) Build() (*viper.Viper, error) {
 		return nil, fmt.Errorf("No %s configuration for ENV %s", vb.name, env)
 	}
 
-	vb.vConf.BindEnv("APP_ENV")
-	vb.vConf.SetEnvPrefix(fmt.Sprintf("APP_%s", vb.name))
+	_ = vb.vConf.BindEnv("APP_ENV")
+	vb.vConf.SetEnvPrefix(fmt.Sprintf("APP_%s", strings.ToUpper(vb.name)))
 	vb.vConf.AutomaticEnv()
 
 	// Bind the ENV values manually.
