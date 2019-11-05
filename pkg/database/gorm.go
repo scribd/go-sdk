@@ -21,9 +21,10 @@ func NewConnection(config *Config, environment string) (*gorm.DB, error) {
 		db, err = gorm.Open(connectionDetails.Dialect, "txdb", "tx_1")
 	default:
 		db, err = gorm.Open(connectionDetails.Dialect, connectionDetails.String())
-		if err == nil {
-			db.DB().SetMaxIdleConns(connectionDetails.Pool)
-		}
+	}
+
+	if err == nil {
+		db.DB().SetMaxIdleConns(connectionDetails.Pool)
 	}
 
 	return db, err
