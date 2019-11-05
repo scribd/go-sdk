@@ -48,7 +48,7 @@ func (vb *ViperBuilder) SetDefault(key string, value string) *ViperBuilder {
 
 // Build builds the Viper config and returns it.
 // It first extracts a Viper instance for the specific environment it's running
-// in, then explictly calls BindEnv for each of the attributes of the
+// in, then explicitly calls BindEnv for each of the attributes of the
 // configuration. This is done to force Viper to be aware of the ENV variables
 // for each of those configuration attributes. The Viper instance returned by
 // this function can be unmarshalled by the caller in a configuration-specific

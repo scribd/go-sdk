@@ -13,7 +13,7 @@ type Builder struct {
 	trackingConfig *tracking.Config
 }
 
-// NewBuilder initialises a Logger builder with the given configuration.
+// NewBuilder initializes a Logger builder with the given configuration.
 func NewBuilder(config *Config) *Builder {
 	return &Builder{
 		config: config,
