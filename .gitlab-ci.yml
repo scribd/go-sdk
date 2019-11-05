@@ -1,6 +1,7 @@
 # Define global variables
 # Doc: https://docs.gitlab.com/ee/ci/yaml/README.html#variables
 variables:
+  CI_GOLANGCI_LINT_VERSION: "1.18.0"
   CI_IMAGE_NAME: "docker.artifacts.lo/$CI_PROJECT_PATH"
 
 # Define pipeline stages
@@ -26,6 +27,20 @@ check:fmt:
   image: $CI_IMAGE_NAME:$CI_COMMIT_REF_SLUG
   script:
     - make fmt-check
+  dependencies:
+    - build:image
+  tags:
+    - docker
+
+# Checks the application code against the enabled linters
+# Doc: https://docs.gitlab.com/ee/ci/yaml/README.html#stage
+check:lint:
+  stage: check
+  image: $CI_IMAGE_NAME:$CI_COMMIT_REF_SLUG
+  before_script:
+    - curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s -- -b $(go env GOPATH)/bin v$CI_GOLANGCI_LINT_VERSION
+  script:
+    - make lint
   dependencies:
     - build:image
   tags:

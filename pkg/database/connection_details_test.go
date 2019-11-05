@@ -7,7 +7,10 @@ import (
 )
 
 func TestNewConnectionDetails(t *testing.T) {
-	config, _ := NewConfig()
+	config, err := NewConfig()
+	if err != nil {
+		t.Logf("Cannot create NewConfig: %s", err.Error())
+	}
 	details := NewConnectionDetails(config)
 
 	assert.Equal(t, details.Dialect, "mysql")
