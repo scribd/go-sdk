@@ -35,7 +35,7 @@ func fileName() string {
 	return fmt.Sprintf("%s.log", fileName)
 }
 
-// NewConfig returns a new ServerConfig instance
+// NewConfig returns a new LoggerConfig instance
 func NewConfig() (*Config, error) {
 	config := &Config{}
 	viperBuilder := cbuilder.New("logger")
