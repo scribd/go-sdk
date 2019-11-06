@@ -65,3 +65,12 @@ func (t *Tracer) Stop() {
 
 	tracer.Stop()
 }
+
+// Router returns an instrumented-mux-compatible router instance traced
+// with the global tracer.
+//
+// Returning a Router is part of the Tracer API to ensure a single entry-point
+// for the instrumentation features.
+func (t *Tracer) Router(serviceName string) *ddmux.Router {
+	return ddmux.NewRouter(ddmux.WithServiceName(serviceName))
+}
