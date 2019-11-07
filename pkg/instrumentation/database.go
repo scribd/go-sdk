@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"strings"
 
-	sdkconfig "git.lo/microservices/sdk/go-sdk/pkg/configuration"
-
 	"github.com/jinzhu/gorm"
 	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/ext"
 	ddtrace "gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer"
@@ -29,13 +27,9 @@ func TraceDatabase(ctx context.Context, db *gorm.DB) *gorm.DB {
 }
 
 // InstrumentDatabase adds callbacks for tracing, call TraceDatabase to make it work
-func InstrumentDatabase(db *gorm.DB) {
-	config, err := sdkconfig.NewConfig()
-	if err != nil {
-		return
-	}
+func InstrumentDatabase(db *gorm.DB, appName string) {
+	callbacks := newCallbacks(appName)
 
-	callbacks := newCallbacks(config.App.GetString("APP_NAME"))
 	registerCallbacks(db, "create", callbacks)
 	registerCallbacks(db, "query", callbacks)
 	registerCallbacks(db, "update", callbacks)
