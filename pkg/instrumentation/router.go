@@ -2,7 +2,6 @@ package instrumentation
 
 import (
 	"fmt"
-	"os"
 
 	ddmux "gopkg.in/DataDog/dd-trace-go.v1/contrib/gorilla/mux"
 	tracer "gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer"
@@ -31,19 +30,14 @@ type Tracer struct {
 // New tracer returns a new tracer with the giver configuration and an optional
 // list of ddtrace's tracer.StartOptions.
 func NewTracer(config *Config, options ...tracer.StartOption) *Tracer {
-	appEnvironment := "development"
-	if val, ok := os.LookupEnv("APP_ENV"); ok && val != "" {
-		appEnvironment = val
-	}
-
 	options = append(
 		options,
-		tracer.WithGlobalTag("env", appEnvironment),
+		tracer.WithGlobalTag("env", config.environment),
 	)
 
 	return &Tracer{
 		Enabled:     config.Enabled,
-		Environment: appEnvironment,
+		Environment: config.environment,
 		Options:     options,
 	}
 }

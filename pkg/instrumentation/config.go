@@ -7,7 +7,8 @@ import (
 )
 
 type Config struct {
-	Enabled bool `mapstructure:"enabled"`
+	environment string
+	Enabled     bool `mapstructure:"enabled"`
 }
 
 // NewConfig returns a new ServerConfig instance.
@@ -23,6 +24,8 @@ func NewConfig() (*Config, error) {
 	if err = vConf.Unmarshal(config); err != nil {
 		return config, fmt.Errorf("Unable to decode into struct: %s", err.Error())
 	}
+
+	config.environment = vConf.GetString("ENV")
 
 	return config, nil
 }
