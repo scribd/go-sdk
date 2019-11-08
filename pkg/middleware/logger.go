@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"time"
 
+	sdkinstrumentation "git.lo/microservices/sdk/go-sdk/pkg/instrumentation"
 	sdklogger "git.lo/microservices/sdk/go-sdk/pkg/logger"
 
 	"git.lo/microservices/sdk/go-sdk/pkg/contextkeys"
@@ -40,9 +41,14 @@ func NewLoggingMiddleware(l sdklogger.Logger) LoggingMiddleware {
 // the total elapsed time per request in milliseconds.
 func (lm LoggingMiddleware) Handler(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		logContext := sdkinstrumentation.TraceLogs(r.Context())
 		logger := lm.logger.WithFields(sdklogger.Fields{
 			"http": sdklogger.Fields{
 				"request_id": r.Header.Get(RequestIDHeader),
+			},
+			"dd": sdklogger.Fields{
+				"trace_id": logContext.TraceID,
+				"span_id":  logContext.SpanID,
 			},
 		})
 
