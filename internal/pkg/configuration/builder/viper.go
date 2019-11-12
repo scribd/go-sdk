@@ -30,8 +30,9 @@ func New(name string) *ViperBuilder {
 	vConf.SetConfigType("yaml")
 
 	return &ViperBuilder{
-		vConf: vConf,
-		name:  name,
+		vConf:    vConf,
+		name:     name,
+		defaults: make(map[string]string),
 	}
 }
 
