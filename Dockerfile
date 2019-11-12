@@ -22,4 +22,4 @@ COPY . .
 FROM builder AS development
 
 RUN go get -u -v github.com/go-delve/delve/cmd/dlv \
-	github.com/golangci/golangci-lint/cmd/golangci-lint
+	github.com/golangci/golangci-lint/cmd/golangci-lint@v1.20.1
