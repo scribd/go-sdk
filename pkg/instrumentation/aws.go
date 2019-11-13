@@ -11,5 +11,6 @@ func InstrumentAWSSession(s *awssession.Session, appName string) *awssession.Ses
 	return awstrace.WrapSession(
 		s,
 		awstrace.WithServiceName(fmt.Sprintf("%s-%s", appName, "aws")),
+		awstrace.WithAnalytics(true),
 	)
 }
