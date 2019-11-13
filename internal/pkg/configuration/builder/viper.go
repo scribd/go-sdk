@@ -21,8 +21,8 @@ type ViperBuilder struct {
 func New(name string) *ViperBuilder {
 	vConf := viper.New()
 
-	vConf.SetDefault("APP_ENV", "development")
-	if err := vConf.BindEnv("APP_ENV"); err != nil {
+	vConf.SetDefault("ENV", "development")
+	if err := vConf.BindEnv("ENV", "APP_ENV"); err != nil {
 		log.Fatalf("Could not bind ENV for APP_ENV")
 	}
 	vConf.SetConfigName(name)
@@ -62,16 +62,13 @@ func (vb *ViperBuilder) Build() (*viper.Viper, error) {
 		return nil, err
 	}
 
-	env := vb.vConf.GetString("APP_ENV")
+	env := vb.vConf.GetString("ENV")
 	vb.vConf = vb.vConf.Sub(env)
 	if vb.vConf == nil {
 		return nil, fmt.Errorf("No %s configuration for ENV %s", vb.name, env)
 	}
 
-	if err := vb.vConf.BindEnv("APP_ENV"); err != nil {
-		return nil, fmt.Errorf("Could not bind ENV for APP_ENV")
-	}
-
+	vb.vConf.Set("ENV", env)
 	vb.vConf.SetEnvPrefix(fmt.Sprintf("APP_%s", strings.ToUpper(vb.name)))
 	vb.vConf.AutomaticEnv()
 
