@@ -65,7 +65,7 @@ func (t *Tracer) Stop() {
 //
 // Returning a Router is part of the Tracer API to ensure a single entry-point
 // for the instrumentation features.
-func (t *Tracer) Router(serviceName string) *ddmux.Router {
-	serviceName = fmt.Sprintf("%s-%s", serviceName, datadogServiceSuffix)
+func (t *Tracer) Router(appName string) *ddmux.Router {
+	serviceName := fmt.Sprintf("%s-%s", appName, datadogServiceSuffix)
 	return ddmux.NewRouter(ddmux.WithServiceName(serviceName))
 }
