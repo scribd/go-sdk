@@ -24,6 +24,7 @@ SDK, the Go version.
     - [ORM Integration](#orm-integration)
       - [Usage of ORM](#usage-of-orm)
     - [APM & Instrumentation](#apm-instrumentation)
+      - [HTTP Router Instrumentation](#http-router-instrumentation)
       - [Database Instrumentation & ORM logging](#database-instrumentation-orm-logging)
 - [Using the `go-sdk` in isolation](#using-the-go-sdk-in-isolation)
 - [Developing the SDK](#developing-the-sdk)
@@ -621,6 +622,29 @@ The `go-sdk` provides an easy way to add application performance monitoring
 provides HTTP router instrumentation, database connection & ORM instrumentation
 and AWS session instrumentation. All of the traces and data are opaquely sent
 to DataDog.
+
+### HTTP Router Instrumentation
+
+`go-sdk` ships with HTTP router instrumentation, based on DataDog's
+`dd-trace-go` library. It spawns a new instrumented router where each of the
+requests will create traces that will be sent opaquely to the DataDog agent.
+
+Example usage of the instrumentation:
+
+```go
+// Example taken from go-chassis
+func NewHTTPServer(host, port, applicationEnv, applicationName string) *HTTPServer {
+	router := sdk.Tracer.Router(applicationName)
+	srv := &http.Server{
+		Addr:    fmt.Sprintf("%s:%s", host, port),
+		Handler: router,
+	}
+	return &HTTPServer{
+		srv:            srv,
+		applicationEnv: applicationEnv,
+	}
+}
+```
 
 ### Database instrumentation & ORM logging
 
