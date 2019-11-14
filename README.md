@@ -17,13 +17,17 @@ SDK, the Go version.
         - [Environment-awareness](#environment-awareness-1)
         - [Log levels](#log-levels)
         - [Structured logging](#structured-logging)
+        - [Logging & tracing middleware](#logging-tracing-middleware)
         - [Formatting and handlers](#formatting-and-handlers)
         - [Sentry error reporting](#sentry-error-reporting)
     - [Database Connection](#database-connection)
     - [ORM Integration](#orm-integration)
       - [Usage of ORM](#usage-of-orm)
     - [APM & Instrumentation](#apm-instrumentation)
+      - [Request ID middleware](#request-id-middleware)
+      - [HTTP Router Instrumentation](#http-router-instrumentation)
       - [Database Instrumentation & ORM logging](#database-instrumentation-orm-logging)
+      - [AWS Session Instrumentation](#aws-session-instrumentation)
 - [Using the `go-sdk` in isolation](#using-the-go-sdk-in-isolation)
 - [Developing the SDK](#developing-the-sdk)
     - [Building the docker environment](#building-the-docker-environment)
@@ -375,6 +379,27 @@ The list of fields are:
 * `message`, representing the actual log message
 * `timestamp`, the date & time of the log entry in ISO 8601 UTC format
 
+### Logging & tracing middleware
+
+`go-sdk` ships with a `Logger` middleware. When used, it assigns a random
+UUID as a `RequestID`, if none exists, and it opens a new span using Datadog's
+`ddtrace` library. The span has a corresponding `SpanID` that is used to easily
+create sub-spans for application performance monitoring (APM). The `RequestID`
+is used for request-scoped logs correlation.
+
+Example usage of the middleware:
+
+```go
+func main() {
+	loggingMiddleware := sdkmiddleware.NewLoggingMiddleware(sdk.Logger)
+
+	httpServer := server.
+		NewHTTPServer(host, httpPort, applicationEnv, applicationName).
+		MountMiddleware(loggingMiddleware.Handler).
+		MountRoutes(routes)
+}
+```
+
 #### Formatting and handlers
 
 The logger ships with two different formats: a plaintext and JSON format. This
@@ -593,6 +618,58 @@ documentation](https://gorm.io/docs/).
 
 ## APM & Instrumentation
 
+The `go-sdk` provides an easy way to add application performance monitoring
+(APM) & instrumentation to a service. It provides DataDog APM using the
+[`dd-trace-go`](https://github.com/DataDog/dd-trace-go) library. `dd-trace-go`
+provides HTTP router instrumentation, database connection & ORM instrumentation
+and AWS session instrumentation. All of the traces and data are opaquely sent
+to DataDog.
+
+### Request ID middleware
+
+For easier identification of requests and their tracing within components of a
+single service, and across-services, `go-sdk` ships has a `RequestID`
+middleware. It checks every incoming request for a `X-Request-Id` HTTP header
+and sets the value of the header as a field in the request `Context`. In case
+there's no `RequestID` present, it will generate a UUID and assign it in the
+request `Context`.
+
+Example usage of the middleware:
+
+```go
+func main() {
+	requestIDMiddleware := sdkmiddleware.NewRequestIDMiddleware()
+
+	httpServer := server.
+		NewHTTPServer(host, httpPort, applicationEnv, applicationName).
+		MountMiddleware(requestIDMiddleware.Handler).
+		MountRoutes(routes)
+}
+```
+
+### HTTP Router Instrumentation
+
+`go-sdk` ships with HTTP router instrumentation, based on DataDog's
+`dd-trace-go` library. It spawns a new instrumented router where each of the
+requests will create traces that will be sent opaquely to the DataDog agent.
+
+Example usage of the instrumentation:
+
+```go
+// Example taken from go-chassis
+func NewHTTPServer(host, port, applicationEnv, applicationName string) *HTTPServer {
+	router := sdk.Tracer.Router(applicationName)
+	srv := &http.Server{
+		Addr:    fmt.Sprintf("%s:%s", host, port),
+		Handler: router,
+	}
+	return &HTTPServer{
+		srv:            srv,
+		applicationEnv: applicationEnv,
+	}
+}
+```
+
 ### Database instrumentation & ORM logging
 
 `go-sdk` ships with two database-related middlewares: `Database` &
@@ -625,6 +702,41 @@ func main() {
 		MountRoutes(routes)
 }
 ```
+
+### AWS Session instrumentation
+
+`go-sdk` instruments the AWS session by wrapping it with a DataDog trace and
+tagging it with the service name. In addition, this registers AWS as a separate
+service in DataDog.
+
+Example usage of the instrumentation:
+
+```go
+func main() {
+    s := session.NewSession(&aws.Config{
+		Endpoint: aws.String(config.GetString("s3_endpoint")),
+		Region:   aws.String(config.GetString("default_region")),
+		Credentials: credentials.NewStaticCredentials(
+			config.GetString("access_key_id"),
+			config.GetString("secret_access_key"),
+			"",
+		),
+	})
+
+    session = instrumentation.InstrumentSession(s)
+
+    // Use the session...
+}
+```
+
+To correlate the traces that are registered with DataDog with the corresponding
+requests in other DataDog services, the
+[`aws-sdk-go`](https://aws.amazon.com/sdk-for-go) provides functions with the
+`WithContext` suffix. These functions expect the request `Context` as the first
+arugment of the function, which allows the tracing chain to be continued inside
+the SDK call stack. To learn more about these functions you can start by
+reading about them on [the AWS developer
+blog](https://aws.amazon.com/blogs/developer/v2-aws-sdk-for-go-adds-context-to-api-operations).
 
 ## Using the `go-sdk` in isolation
 
