@@ -26,6 +26,7 @@ SDK, the Go version.
     - [APM & Instrumentation](#apm-instrumentation)
       - [HTTP Router Instrumentation](#http-router-instrumentation)
       - [Database Instrumentation & ORM logging](#database-instrumentation-orm-logging)
+      - [AWS Session Instrumentation](#aws-session-instrumentation)
 - [Using the `go-sdk` in isolation](#using-the-go-sdk-in-isolation)
 - [Developing the SDK](#developing-the-sdk)
     - [Building the docker environment](#building-the-docker-environment)
@@ -678,6 +679,41 @@ func main() {
 		MountRoutes(routes)
 }
 ```
+
+### AWS Session instrumentation
+
+`go-sdk` instruments the AWS session by wrapping it with a DataDog trace and
+tagging it with the service name. In addition, this registers AWS as a separate
+service in DataDog.
+
+Example usage of the instrumentation:
+
+```go
+func main() {
+    s := session.NewSession(&aws.Config{
+		Endpoint: aws.String(config.GetString("s3_endpoint")),
+		Region:   aws.String(config.GetString("default_region")),
+		Credentials: credentials.NewStaticCredentials(
+			config.GetString("access_key_id"),
+			config.GetString("secret_access_key"),
+			"",
+		),
+	})
+
+    session = instrumentation.InstrumentSession(s)
+
+    // Use the session...
+}
+```
+
+To correlate the traces that are registered with DataDog with the corresponding
+requests in other DataDog services, the
+[`aws-sdk-go`](https://aws.amazon.com/sdk-for-go) provides functions with the
+`WithContext` suffix. These functions expect the request `Context` as the first
+arugment of the function, which allows the tracing chain to be continued inside
+the SDK call stack. To learn more about these functions you can start by
+reading about them on [the AWS developer
+blog](https://aws.amazon.com/blogs/developer/v2-aws-sdk-for-go-adds-context-to-api-operations).
 
 ## Using the `go-sdk` in isolation
 
