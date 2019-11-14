@@ -615,6 +615,13 @@ documentation](https://gorm.io/docs/).
 
 ## APM & Instrumentation
 
+The `go-sdk` provides an easy way to add application performance monitoring
+(APM) & instrumentation to a service. It provides DataDog APM using the
+[`dd-trace-go`](https://github.com/DataDog/dd-trace-go) library. `dd-trace-go`
+provides HTTP router instrumentation, database connection & ORM instrumentation
+and AWS session instrumentation. All of the traces and data are opaquely sent
+to DataDog.
+
 ### Database instrumentation & ORM logging
 
 `go-sdk` ships with two database-related middlewares: `Database` &
