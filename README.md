@@ -17,6 +17,7 @@ SDK, the Go version.
         - [Environment-awareness](#environment-awareness-1)
         - [Log levels](#log-levels)
         - [Structured logging](#structured-logging)
+        - [Logging & tracing middleware](#logging-tracing-middleware)
         - [Formatting and handlers](#formatting-and-handlers)
         - [Sentry error reporting](#sentry-error-reporting)
     - [Database Connection](#database-connection)
@@ -374,6 +375,27 @@ The list of fields are:
 * `level`, indicating the log level of the log line
 * `message`, representing the actual log message
 * `timestamp`, the date & time of the log entry in ISO 8601 UTC format
+
+### Logging & tracing middleware
+
+`go-sdk` ships with a `Logger` middleware. When used, it assigns a random
+UUID as a `RequestID`, if none exists, and it opens a new span using Datadog's
+`ddtrace` library. The span has a corresponding `SpanID` that is used to easily
+create sub-spans for application performance monitoring (APM). The `RequestID`
+is used for request-scoped logs correlation.
+
+Example usage of the middleware:
+
+```go
+func main() {
+	loggingMiddleware := sdkmiddleware.NewLoggingMiddleware(sdk.Logger)
+
+	httpServer := server.
+		NewHTTPServer(host, httpPort, applicationEnv, applicationName).
+		MountMiddleware(loggingMiddleware.Handler).
+		MountRoutes(routes)
+}
+```
 
 #### Formatting and handlers
 
