@@ -21,6 +21,9 @@ SDK, the Go version.
         - [Sentry error reporting](#sentry-error-reporting)
     - [Database Connection](#database-connection)
     - [ORM Integration](#orm-integration)
+      - [Usage of ORM](#usage-of-orm)
+    - [APM & Instrumentation](#apm-instrumentation)
+      - [Database Instrumentation & ORM logging](#database-instrumentation-orm-logging)
 - [Using the `go-sdk` in isolation](#using-the-go-sdk-in-isolation)
 - [Developing the SDK](#developing-the-sdk)
     - [Building the docker environment](#building-the-docker-environment)
@@ -480,6 +483,45 @@ At the moment, the database connection established using the `go-sdk` can be
 only to a MySQL database. This is subject to change as the `go-sdk` evolves and
 becomes more feature-complete.
 
+The database connection can also be configured through a YAML file. `go-sdk`
+expects this file to be placed at the `config/database.yml` path, within the
+root of the project.
+
+Each of these connection details can be overriden by an `ENV` variable.
+
+| Setting  | Description                      | YAML variable | Environment variable (ENV) | Default     |
+| -------- | -------------------------------- | ------------- | -------------------------- | ----------- |
+| Host     | The database host                | `host`        | `APP_DATABASE_HOST`        | `localhost` |
+| Port     | The database port                | `port`        | `APP_DATABASE_PORT`        | `3306`      |
+| Database | The database name                | `database`    | `APP_DATABASE_DATABASE`    |             |
+| Username | App user name                    | `username`    | `APP_DATABASE_USERNAME`    |             |
+| Password | App user password                | `password`    | `APP_DATABASE_PASSWORD`    |             |
+| Pool     | Connection pool size             | `pool`        | `APP_DATABASE_POOL`        | `5`         |
+| Timeout  | Connection timeout (in seconds)  | `timeout`     | `APP_DATABASE_TIMEOUT`     | `1s`        |
+
+An example `database.yml`:
+
+```yaml
+common: &common
+  host: db
+  port: 3306
+  username: username
+  password: password
+  pool: 5
+  timeout: 1s
+
+development:
+  <<: *common
+  database: application_development
+
+test:
+  <<: *common
+  database: application_test
+
+production:
+  <<: *common
+```
+
 ### ORM Integration
 
 `go-sdk` comes with an integration with the popular
@@ -508,6 +550,81 @@ func main() {
 
 The connection details are handled internally by the gorm integration, in other
 words the `NewConnection` function, so they remain opaque for the user.
+
+#### Usage of ORM
+
+Invoking the constructor for a database connection, `go-sdk` returns a
+[Gorm-powered](https://github.com/jinzhu/gorm) database connection. It can be
+used right away to query the database:
+
+```go
+package main
+
+import (
+	"fmt"
+
+	sdkdb "git.lo/microservices/chassis/go-sdk/pkg/database"
+	"github.com/jinzhu/gorm"
+)
+
+type User struct {
+	gorm.Model
+
+	Name string `gorm:"type:varchar(255)"`
+	Age  uint   `gorm:"type:int"`
+}
+
+func main() {
+	dbConfig, err := sdkdb.NewConfig()
+	dbConn, err := sdkdb.NewConnection(dbConfig)
+
+	user := User{Name: name, Age: age}
+
+	errs := dbConn.Create(&user).GetErrors()
+	if errs != nil {
+		fmt.Println(errs)
+	}
+	fmt.Println(user)
+}
+```
+
+To learn more about Gorm, you can start with its [official
+documentation](https://gorm.io/docs/).
+
+## APM & Instrumentation
+
+### Database instrumentation & ORM logging
+
+`go-sdk` ships with two database-related middlewares: `Database` &
+`DatabaseLogging`.
+
+The `Database` middleware which instruments the
+[Gorm-powered](https://github.com/jinzhu/gorm) database connection. It utilizes
+Gorm-specific callbacks that report spans and traces to Datadog. The
+instrumented Gorm database connection is injected in the request `Context` and
+it is always scoped within the request.
+
+The `DatabaseLogging` middleware checks for a logger injected in the request
+`context`. If found, the logger is passed to the Gorm database connection,
+which in turn uses the logger to produce database query logs. A nice
+side-effect of this approach is that, if the logger is tagged with a
+`request_id`, there's a logs correlation between the HTTP requests and the
+database queries.
+
+Example usage of the middlewares:
+
+```go
+func main() {
+	databaseMiddleware := sdkmiddleware.NewDatabaseMiddleware(sdk.Database)
+	databaseLoggingMiddleware := sdkmiddleware.NewDatabaseLoggingMiddleware()
+
+	httpServer := server.
+		NewHTTPServer(host, httpPort, applicationEnv, applicationName).
+		MountMiddleware(databaseMiddleware.Handler).
+		MountMiddleware(databaseLoggingMiddleware.Handler).
+		MountRoutes(routes)
+}
+```
 
 ## Using the `go-sdk` in isolation
 
