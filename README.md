@@ -24,6 +24,7 @@ SDK, the Go version.
     - [ORM Integration](#orm-integration)
       - [Usage of ORM](#usage-of-orm)
     - [APM & Instrumentation](#apm-instrumentation)
+      - [Request ID middleware](#request-id-middleware)
       - [HTTP Router Instrumentation](#http-router-instrumentation)
       - [Database Instrumentation & ORM logging](#database-instrumentation-orm-logging)
       - [AWS Session Instrumentation](#aws-session-instrumentation)
@@ -623,6 +624,28 @@ The `go-sdk` provides an easy way to add application performance monitoring
 provides HTTP router instrumentation, database connection & ORM instrumentation
 and AWS session instrumentation. All of the traces and data are opaquely sent
 to DataDog.
+
+### Request ID middleware
+
+For easier identification of requests and their tracing within components of a
+single service, and across-services, `go-sdk` ships has a `RequestID`
+middleware. It checks every incoming request for a `X-Request-Id` HTTP header
+and sets the value of the header as a field in the request `Context`. In case
+there's no `RequestID` present, it will generate a UUID and assign it in the
+request `Context`.
+
+Example usage of the middleware:
+
+```go
+func main() {
+	requestIDMiddleware := sdkmiddleware.NewRequestIDMiddleware()
+
+	httpServer := server.
+		NewHTTPServer(host, httpPort, applicationEnv, applicationName).
+		MountMiddleware(requestIDMiddleware.Handler).
+		MountRoutes(routes)
+}
+```
 
 ### HTTP Router Instrumentation
 
