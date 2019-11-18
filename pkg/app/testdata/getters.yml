@@ -1,0 +1,10 @@
+test:
+  bool: true
+  float64: 100.59
+  int: 42
+  string: "foo"
+  string_slice:
+  - foo
+  - bar
+  duration: 100500
+  time: 2009-11-10T23:00:00Z
