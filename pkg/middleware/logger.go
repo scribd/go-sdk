@@ -78,6 +78,10 @@ func (lm LoggingMiddleware) Handler(next http.Handler) http.Handler {
 				"response_status":        lrw.StatusCode,
 				"response_time_total_ms": time.Since(start).Milliseconds(),
 			},
+			"dd": sdklogger.Fields{
+				"trace_id": logContext.TraceID,
+				"span_id":  logContext.SpanID,
+			},
 		})
 
 		// Format the message in a similar way to Common Log Format
