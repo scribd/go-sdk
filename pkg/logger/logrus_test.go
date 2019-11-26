@@ -332,3 +332,56 @@ func TestMergeAndOverrideFields(t *testing.T) {
 		finalAssertions,
 	)
 }
+
+func TestClearFields(t *testing.T) {
+	// Add a field to the logger.
+	fields := Fields{
+		logKey: Fields{
+			firstKey: firstValue,
+		},
+	}
+
+	// Assert that the initial set of fields is present.
+	assertions := func(fields Fields) {
+		assert.Nil(t, fields["msg"])
+		assert.Equal(t, "info", fields["level"])
+		assert.NotEmpty(t, fields[fieldKeyTime])
+		assert.Equal(t, messageContent, fields[fieldKeyMsg])
+		assert.Equal(t, firstValue, (fields[logKey]).(map[string]interface{})[firstKey])
+	}
+
+	// Build the logger with the given fields.
+	var buffer bytes.Buffer
+	lLogger := buildTestLoggerWithFields(t, &buffer, fields)
+
+	// Run the logger.
+	logFunc(lLogger)
+
+	// Verify the assertions.
+	fields = Fields{}
+	err := json.Unmarshal(buffer.Bytes(), &fields)
+	assert.Nil(t, err)
+	assertions(fields)
+
+	// Clear the fields.
+	lLogger.ClearFields()
+
+	// Assert that the fields does not include any custom field.
+	assertions = func(fields Fields) {
+		assert.Nil(t, fields["msg"])
+		assert.Equal(t, "info", fields["level"])
+		assert.NotEmpty(t, fields[fieldKeyTime])
+		assert.Equal(t, messageContent, fields[fieldKeyMsg])
+		assert.Nil(t, fields[logKey])
+	}
+
+	// Run again the logger.
+	buffer.Reset()
+	logFunc(lLogger)
+
+	// Verify the assertions.
+	fields = Fields{}
+	err = json.Unmarshal(buffer.Bytes(), &fields)
+	assert.Nil(t, err)
+	assertions(fields)
+}
