@@ -285,3 +285,50 @@ func TestMergeFields(t *testing.T) {
 		finalAssertions,
 	)
 }
+
+func TestMergeAndOverrideFields(t *testing.T) {
+	// Add a field to the logger.
+	initialFields := Fields{
+		logKey: Fields{
+			firstKey: firstValue,
+		},
+	}
+
+	// Assert that the initial set of fields is present.
+	initialAssertions := func(fields Fields) {
+		assert.Nil(t, fields["msg"])
+		assert.Equal(t, "info", fields["level"])
+		assert.NotEmpty(t, fields[fieldKeyTime])
+		assert.Equal(t, messageContent, fields[fieldKeyMsg])
+		assert.Equal(t, firstValue, (fields[logKey]).(map[string]interface{})[firstKey])
+	}
+
+	// Add a new field that should be merged in the initial set of fields.
+	// Also, override the existing value of the `firstField`.
+	firstValueUpdated := "first_value_updated"
+	finalFields := Fields{
+		logKey: Fields{
+			firstKey:  firstValueUpdated,
+			secondKey: secondValue,
+		},
+	}
+
+	// Assert that the new field is added to the initial set of fields
+	// and that the previous value is overwritten.
+	finalAssertions := func(fields Fields) {
+		assert.Nil(t, fields["msg"])
+		assert.Equal(t, "info", fields["level"])
+		assert.NotEmpty(t, fields[fieldKeyTime])
+		assert.Equal(t, messageContent, fields[fieldKeyMsg])
+		assert.Equal(t, firstValueUpdated, (fields[logKey]).(map[string]interface{})[firstKey])
+		assert.Equal(t, secondValue, (fields[logKey]).(map[string]interface{})[secondKey])
+	}
+
+	testMergeFieldsBeforeAndAfter(
+		t,
+		initialFields,
+		initialAssertions,
+		finalFields,
+		finalAssertions,
+	)
+}
