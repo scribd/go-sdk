@@ -146,6 +146,10 @@ func (l *logrusLogEntry) Panicf(format string, args ...interface{}) {
 	l.entry.Panicf(format, args...)
 }
 
+func (l *logrusLogEntry) ClearFields() {
+	l.entry.Data = convertToLogrusFields(Fields{})
+}
+
 // WithFields returns a new logger with the given set of fields added.
 //
 // This function merges the existing fields in the logger with the
