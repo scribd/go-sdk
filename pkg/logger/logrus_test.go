@@ -13,9 +13,14 @@ import (
 )
 
 const (
+	firstKey       = "firstKey"
+	firstValue     = "firstValue"
+	logKey         = "logKey"
+	messageContent = "test message"
+	secondKey      = "second_key"
+	secondValue    = "second_value"
 	withJSON       = true
 	withoutJSON    = false
-	messageContent = "test message"
 )
 
 func logAndAssertContent(
@@ -189,4 +194,94 @@ func TestLevelConfiguration(t *testing.T) {
 			)
 		})
 	}
+}
+
+var logFunc = func(log Logger) {
+	log.Infof(messageContent)
+}
+
+func buildTestLoggerWithFields(t *testing.T, buffer *bytes.Buffer, fields Fields) Logger {
+	b := NewBuilder(logConfigForTest(withJSON))
+	lLogger, err := b.BuildTestLogger(buffer)
+	require.Nil(t, err)
+
+	lLogger = lLogger.WithFields(fields)
+
+	return lLogger
+}
+
+func testMergeFieldsBeforeAndAfter(
+	t *testing.T,
+	initialFields Fields,
+	initialAssertions func(fields Fields),
+	finalFields Fields,
+	finalAssertions func(fields Fields),
+) {
+	// Build the logger with the given fields.
+	var buffer bytes.Buffer
+	lLogger := buildTestLoggerWithFields(t, &buffer, initialFields)
+	// Run the logger.
+	logFunc(lLogger)
+	// Verify the assertions.
+	actualFields := Fields{}
+	err := json.Unmarshal(buffer.Bytes(), &actualFields)
+	assert.Nil(t, err)
+	initialAssertions(actualFields)
+
+	// Add the fields to the previous logger.
+	lLogger = lLogger.WithFields(finalFields)
+
+	// Run again the logger with the new fields.
+	buffer.Reset()
+	logFunc(lLogger)
+
+	// Verify the assertions
+	actualFields = Fields{}
+	err = json.Unmarshal(buffer.Bytes(), &actualFields)
+	assert.Nil(t, err)
+	finalAssertions(actualFields)
+}
+
+func TestMergeFields(t *testing.T) {
+	// Add a field to the logger.
+	initialFields := Fields{
+		logKey: Fields{
+			firstKey: firstValue,
+		},
+	}
+
+	// Assert that the initial set of fields is present.
+	initialAssertions := func(fields Fields) {
+		assert.Nil(t, fields["msg"])
+		assert.Equal(t, "info", fields["level"])
+		assert.NotEmpty(t, fields[fieldKeyTime])
+		assert.Equal(t, messageContent, fields[fieldKeyMsg])
+		assert.Equal(t, firstValue, (fields[logKey]).(map[string]interface{})[firstKey])
+	}
+
+	// Add a new field that should be merged in the initial set of fields.
+	// Also, override the existing value of the `firstField`.
+	finalFields := Fields{
+		logKey: Fields{
+			secondKey: secondValue,
+		},
+	}
+
+	// Assert that the new field is added to the initial set of fields.
+	finalAssertions := func(fields Fields) {
+		assert.Nil(t, fields["msg"])
+		assert.Equal(t, "info", fields["level"])
+		assert.NotEmpty(t, fields[fieldKeyTime])
+		assert.Equal(t, messageContent, fields[fieldKeyMsg])
+		assert.Equal(t, firstValue, (fields[logKey]).(map[string]interface{})[firstKey])
+		assert.Equal(t, secondValue, (fields[logKey]).(map[string]interface{})[secondKey])
+	}
+
+	testMergeFieldsBeforeAndAfter(
+		t,
+		initialFields,
+		initialAssertions,
+		finalFields,
+		finalAssertions,
+	)
 }
