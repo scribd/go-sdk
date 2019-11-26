@@ -13,8 +13,9 @@ import (
 )
 
 const (
-	withJSON    bool = true
-	withoutJSON bool = false
+	withJSON       = true
+	withoutJSON    = false
+	messageContent = "test message"
 )
 
 func logAndAssertContent(
@@ -106,7 +107,6 @@ func logConfigForTest(withJSONFormat bool) *Config {
 // - the formatter disables the logrus standard "msg" key in the field and
 //   the logger correctly doesn't show it;
 func TestInfoLevelWithJSONFields(t *testing.T) {
-	messageContent := "test message"
 	logAndAssertJSONFields(
 		t,
 		logConfigForTest(withJSON),
@@ -125,18 +125,17 @@ func TestInfoLevelWithJSONFields(t *testing.T) {
 func TestInfoLevelWithTextFields(t *testing.T) {
 	// Using an underscore as separator to simplify the parser
 	// in `logAndAssertTextFields`.
-	messageContent := "test_message"
 	logAndAssertTextFields(
 		t,
 		logConfigForTest(withoutJSON),
 		func(log Logger) {
-			log.Infof(messageContent)
+			log.Infof("messageContent")
 		},
 		func(fields map[string]string) {
 			assert.Empty(t, fields["msg"])
 			assert.Equal(t, "info", fields["level"])
 			assert.NotEmpty(t, fields[fieldKeyTime])
-			assert.Equal(t, messageContent, fields[fieldKeyMsg])
+			assert.Equal(t, "messageContent", fields[fieldKeyMsg])
 		},
 	)
 }
@@ -148,7 +147,6 @@ func TestLevelConfiguration(t *testing.T) {
 		assert.Equal(t, expected, actual)
 	})
 
-	messageContent := "test message"
 	testCases := []struct {
 		name                string
 		config              *Config
