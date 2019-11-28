@@ -8,6 +8,7 @@ import (
 
 	"git.lo/microservices/sdk/go-sdk/pkg/tracking"
 
+	"github.com/imdario/mergo"
 	"github.com/sirupsen/logrus"
 	lumberjack "gopkg.in/natefinch/lumberjack.v2"
 )
@@ -145,9 +146,28 @@ func (l *logrusLogEntry) Panicf(format string, args ...interface{}) {
 	l.entry.Panicf(format, args...)
 }
 
-func (l *logrusLogEntry) WithFields(fields Fields) Logger {
+func (l *logrusLogEntry) ClearFields() {
+	l.entry.Data = convertToLogrusFields(Fields{})
+}
+
+// WithFields returns a new logger with the given set of fields added.
+//
+// This function merges the existing fields in the logger with the
+// `toAdd` fields passed as parameter; it will merge and override
+// the non-empty fields with any non-empty fields in `toAdd`. It will
+// merge recursively any field.
+func (l *logrusLogEntry) WithFields(toAdd Fields) Logger {
+	fields := l.entry.Data
+
+	if err := mergo.Merge(&fields, convertToLogrusFields(toAdd), mergo.WithOverride); err != nil {
+		// `mergo.Merge` expects `dst` and `src` to be valid
+		// same-type structs and `dst` must be a pointer to
+		// struct. Fails if the conditions are not met.
+		l.Warnf("Could not merge fields: %s", err)
+	}
+
 	return &logrusLogEntry{
-		entry: l.entry.WithFields(convertToLogrusFields(fields)),
+		entry: l.entry.WithFields(fields),
 	}
 }
 
