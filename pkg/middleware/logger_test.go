@@ -23,6 +23,64 @@ func testingHandler(t *testing.T) http.Handler {
 	})
 }
 
+func logger(t *testing.T, b *bytes.Buffer) sdklogger.Logger {
+	t.Helper()
+
+	// Inject this "owned" buffer as Output in the logger wrapped by
+	// the loggingMiddleware under test.
+
+	config := &sdklogger.Config{
+		ConsoleEnabled:    true,
+		ConsoleJSONFormat: true,
+		ConsoleLevel:      "info",
+		FileEnabled:       false,
+	}
+	l, err := sdklogger.NewBuilder(config).BuildTestLogger(b)
+	require.Nil(t, err)
+
+	return l
+}
+
+func TestPreviousRequestDoesNotAffectNewOne(t *testing.T) {
+	handler := testingHandler(t)
+
+	recorder := httptest.NewRecorder()
+
+	req1, err := http.NewRequest("GET", "http://example.com?param1=42", nil)
+	require.Nil(t, err)
+
+	req2, err := http.NewRequest("GET", "http://example.com?param2=100500", nil)
+	require.Nil(t, err)
+
+	var buffer bytes.Buffer
+	loggingMiddleware := NewLoggingMiddleware(logger(t, &buffer))
+
+	loggingMiddleware.Handler(handler).ServeHTTP(recorder, req1)
+
+	var fields1 map[string]interface{}
+	err = json.Unmarshal(buffer.Bytes(), &fields1)
+	require.Nil(t, err)
+
+	var http1 map[string]interface{} = (fields1["http"]).(map[string]interface{})
+	var params1 map[string]interface{} = (http1["request_params"]).(map[string]interface{})
+
+	assert.NotNil(t, params1["param1"])
+
+	buffer.Reset()
+
+	loggingMiddleware.Handler(handler).ServeHTTP(recorder, req2)
+
+	var fields2 map[string]interface{}
+	err = json.Unmarshal(buffer.Bytes(), &fields2)
+	require.Nil(t, err)
+
+	var http2 map[string]interface{} = (fields2["http"]).(map[string]interface{})
+	var params2 map[string]interface{} = (http2["request_params"]).(map[string]interface{})
+
+	assert.Nil(t, params2["param1"])
+	assert.NotNil(t, params2["param2"])
+}
+
 func TestOutputStructuredContentFromMiddleware(t *testing.T) {
 	handler := testingHandler(t)
 
@@ -35,16 +93,7 @@ func TestOutputStructuredContentFromMiddleware(t *testing.T) {
 	// the loggingMiddleware under test.
 	var buffer bytes.Buffer
 
-	config := &sdklogger.Config{
-		ConsoleEnabled:    true,
-		ConsoleJSONFormat: true,
-		ConsoleLevel:      "info",
-		FileEnabled:       false,
-	}
-	l, err := sdklogger.NewBuilder(config).BuildTestLogger(&buffer)
-	require.Nil(t, err)
-
-	loggingMiddleware := NewLoggingMiddleware(l)
+	loggingMiddleware := NewLoggingMiddleware(logger(t, &buffer))
 	loggingMiddleware.Handler(handler).ServeHTTP(recorder, req)
 
 	expectedBody := testingHandlerBody
