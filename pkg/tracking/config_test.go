@@ -3,6 +3,7 @@ package tracking
 import (
 	"os"
 	"testing"
+	"time"
 
 	assert "github.com/stretchr/testify/assert"
 )
@@ -17,14 +18,16 @@ func TestNewConfig(t *testing.T) {
 	})
 
 	testCases := []struct {
-		name      string
-		sentryDSN string
-		wantError bool
+		name          string
+		sentryDSN     string
+		sentryTimeout time.Duration
+		wantError     bool
 	}{
 		{
-			name:      "NewWithoutConfigFileFails",
-			sentryDSN: "",
-			wantError: true,
+			name:          "NewWithoutConfigFileFails",
+			sentryDSN:     "",
+			sentryTimeout: time.Duration(0),
+			wantError:     true,
 		},
 	}
 
@@ -36,6 +39,7 @@ func TestNewConfig(t *testing.T) {
 			assert.Equal(t, gotError, tc.wantError)
 
 			assert.Equal(t, c.SentryDSN, tc.sentryDSN)
+			assert.Equal(t, c.SentryTimeout, tc.sentryTimeout)
 		})
 	}
 }
