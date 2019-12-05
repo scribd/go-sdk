@@ -439,6 +439,7 @@ the following content:
 # config/sentry.yml
 common: &common
   dsn: ""
+  timeout: 200 # milliseconds
 
 development:
   <<: *common
