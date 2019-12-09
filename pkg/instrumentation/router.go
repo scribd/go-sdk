@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	datadogServiceSuffix = "-app"
+	datadogServiceSuffix = "app"
 )
 
 // Tracer is a "controller" to a ddtrace.tracer.
