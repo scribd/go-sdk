@@ -4,7 +4,6 @@ package main
 
 import (
 	"fmt"
-	"path/filepath"
 
 	"github.com/magefile/mage/mg"
 	"github.com/magefile/mage/sh"
@@ -21,11 +20,6 @@ func (Test) Run() error {
 		"APP_ENV": "test",
 	}
 	return sh.RunWith(env, goCmd, "test", "./...", "-count=1", "-v")
-}
-
-// Runs test coverage analysis.
-func (Test) Coverage() error {
-	return sh.RunV(filepath.Join("tools", "coverage.sh"))
 }
 
 type Fmt mg.Namespace
