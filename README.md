@@ -806,7 +806,7 @@ for the full list of option and the synopsis of the command.
 Compose provides a way to create and destroy isolated testing environments:
 
 ```sh
-$ docker-compose run --rm sdk make test
+$ docker-compose run --rm sdk mage test:run
 ```
 
 ### Entering the docker environment
@@ -825,4 +825,4 @@ for the full list of option and the synopsis of the command.
 
 ## Maintainers
 
-Made with ❤️  by the Core Services team.
+Made with ❤️ by the Core Services team.

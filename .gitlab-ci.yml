@@ -26,7 +26,7 @@ check:fmt:
   stage: check
   image: $CI_IMAGE_NAME:$CI_COMMIT_REF_SLUG
   script:
-    - make fmt-check
+    - mage fmt:check
   dependencies:
     - build:image
   tags:
@@ -40,7 +40,7 @@ check:lint:
   before_script:
     - curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s -- -b $(go env GOPATH)/bin v$CI_GOLANGCI_LINT_VERSION
   script:
-    - make lint
+    - mage fmt:lint
   dependencies:
     - build:image
   tags:
@@ -52,7 +52,7 @@ run:tests:
   stage: test
   image: $CI_IMAGE_NAME:$CI_COMMIT_REF_SLUG
   script:
-    - make test
+    - mage test:run
   dependencies:
     - check:fmt
   tags:
