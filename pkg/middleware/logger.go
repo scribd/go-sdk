@@ -42,7 +42,6 @@ func NewLoggingMiddleware(l sdklogger.Logger) LoggingMiddleware {
 func (lm LoggingMiddleware) Handler(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		logContext := sdkinstrumentation.TraceLogs(r.Context())
-		lm.logger.ClearFields()
 		logger := lm.logger.WithFields(sdklogger.Fields{
 			"http": sdklogger.Fields{
 				"request_id": r.Header.Get(RequestIDHeader),

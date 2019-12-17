@@ -53,6 +53,4 @@ type Logger interface {
 	// Note that it doesn't log until you call Debug, Print, Info,
 	// Warn, Fatal or Panic on the Entry it returns.
 	WithFields(keyValues Fields) Logger
-	// ClearFields empties the set of Fields of this logger.
-	ClearFields()
 }
