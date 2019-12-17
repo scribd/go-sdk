@@ -10,7 +10,6 @@ require (
 	github.com/evalphobia/logrus_sentry v0.8.2
 	github.com/getsentry/raven-go v0.2.0 // indirect
 	github.com/google/uuid v1.1.1
-	github.com/imdario/mergo v0.3.8
 	github.com/jinzhu/gorm v1.9.11
 	github.com/magefile/mage v1.9.0
 	github.com/opentracing/opentracing-go v1.1.0 // indirect
