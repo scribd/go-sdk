@@ -23,7 +23,7 @@ func NewSentryHook(config *Config) (*logrus_sentry.SentryHook, error) {
 		return hook, err
 	}
 
-	hook.Timeout = config.SentryTimeout * time.Millisecond
+	hook.Timeout = time.Duration(config.SentryTimeout) * time.Millisecond
 	hook.StacktraceConfiguration.Enable = true
 
 	return hook, err

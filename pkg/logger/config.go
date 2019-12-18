@@ -27,13 +27,13 @@ func NewConfig() (*Config, error) {
 	config := &Config{}
 	viperBuilder := cbuilder.New("logger")
 
+	viperBuilder.SetDefault("file_location", path.Join(os.Getenv("APP_ROOT"), "log"))
+	viperBuilder.SetDefault("file_name", fmt.Sprintf("%s.log", os.Getenv("APP_ENV")))
+
 	vConf, err := viperBuilder.Build()
 	if err != nil {
 		return config, err
 	}
-
-	vConf.SetDefault("file_location", path.Join(os.Getenv("APP_ROOT"), "log"))
-	vConf.SetDefault("file_name", fmt.Sprintf("%s.log", vConf.GetString("ENV")))
 
 	if err = vConf.Unmarshal(config); err != nil {
 		return config, fmt.Errorf("Unable to decode into struct: %s", err.Error())

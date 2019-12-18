@@ -2,6 +2,8 @@ package database
 
 import (
 	"fmt"
+	"os"
+	"strings"
 
 	cbuilder "git.lo/microservices/sdk/go-sdk/internal/pkg/configuration/builder"
 )
@@ -21,6 +23,9 @@ type Config struct {
 func NewConfig() (*Config, error) {
 	config := &Config{}
 	viperBuilder := cbuilder.New("database")
+
+	appName := strings.ReplaceAll(os.Getenv("APP_SETTINGS_NAME"), "-", "_")
+	viperBuilder.SetDefault("database", fmt.Sprintf("%s_%s", appName, os.Getenv("APP_ENV")))
 
 	vConf, err := viperBuilder.Build()
 	if err != nil {

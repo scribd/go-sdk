@@ -56,6 +56,11 @@ custom dynamic configurations. Lastly, the `go-sdk` is environment-aware. This
 means that it supports environment scoped configuration in the configuration
 files out-of-the-box.
 
+:warning: Environment variables will not be picked up by Viper if the keys are
+not present in the respective YAML file. This is due to Viper loading the
+configuration by reading a YAML file **first**, and binding the respective ENV
+variables on the fly.
+
 #### Predefined application-agnostic configurations
 
 The predefined configurations have an associated type and expect their
