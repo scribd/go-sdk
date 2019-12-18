@@ -13,7 +13,7 @@ import (
 // ViperBuilder is a builder to streamline Viper configuration and building.
 type ViperBuilder struct {
 	vConf    *viper.Viper
-	defaults map[string]string
+	defaults map[string]interface{}
 	name     string
 }
 
@@ -32,7 +32,7 @@ func New(name string) *ViperBuilder {
 	return &ViperBuilder{
 		vConf:    vConf,
 		name:     name,
-		defaults: make(map[string]string),
+		defaults: make(map[string]interface{}),
 	}
 }
 
@@ -45,7 +45,7 @@ func (vb *ViperBuilder) ConfigPath(path string) *ViperBuilder {
 // SetDefault sets a default value for a configuration key.
 // Any default value set will be available in the `viper.Viper` configuration
 // instance that is returned after calling the `Build()` function.
-func (vb *ViperBuilder) SetDefault(key string, value string) *ViperBuilder {
+func (vb *ViperBuilder) SetDefault(key string, value interface{}) *ViperBuilder {
 	vb.defaults[key] = value
 	return vb
 }
