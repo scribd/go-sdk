@@ -65,7 +65,7 @@ func (lm LoggingMiddleware) Handler(next http.Handler) http.Handler {
 			}).Warnf("Could not parse the request params")
 		}
 
-		next.ServeHTTP(w, r.WithContext(ctx))
+		next.ServeHTTP(lrw, r.WithContext(ctx))
 
 		logger = logger.WithFields(sdklogger.Fields{
 			"http": sdklogger.Fields{

@@ -23,6 +23,14 @@ func testingHandler(t *testing.T) http.Handler {
 	})
 }
 
+func testingFailingHandler(t *testing.T) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		w.WriteHeader(http.StatusBadRequest)
+		_, err := w.Write([]byte(testingHandlerBody))
+		require.Nil(t, err)
+	})
+}
+
 func TestOutputStructuredContentFromMiddleware(t *testing.T) {
 	handler := testingHandler(t)
 
@@ -82,6 +90,51 @@ func TestOutputStructuredContentFromMiddleware(t *testing.T) {
 
 		assert.NotNil(t, dd["trace_id"])
 		assert.NotNil(t, dd["span_id"])
+	}
+
+	assertions(fields)
+}
+
+func TestResponseStatusFromMiddleware(t *testing.T) {
+	handler := testingFailingHandler(t)
+
+	req, err := http.NewRequest("GET", "http://example.com", nil)
+	require.Nil(t, err)
+
+	recorder := httptest.NewRecorder()
+
+	// Inject this "owned" buffer as Output in the logger wrapped by
+	// the loggingMiddleware under test.
+	var buffer bytes.Buffer
+
+	config := &sdklogger.Config{
+		ConsoleEnabled:    true,
+		ConsoleJSONFormat: true,
+		ConsoleLevel:      "info",
+		FileEnabled:       false,
+	}
+	l, err := sdklogger.NewBuilder(config).BuildTestLogger(&buffer)
+	require.Nil(t, err)
+
+	loggingMiddleware := NewLoggingMiddleware(l)
+	loggingMiddleware.Handler(handler).ServeHTTP(recorder, req)
+
+	expectedBody := testingHandlerBody
+	actualBody := recorder.Body.String()
+	assert.Equal(t, expectedBody, actualBody)
+
+	expectedCode := http.StatusBadRequest
+	actualCode := recorder.Code
+	assert.Equal(t, expectedCode, actualCode)
+
+	var fields map[string]interface{}
+	err = json.Unmarshal(buffer.Bytes(), &fields)
+	require.Nil(t, err)
+
+	assertions := func(fields map[string]interface{}) {
+		var http map[string]interface{} = (fields["http"]).(map[string]interface{})
+
+		assert.EqualValues(t, 400, http["response_status"])
 	}
 
 	assertions(fields)
