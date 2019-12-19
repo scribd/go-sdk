@@ -56,14 +56,16 @@ func (lm LoggingMiddleware) Handler(next http.Handler) http.Handler {
 		lrw := newLoggingResponseWriter(w)
 		ctx := context.WithValue(r.Context(), contextkeys.Logger, logger)
 
-		next.ServeHTTP(w, r.WithContext(ctx))
-
-		// Parse the request params/form to populate r.Form for logging.
+		// Parse the request params/form to populate r.Form for
+		// logging. The request form has to be parsed before the
+		// request is served.
 		if err := r.ParseForm(); err != nil {
 			logger.WithFields(sdklogger.Fields{
 				"error": err.Error(),
 			}).Warnf("Could not parse the request params")
 		}
+
+		next.ServeHTTP(w, r.WithContext(ctx))
 
 		logger = logger.WithFields(sdklogger.Fields{
 			"http": sdklogger.Fields{
