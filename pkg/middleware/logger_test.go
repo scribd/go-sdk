@@ -77,6 +77,11 @@ func TestOutputStructuredContentFromMiddleware(t *testing.T) {
 		assert.NotNil(t, http["request_user_agent"])
 		assert.NotEmpty(t, http["response_status"])
 		assert.NotNil(t, http["response_time_total_ms"])
+
+		var dd map[string]interface{} = (fields["dd"]).(map[string]interface{})
+
+		assert.NotNil(t, dd["trace_id"])
+		assert.NotNil(t, dd["span_id"])
 	}
 
 	assertions(fields)
