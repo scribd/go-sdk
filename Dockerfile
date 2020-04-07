@@ -25,7 +25,8 @@ RUN go install cmd/mage/mage.go
 
 FROM builder AS development
 
-RUN go get -u -v github.com/go-delve/delve/cmd/dlv \
+RUN go get -v \
+	github.com/go-delve/delve/cmd/dlv@v1.4.0 \
 	github.com/golangci/golangci-lint/cmd/golangci-lint@v1.20.1
 
 ENV GOBIN=/go/bin
