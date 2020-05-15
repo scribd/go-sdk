@@ -8,7 +8,10 @@ import (
 
 // Config stores the configuration for the tracking.
 type Config struct {
-	SentryDSN     string `mapstructure:"dsn"`
+	Environment string `mapstructure:"environment"`
+	Release     string `mapstructure:"release"`
+	SentryDSN   string `mapstructure:"dsn"`
+	ServerName  string `mapstructure:"servername"`
 }
 
 // NewConfig returns a new TrackingConfig instance
