@@ -104,7 +104,7 @@ func TestBuild(t *testing.T) {
 		{
 			name: "WithATrackingConfigAndFieldsItBuilds",
 			trackingConfig: &tracking.Config{
-				SentryDSN: "https://key@sentry.io/project",
+				SentryDSN: "https://thealphanumericsentrydns00000000@a012345.ingest.sentry.io/0000000",
 			},
 			fields: Fields{
 				"role": "test",
