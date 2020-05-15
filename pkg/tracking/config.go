@@ -2,13 +2,14 @@ package tracking
 
 import (
 	"fmt"
+	"os"
 
 	cbuilder "git.lo/microservices/sdk/go-sdk/internal/pkg/configuration/builder"
 )
 
 // Config stores the configuration for the tracking.
 type Config struct {
-	Environment string `mapstructure:"environment"`
+	environment string
 	Release     string `mapstructure:"release"`
 	SentryDSN   string `mapstructure:"dsn"`
 	ServerName  string `mapstructure:"servername"`
@@ -17,6 +18,7 @@ type Config struct {
 // NewConfig returns a new TrackingConfig instance
 func NewConfig() (*Config, error) {
 	config := &Config{}
+	config.environment = os.Getenv("APP_ENV")
 
 	viperBuilder := cbuilder.New("sentry")
 

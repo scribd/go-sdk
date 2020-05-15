@@ -115,7 +115,7 @@ func NewSentryHook(config *Config) (*Hook, error) {
 		// The release to be sent with events.
 		Release: config.Release,
 		// The environment to be sent with events.
-		Environment: config.Environment,
+		Environment: config.environment,
 	})
 	if err != nil {
 		return nil, err
