@@ -45,7 +45,7 @@ func TestNewConfig(t *testing.T) {
 		{
 			name:    "NewWithConfigFile",
 			release: "releaseTagExample",
-			// The expected value is the DSN defined in ./testfiles/config/sentry.yml
+			// The expected value is the DSN defined in ./testdata/config/sentry.yml
 			sentryDSN:  "https://aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@0000000.ingest.sentry.io/0000000",
 			serverName: "serverHostnameExample",
 			withConfig: true,
@@ -59,7 +59,7 @@ func TestNewConfig(t *testing.T) {
 			os.Setenv("APP_SERVER_NAME", tc.serverName)
 
 			if tc.withConfig {
-				os.Setenv("APP_ROOT", filepath.Join("/", "sdk", "pkg", "tracking", "testfiles"))
+				os.Setenv("APP_ROOT", filepath.Join("/", "sdk", "pkg", "tracking", "testdata"))
 			}
 
 			c, err := NewConfig()
