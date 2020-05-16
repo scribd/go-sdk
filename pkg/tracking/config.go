@@ -9,16 +9,19 @@ import (
 
 // Config stores the configuration for the tracking.
 type Config struct {
+	SentryDSN string `mapstructure:"dsn"`
+
 	environment string
-	Release     string `mapstructure:"release"`
-	SentryDSN   string `mapstructure:"dsn"`
-	ServerName  string `mapstructure:"servername"`
+	release     string
+	serverName  string
 }
 
-// NewConfig returns a new TrackingConfig instance
+// NewConfig returns a new TrackingConfig instance.
 func NewConfig() (*Config, error) {
 	config := &Config{}
 	config.environment = os.Getenv("APP_ENV")
+	config.release = os.Getenv("APP_VERSION")
+	config.serverName = os.Getenv("APP_SERVER_NAME")
 
 	viperBuilder := cbuilder.New("sentry")
 

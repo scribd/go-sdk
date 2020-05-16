@@ -111,9 +111,9 @@ func NewSentryHook(config *Config) (*Hook, error) {
 		// The sample rate for event submission (0.0 - 1.0, defaults to 1.0)
 		SampleRate: 1.0,
 		// The server name to be reported.
-		ServerName: config.ServerName,
+		ServerName: config.serverName,
 		// The release to be sent with events.
-		Release: config.Release,
+		Release: config.release,
 		// The environment to be sent with events.
 		Environment: config.environment,
 	})
