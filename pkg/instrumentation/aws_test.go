@@ -24,7 +24,7 @@ func TestInstrumentAWSSession(t *testing.T) {
 		WithCredentials(credentials.AnonymousCredentials)
 
 	sess := session.Must(session.NewSession(cfg))
-	sess = InstrumentAWSSession(sess, "testApp")
+	sess = InstrumentAWSSession(sess, Settings{AppName: "testApp"})
 
 	var (
 		tagAWSAgent     = "aws.agent"
