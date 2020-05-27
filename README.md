@@ -723,7 +723,7 @@ func main() {
 		),
 	})
 
-    session = instrumentation.InstrumentSession(s)
+    session = instrumentation.InstrumentAWSSession(s, instrumentation.Settings{AppName: "MyServiceName"})
 
     // Use the session...
 }

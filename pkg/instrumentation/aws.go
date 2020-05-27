@@ -7,10 +7,19 @@ import (
 	awstrace "gopkg.in/DataDog/dd-trace-go.v1/contrib/aws/aws-sdk-go/aws"
 )
 
-func InstrumentAWSSession(s *awssession.Session, appName string) *awssession.Session {
+// Settings stores DataDog instrumentation settings.
+type Settings struct {
+	AppName       string
+	Analytics     bool
+	AnalyticsRate float64
+}
+
+// InstrumentAWSSession configures DD tracing mode.
+func InstrumentAWSSession(session *awssession.Session, settings Settings) *awssession.Session {
 	return awstrace.WrapSession(
-		s,
-		awstrace.WithServiceName(fmt.Sprintf("%s-%s", appName, "aws")),
-		awstrace.WithAnalytics(true),
+		session,
+		awstrace.WithServiceName(fmt.Sprintf("%s-aws", settings.AppName)),
+		awstrace.WithAnalytics(settings.Analytics),
+		awstrace.WithAnalyticsRate(settings.AnalyticsRate),
 	)
 }
