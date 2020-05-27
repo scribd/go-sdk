@@ -3,6 +3,7 @@
 variables:
   CI_GOLANGCI_LINT_VERSION: "1.18.0"
   CI_IMAGE_NAME: "docker.artifacts.lo/$CI_PROJECT_PATH"
+  CI_RELEASE_IMAGE_NAME: "docker.artifacts.lo/microservices/tools/release"
 
 # Define pipeline stages
 # Doc: https://docs.gitlab.com/ee/ci/yaml/README.html#stages
@@ -10,6 +11,7 @@ stages:
   - build
   - check
   - test
+  - release
 
 # Builds a docker image
 # Doc: https://docs.gitlab.com/ee/ci/yaml/README.html#stage
@@ -57,3 +59,17 @@ run:tests:
     - check:fmt
   tags:
     - docker
+
+# Release a new version
+release:version:
+  stage: release
+  image: $CI_RELEASE_IMAGE_NAME:latest
+  script:
+    - npx semantic-release
+  dependencies:
+    - run:tests
+  only:
+    - master
+  tags:
+    - docker
+  when: manual
