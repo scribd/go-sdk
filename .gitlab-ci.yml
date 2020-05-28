@@ -63,7 +63,9 @@ run:tests:
 # Release a new version
 release:version:
   stage: release
-  image: $CI_RELEASE_IMAGE_NAME:latest
+  image:
+    name: $CI_RELEASE_IMAGE_NAME:latest
+    entrypoint: ["/bin/sh", "-c"]
   script:
     - npx semantic-release
   dependencies:
