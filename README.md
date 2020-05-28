@@ -32,6 +32,7 @@ SDK, the Go version.
    - [Building the docker environment](#building-the-docker-environment)
    - [Running tests within the docker environment](#running-tests-within-the-docker-environment)
    - [Entering the docker environment](#entering-the-docker-environment)
+- [Release](#release)
 - [Maintainers](#maintainers)
 
 ## Prerequisites
@@ -827,6 +828,25 @@ go version go1.14 linux/amd64
 Refer to the
 [Compose CLI reference](https://docs.docker.com/compose/reference/run/)
 for the full list of option and the synopsis of the command.
+
+## Release
+
+This project is using [semantic-release](https://semantic-release.gitbook.io/semantic-release/)
+and [conventional-commits](https://www.conventionalcommits.org/en/v1.0.0/),
+with the [`angular` preset](https://github.com/conventional-changelog/conventional-changelog/tree/master/packages/conventional-changelog-angular).
+
+Releases are done from the `origin/master` branch using a manual step at the end of the CI/CD pipeline.
+
+In order to create a new release:
+
+1. Merge / push changes to `origin/master`
+2. Open the `origin/master` [GitLab CI/CD pipeline](https://git.lo/microservices/sdk/go-sdk/pipelines)
+3. Press ▶️on the release step
+
+A version bump will happen automatically and the type of version bump
+(patch, minor, major) depends on the commits introduced since the last release.
+
+The `semantic-release` configuration is in [`.releaserc.yml`](https://git.lo/microservices/sdk/go-sdk/blob/master/.releaserc.yml).
 
 ## Maintainers
 

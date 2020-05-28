@@ -1,0 +1,19 @@
+preset: "angular"
+
+plugins:
+  - "@semantic-release/commit-analyzer"
+  - "@semantic-release/release-notes-generator"
+  - - "@semantic-release/changelog"
+    - changelogFile: "CHANGELOG.md"
+  - - "@semantic-release/exec"
+    - "prepareCmd": "sed -i -e 's/\\(Version.*\\)\"\\(.*\\)\"/\\1\"${nextRelease.version}\"/' pkg/version/version*"
+  - - "@semantic-release/git"
+    - assets:
+      - pkg/version/**/*
+      - CHANGELOG.md
+      message: |-
+        chore: Bump to version ${nextRelease.version}
+
+        [skip ci]
+  - - "@semantic-release/gitlab"
+    -  gitlabUrl: "https://git.lo"
