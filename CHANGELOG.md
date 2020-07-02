@@ -1,3 +1,15 @@
+# [0.2.0](https://git.lo/microservices/sdk/go-sdk/compare/v0.1.0...v0.2.0) (2020-07-02)
+
+
+### Features
+
+* Environment not directly configurable but read from APP_ENV ([f0e6b99](https://git.lo/microservices/sdk/go-sdk/commit/f0e6b999a5bb830ee8cee9572fb0aa01de0d54df))
+* Extend the Tracking configuration to expose additional options ([e85d10a](https://git.lo/microservices/sdk/go-sdk/commit/e85d10ac22845e26de684f5de926acecb7bd2333))
+* Implement a "native" Sentry hook using the official library ([62def35](https://git.lo/microservices/sdk/go-sdk/commit/62def354b6ff29fd5fca3bab6041d4f4c6572caf))
+* Read APP_VERSION and APP_SERVER_NAME from ENV instead config ([8b9bf5d](https://git.lo/microservices/sdk/go-sdk/commit/8b9bf5d22b62a207bf79695d40ce0790005ced43))
+* Remove the unsupported Timeout option from the Sentry configuration ([21cc31a](https://git.lo/microservices/sdk/go-sdk/commit/21cc31ab25af512b42ba94a6f8ce1334174f739e))
+* Replace LogrusSentry with the official SentriGo (go.mod) ([f63df74](https://git.lo/microservices/sdk/go-sdk/commit/f63df74988fc602ac6880e3a21633404904eddda))
+
 # [0.1.0](https://git.lo/microservices/sdk/go-sdk/compare/v0.0.1...v0.1.0) (2020-05-28)
 
 
