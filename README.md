@@ -27,6 +27,7 @@ SDK, the Go version.
    - [HTTP Router Instrumentation](#http-router-instrumentation)
    - [Database instrumentation &amp; ORM logging](#database-instrumentation--orm-logging)
    - [AWS Session instrumentation](#aws-session-instrumentation)
+   - [Profiling](#profiling)
 - [Using the go-sdk in isolation](#using-the-go-sdk-in-isolation)
 - [Developing the SDK](#developing-the-sdk)
    - [Building the docker environment](#building-the-docker-environment)
@@ -738,6 +739,23 @@ arugment of the function, which allows the tracing chain to be continued inside
 the SDK call stack. To learn more about these functions you can start by
 reading about them on [the AWS developer
 blog](https://aws.amazon.com/blogs/developer/v2-aws-sdk-for-go-adds-context-to-api-operations).
+
+### Profiling
+You can send `pprof` samples to DataDog by enabling profiler. 
+Under the hood DataDog profiler will continuously take heap, CPU and mutex profiles with some interval.
+Profiler introduces overhead, but only when it is being executed. If we would assume that CPU profiles are taken for 1000ms each 30s, 
+then we have overhead only 2000s each minute. Read more about [profiler overhead](https://groups.google.com/g/golang-nuts/c/e6lB8ENbIw8?pli=1)   
+
+```go
+func main() {
+    // Start profiler.
+    stop, err := instrumentation.WithProfiler(applicationName, applicationEnv)
+    if err != nil {
+        log.Fatalf("Failed to start profiler: %s", err)
+    }
+    defer stop()
+}
+```
 
 ## Using the `go-sdk` in isolation
 
