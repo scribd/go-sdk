@@ -19,8 +19,7 @@ require (
 	github.com/sirupsen/logrus v1.4.2
 	github.com/spf13/viper v1.4.0
 	github.com/stretchr/testify v1.4.0
-	github.com/tinylib/msgp v1.1.0 // indirect
 	golang.org/x/xerrors v0.0.0-20191011141410-1b5146add898 // indirect
-	gopkg.in/DataDog/dd-trace-go.v1 v1.19.0
+	gopkg.in/DataDog/dd-trace-go.v1 v1.25.0
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0
 )
