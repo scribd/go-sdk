@@ -2,25 +2,28 @@ package tracking
 
 import (
 	"fmt"
+	"os"
 
 	cbuilder "git.lo/microservices/sdk/go-sdk/internal/pkg/configuration/builder"
 )
 
-var timeout = 200
-
 // Config stores the configuration for the tracking.
 type Config struct {
-	SentryDSN     string `mapstructure:"dsn"`
-	SentryTimeout int    `mapstructure:"timeout"`
+	SentryDSN string `mapstructure:"dsn"`
+
+	environment string
+	release     string
+	serverName  string
 }
 
-// NewConfig returns a new TrackingConfig instance
+// NewConfig returns a new TrackingConfig instance.
 func NewConfig() (*Config, error) {
 	config := &Config{}
+	config.environment = os.Getenv("APP_ENV")
+	config.release = os.Getenv("APP_VERSION")
+	config.serverName = os.Getenv("APP_SERVER_NAME")
 
 	viperBuilder := cbuilder.New("sentry")
-
-	viperBuilder.SetDefault("timeout", timeout)
 
 	vConf, err := viperBuilder.Build()
 	if err != nil {

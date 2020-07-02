@@ -1,0 +1,12 @@
+# config/sentry.yml
+#
+# A valid DSN should have this format
+# "https://<key>@sentry.io/<project>"
+common: &common
+  dsn: "https://aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@0000000.ingest.sentry.io/0000000"
+
+development:
+  <<: *common
+
+test:
+  <<: *common

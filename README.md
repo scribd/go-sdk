@@ -439,7 +439,6 @@ the following content:
 # config/sentry.yml
 common: &common
   dsn: ""
-  timeout: 200 # milliseconds
 
 development:
   <<: *common
@@ -491,6 +490,23 @@ report to Sentry any errors emitted from the following log levels:
 - `Error`;
 - `Fatal`;
 - `Panic`;
+
+The following environment variables are automatically used in the configuration
+of the Sentry client to enrich the error data:
+
+```
+environment: APP_ENV
+release: APP_VERSION
+serverName: APP_SERVER_NAME
+```
+
+More about the
+["environment" configuration](https://docs.sentry.io/enriching-error-data/environments/?platform=go)
+the
+["server name" configuration](https://docs.sentry.io/error-reporting/configuration/?platform=go#server-name)
+and the
+["release" configuration](https://docs.sentry.io/workflow/releases/?platform=go)
+can be found in the Sentry documentation.
 
 ### Database Connection
 
