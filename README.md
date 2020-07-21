@@ -33,6 +33,7 @@ SDK, the Go version.
    - [Building the docker environment](#building-the-docker-environment)
    - [Running tests within the docker environment](#running-tests-within-the-docker-environment)
    - [Entering the docker environment](#entering-the-docker-environment)
+   - [Using a development build of go-sdk](#using-a-development-build-of-go-sdk)
 - [Release](#release)
 - [Maintainers](#maintainers)
 
@@ -867,6 +868,51 @@ go version go1.14 linux/amd64
 Refer to the
 [Compose CLI reference](https://docs.docker.com/compose/reference/run/)
 for the full list of option and the synopsis of the command.
+
+### Using a development build of `go-sdk`
+
+When developing a project that uses `go-sdk` as a dependency, you might need
+to introduce changes to the `go-sdk` codebase.
+
+In this case, perform the following steps:
+
+1. Create a branch in the `go-sdk` repository with the changes you want,
+   and push the branch to the repository remote:
+
+   ```sh
+   git push -u origin <username/branch-name>
+   ```
+
+2. Add or change the following line in the `go.mod` file of the project
+   that uses `go-sdk` as a dependency:
+
+   ```go
+   replace git.lo/microservices/sdk/go-sdk => git.lo/microservices/sdk/go-sdk.git <username/branch-name>
+   ```
+
+3. From the project root, fetch the new branch by running:
+
+   ```sh
+   go mod tidy
+   ```
+
+4. Note that running `go mod tidy` will tie `go-sdk` to the specific git commit.
+   So after running it, the `replace` statement will look like this:
+
+   ```go
+   replace git.lo/microservices/sdk/go-sdk => git.lo/microservices/sdk/go-sdk.git <pseudo-version>
+   ```
+
+   Therefore, you will need to repeat steps 1, 2 and 3 each time you add new
+   changes to your branch in `go-sdk`.
+
+5. After you are done with the required changes, create a merge request to the
+   `go-sdk` repository. After the merge request is merged and a release is done,
+   you need to, once again, alter the `replace` statement in your `go.mod` file:
+
+   ```go
+   replace git.lo/microservices/sdk/go-sdk => git.lo/microservices/sdk/go-sdk.git <tag-name>
+   ```
 
 ## Release
 
