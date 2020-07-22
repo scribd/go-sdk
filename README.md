@@ -27,6 +27,7 @@ SDK, the Go version.
    - [HTTP Router Instrumentation](#http-router-instrumentation)
    - [Database instrumentation &amp; ORM logging](#database-instrumentation--orm-logging)
    - [AWS Session instrumentation](#aws-session-instrumentation)
+   - [Profiling](#profiling)
 - [Using the go-sdk in isolation](#using-the-go-sdk-in-isolation)
 - [Developing the SDK](#developing-the-sdk)
    - [Building the docker environment](#building-the-docker-environment)
@@ -754,6 +755,28 @@ arugment of the function, which allows the tracing chain to be continued inside
 the SDK call stack. To learn more about these functions you can start by
 reading about them on [the AWS developer
 blog](https://aws.amazon.com/blogs/developer/v2-aws-sdk-for-go-adds-context-to-api-operations).
+
+### Profiling
+
+You can send `pprof` samples to DataDog by enabling the profiler. 
+Under the hood the DataDog profiler will continuously take heap, CPU and mutex profiles, [every 1 minute by default](https://godoc.org/gopkg.in/DataDog/dd-trace-go.v1/profiler#pkg-constants).
+The [default CPU profile duration is 15 seconds](https://godoc.org/gopkg.in/DataDog/dd-trace-go.v1/profiler#pkg-constants). Keep in mind that the profiler introduces overhead when it is being executed.
+The default DataDog configuration, which go-sdk uses by default, is following [good practices](https://groups.google.com/g/golang-nuts/c/e6lB8ENbIw8?pli=1).
+
+```go
+func main() {
+    // Build profiler.
+    sdkProfiler := instrumentation.NewProfiler(
+	config.Instrumentation, 
+	profiler.WithService(appName), 
+	profiler.WithVersion(version),
+    )
+    if err := sdkProfiler.Start(); err != nil {
+        log.Fatalf("Failed to start profiler: %s", err)
+    }
+    defer sdkProfiler.Stop()
+}
+```
 
 ## Using the `go-sdk` in isolation
 
