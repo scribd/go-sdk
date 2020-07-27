@@ -1,3 +1,10 @@
+# [0.3.0](https://git.lo/microservices/sdk/go-sdk/compare/v0.2.0...v0.3.0) (2020-07-27)
+
+
+### Features
+
+* Add DataDog profiler ([9452058](https://git.lo/microservices/sdk/go-sdk/commit/94520581911c3d69205f212a7e9af0615ae4b32b))
+
 # [0.2.0](https://git.lo/microservices/sdk/go-sdk/compare/v0.1.0...v0.2.0) (2020-07-02)
 
 
