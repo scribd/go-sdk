@@ -122,6 +122,20 @@ statement:
 applicationName := sdk.Config.App.GetString("name")
 ```
 
+The configuration variables can be overridden by a corresponding environment
+variable; these variables must adopt the following logic of _"namespacing"_:
+
+```
+APP_SETTINGS_NAME=my-really-awesome-app
+^^^ ^^^^^^^^ ^^^^ ^^^^^^^^^^^^^^^^^^^^^
+|   |        |    + ----------- variable_value
+|   |        + ---------------- variable_name
+|   + ------------------------- config_file
++ ----------------------------- env_prefix
+```
+
+The environment variable has the precedence over the configuration file.
+
 #### Environment-awareness
 
 Application configurations vary between environments, therefore the `go-sdk` is
