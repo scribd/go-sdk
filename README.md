@@ -103,7 +103,7 @@ following contents:
 ```yaml
 # config/settings.yml
 common: &common
-  app_name: "my-awesome-app"
+  name: "my-awesome-app"
 
 development:
   <<: *common
@@ -119,7 +119,7 @@ To get the application name from the configuration one would use the following
 statement:
 
 ```go
-applicationName := sdk.Config.App.GetString("app_name")
+applicationName := sdk.Config.App.GetString("name")
 ```
 
 #### Environment-awareness
