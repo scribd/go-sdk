@@ -123,7 +123,7 @@ applicationName := sdk.Config.App.GetString("name")
 ```
 
 The configuration variables can be overridden by a corresponding environment
-variable; these variables must adopt the following logic of _"namespacing"_:
+variable; these variables must have the following format:
 
 ```
 APP_SETTINGS_NAME=my-really-awesome-app
