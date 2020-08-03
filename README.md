@@ -773,7 +773,7 @@ blog](https://aws.amazon.com/blogs/developer/v2-aws-sdk-for-go-adds-context-to-a
 
 ### Profiling
 
-You can send `pprof` samples to DataDog by enabling the profiler. 
+You can send `pprof` samples to DataDog by enabling the profiler.
 Under the hood the DataDog profiler will continuously take heap, CPU and mutex profiles, [every 1 minute by default](https://godoc.org/gopkg.in/DataDog/dd-trace-go.v1/profiler#pkg-constants).
 The [default CPU profile duration is 15 seconds](https://godoc.org/gopkg.in/DataDog/dd-trace-go.v1/profiler#pkg-constants). Keep in mind that the profiler introduces overhead when it is being executed.
 The default DataDog configuration, which go-sdk uses by default, is following [good practices](https://groups.google.com/g/golang-nuts/c/e6lB8ENbIw8?pli=1).
@@ -782,8 +782,8 @@ The default DataDog configuration, which go-sdk uses by default, is following [g
 func main() {
     // Build profiler.
     sdkProfiler := instrumentation.NewProfiler(
-	config.Instrumentation, 
-	profiler.WithService(appName), 
+	config.Instrumentation,
+	profiler.WithService(appName),
 	profiler.WithVersion(version),
     )
     if err := sdkProfiler.Start(); err != nil {
