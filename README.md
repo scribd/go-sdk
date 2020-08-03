@@ -103,7 +103,7 @@ following contents:
 ```yaml
 # config/settings.yml
 common: &common
-  app_name: "my-awesome-app"
+  name: "my-awesome-app"
 
 development:
   <<: *common
@@ -119,8 +119,22 @@ To get the application name from the configuration one would use the following
 statement:
 
 ```go
-applicationName := sdk.Config.App.GetString("app_name")
+applicationName := sdk.Config.App.GetString("name")
 ```
+
+The configuration variables can be overridden by a corresponding environment
+variable; these variables must adopt the following logic of _"namespacing"_:
+
+```
+APP_SETTINGS_NAME=my-really-awesome-app
+^^^ ^^^^^^^^ ^^^^ ^^^^^^^^^^^^^^^^^^^^^
+|   |        |    + ----------- variable_value
+|   |        + ---------------- variable_name
+|   + ------------------------- config_file
++ ----------------------------- env_prefix
+```
+
+The environment variable has the precedence over the configuration file.
 
 #### Environment-awareness
 
@@ -759,7 +773,7 @@ blog](https://aws.amazon.com/blogs/developer/v2-aws-sdk-for-go-adds-context-to-a
 
 ### Profiling
 
-You can send `pprof` samples to DataDog by enabling the profiler. 
+You can send `pprof` samples to DataDog by enabling the profiler.
 Under the hood the DataDog profiler will continuously take heap, CPU and mutex profiles, [every 1 minute by default](https://godoc.org/gopkg.in/DataDog/dd-trace-go.v1/profiler#pkg-constants).
 The [default CPU profile duration is 15 seconds](https://godoc.org/gopkg.in/DataDog/dd-trace-go.v1/profiler#pkg-constants). Keep in mind that the profiler introduces overhead when it is being executed.
 The default DataDog configuration, which go-sdk uses by default, is following [good practices](https://groups.google.com/g/golang-nuts/c/e6lB8ENbIw8?pli=1).
@@ -768,8 +782,8 @@ The default DataDog configuration, which go-sdk uses by default, is following [g
 func main() {
     // Build profiler.
     sdkProfiler := instrumentation.NewProfiler(
-	config.Instrumentation, 
-	profiler.WithService(appName), 
+	config.Instrumentation,
+	profiler.WithService(appName),
 	profiler.WithVersion(version),
     )
     if err := sdkProfiler.Start(); err != nil {
