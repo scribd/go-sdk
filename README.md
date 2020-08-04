@@ -28,6 +28,7 @@ SDK, the Go version.
    - [Database instrumentation &amp; ORM logging](#database-instrumentation--orm-logging)
    - [AWS Session instrumentation](#aws-session-instrumentation)
    - [Profiling](#profiling)
+   - [Custom Metrics](#custom-metrics)
 - [Using the go-sdk in isolation](#using-the-go-sdk-in-isolation)
 - [Developing the SDK](#developing-the-sdk)
    - [Building the docker environment](#building-the-docker-environment)
@@ -792,6 +793,68 @@ func main() {
     defer sdkProfiler.Stop()
 }
 ```
+
+### Custom Metrics
+
+`go-sdk` provides a way to send custom metrics to Datadog.
+
+The `metrics.Configuration` configuration can be used to define the set of
+tags to attach to every metric emitted by the client.
+
+This client is configured by default with:
+
+- `service:$APP_NAME`
+- `env:$ENVIRONMENT`
+
+Datadog tags documentation is available [here][ddtags].
+
+See the [metric submission documentation][submit-metric] on how to
+submit custom metrics.
+
+Metric names must only contain ASCII alphanumerics, underscores, and
+periods. The client will not replace nor check for invalid characters.
+
+Some options are suppported when submitting metrics, like applying a
+[sample rate][rate] to your metrics or tagging your metrics with your
+[custom tags][custom-tags]. Find all the available functions to report
+metrics in the Datadog Go [client GoDoc documentation][client-go].
+
+Example usage of the custom metrics:
+
+```go
+package main
+
+import (
+	"log"
+	"time"
+
+	"git.lo/microservices/sdk/go-sdk/pkg/metrics"
+)
+
+func main() {
+	applicationEnv := "development"
+	applicationName := "go-sdk-example"
+
+	metricsConfig := &metrics.Config{
+		Environment: applicationEnv,
+		App:         applicationName,
+	}
+	client, err := metrics.NewBuilder(metricsConfig).Build()
+	if err != nil {
+		log.Fatalf("Could not initialize Metrics client: %s", err)
+	}
+
+	_ = client.Incr("example.increment", []string{""}, 1)
+	_ = client.Decr("example.decrement", []string{""}, 1)
+	_ = client.Count("example.count", 2, []string{""}, 1)
+}
+```
+
+[ddtags]: <https://docs.datadoghq.com/getting_started/tagging/>
+[client-go]: <https://godoc.org/github.com/DataDog/datadog-go/statsd#Client>
+[custom-tags]: <https://docs.datadoghq.com/developers/metrics/dogstatsd_metrics_submission/?tab=go#metric-tagging>
+[rate]: <https://docs.datadoghq.com/developers/metrics/dogstatsd_metrics_submission/?tab=go#metric-submission-options>
+[submit-metric]: <https://docs.datadoghq.com/developers/metrics/dogstatsd_metrics_submission/?tab=go>
 
 ## Using the `go-sdk` in isolation
 
