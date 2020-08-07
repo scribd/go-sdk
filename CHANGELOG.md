@@ -1,3 +1,12 @@
+# [0.4.0](https://git.lo/microservices/sdk/go-sdk/compare/v0.3.0...v0.4.0) (2020-08-07)
+
+
+### Features
+
+* datadog-go is now a direct dependency ([0b5849c](https://git.lo/microservices/sdk/go-sdk/commit/0b5849c8088c726b2df1742dfff5ba6b3046a0d5))
+* Introduce the metrics package ([f352e72](https://git.lo/microservices/sdk/go-sdk/commit/f352e722950b22b40fa59ef9567f753bac717f77))
+* Move the `Metrics` Context key in the package `contextkeys` ([281d91c](https://git.lo/microservices/sdk/go-sdk/commit/281d91c1f16bfa3a8bc3eabee610710003f0b06b))
+
 # [0.3.0](https://git.lo/microservices/sdk/go-sdk/compare/v0.2.0...v0.3.0) (2020-07-27)
 
 
