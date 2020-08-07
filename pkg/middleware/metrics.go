@@ -4,12 +4,8 @@ import (
 	"context"
 	"net/http"
 
+	"git.lo/microservices/sdk/go-sdk/pkg/contextkeys"
 	"git.lo/microservices/sdk/go-sdk/pkg/metrics"
-)
-
-const (
-	// Metrics is the context key for the carrying the Metrics client.
-	Metrics = "Metrics"
 )
 
 // MetricsMiddleware wraps an instantiated Metrics client that will be
@@ -30,7 +26,7 @@ func NewMetricsMiddleware(metrics metrics.Metrics) MetricsMiddleware {
 // client to the request context.
 func (sm MetricsMiddleware) Handler(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ctx := context.WithValue(r.Context(), Metrics, sm.Metrics)
+		ctx := context.WithValue(r.Context(), contextkeys.Metrics, sm.Metrics)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
