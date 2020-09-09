@@ -1,3 +1,14 @@
+# [0.5.0](https://git.lo/microservices/sdk/go-sdk/compare/v0.4.0...v0.5.0) (2020-09-09)
+
+
+### Features
+
+* Add package context/logger to manage the logger in the context ([ecba066](https://git.lo/microservices/sdk/go-sdk/commit/ecba06656e3ad8e1c08a2632ec1ffe90a3242d6c))
+* Add the gRPC dependencies ([2a84eef](https://git.lo/microservices/sdk/go-sdk/commit/2a84eeff3ec9a46b5fa37fd5503340193dbcc61b))
+* Inject the Logger in the context using the sdklogcontext package ([7c8db72](https://git.lo/microservices/sdk/go-sdk/commit/7c8db72ad78afc207012a7c9b03a1da1044b810c))
+* Introduce the gRPC logging interceptors ([f0369e8](https://git.lo/microservices/sdk/go-sdk/commit/f0369e81aba0845040edfad041b6d42a62e0d5d2))
+* Remove the Logger context key as now managed by the context/logger package ([d93eb99](https://git.lo/microservices/sdk/go-sdk/commit/d93eb99c2abd1dab12dfdba4fce06ca87f3c2bf5))
+
 # [0.4.0](https://git.lo/microservices/sdk/go-sdk/compare/v0.3.0...v0.4.0) (2020-08-07)
 
 
