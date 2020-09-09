@@ -1,15 +1,13 @@
 package middleware
 
 import (
-	"context"
 	"fmt"
 	"net/http"
 	"time"
 
+	sdkloggercontext "git.lo/microservices/sdk/go-sdk/pkg/context/logger"
 	sdkinstrumentation "git.lo/microservices/sdk/go-sdk/pkg/instrumentation"
 	sdklogger "git.lo/microservices/sdk/go-sdk/pkg/logger"
-
-	"git.lo/microservices/sdk/go-sdk/pkg/contextkeys"
 )
 
 const (
@@ -54,7 +52,8 @@ func (lm LoggingMiddleware) Handler(next http.Handler) http.Handler {
 
 		start := time.Now()
 		lrw := newLoggingResponseWriter(w)
-		ctx := context.WithValue(r.Context(), contextkeys.Logger, logger)
+
+		ctx := sdkloggercontext.ToContext(r.Context(), logger)
 
 		// Parse the request params/form to populate r.Form for
 		// logging. The request form has to be parsed before the

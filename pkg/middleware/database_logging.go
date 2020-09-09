@@ -12,6 +12,7 @@ import (
 
 	"git.lo/microservices/sdk/go-sdk/pkg/contextkeys"
 
+	sdkloggercontext "git.lo/microservices/sdk/go-sdk/pkg/context/logger"
 	sdklogger "git.lo/microservices/sdk/go-sdk/pkg/logger"
 
 	"github.com/jinzhu/gorm"
@@ -40,8 +41,8 @@ func (dlm DatabaseLoggingMiddleware) Handler(next http.Handler) http.Handler {
 			return
 		}
 
-		l, ok := r.Context().Value(contextkeys.Logger).(sdklogger.Logger)
-		if !ok {
+		l, err := sdkloggercontext.Extract(r.Context())
+		if err != nil {
 			http.Error(w, "Unable to get logger", http.StatusInternalServerError)
 			return
 		}
