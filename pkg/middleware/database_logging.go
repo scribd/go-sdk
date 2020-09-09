@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"context"
 	"database/sql/driver"
 	"fmt"
 	"net/http"
@@ -10,12 +9,9 @@ import (
 	"time"
 	"unicode"
 
-	"git.lo/microservices/sdk/go-sdk/pkg/contextkeys"
-
+	sdkdatabasecontext "git.lo/microservices/sdk/go-sdk/pkg/context/database"
 	sdkloggercontext "git.lo/microservices/sdk/go-sdk/pkg/context/logger"
 	sdklogger "git.lo/microservices/sdk/go-sdk/pkg/logger"
-
-	"github.com/jinzhu/gorm"
 )
 
 // DatabaseLoggingMiddleware wraps an instantiated sdk.Logger that will be injected
@@ -35,8 +31,8 @@ func NewDatabaseLoggingMiddleware() DatabaseLoggingMiddleware {
 // meta-information using the logger.
 func (dlm DatabaseLoggingMiddleware) Handler(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		d, ok := r.Context().Value(contextkeys.Database).(*gorm.DB)
-		if !ok {
+		d, err := sdkdatabasecontext.Extract(r.Context())
+		if err != nil {
 			http.Error(w, "Unable to get DB connection", http.StatusInternalServerError)
 			return
 		}
@@ -50,7 +46,7 @@ func (dlm DatabaseLoggingMiddleware) Handler(next http.Handler) http.Handler {
 		d.LogMode(true)
 		d.SetLogger(newGormLogger(l))
 
-		ctx := context.WithValue(r.Context(), contextkeys.Database, d)
+		ctx := sdkdatabasecontext.ToContext(r.Context(), d)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }

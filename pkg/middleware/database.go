@@ -1,11 +1,10 @@
 package middleware
 
 import (
-	"context"
 	"net/http"
 
-	"git.lo/microservices/sdk/go-sdk/pkg/contextkeys"
-	"git.lo/microservices/sdk/go-sdk/pkg/instrumentation"
+	sdkdatabasecontext "git.lo/microservices/sdk/go-sdk/pkg/context/database"
+	sdkinstrumentation "git.lo/microservices/sdk/go-sdk/pkg/instrumentation"
 
 	"github.com/jinzhu/gorm"
 )
@@ -28,8 +27,8 @@ func NewDatabaseMiddleware(d *gorm.DB) DatabaseMiddleware {
 // connection pool to the request context.
 func (dm DatabaseMiddleware) Handler(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		db := instrumentation.TraceDatabase(r.Context(), dm.Database)
-		ctx := context.WithValue(r.Context(), contextkeys.Database, db)
+		db := sdkinstrumentation.TraceDatabase(r.Context(), dm.Database)
+		ctx := sdkdatabasecontext.ToContext(r.Context(), db)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
