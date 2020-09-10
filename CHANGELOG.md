@@ -1,3 +1,12 @@
+# [0.7.0](https://git.lo/microservices/sdk/go-sdk/compare/v0.6.0...v0.7.0) (2020-09-10)
+
+
+### Features
+
+* Inject gorm.DB in the context using the context/database package ([66ef7ba](https://git.lo/microservices/sdk/go-sdk/commit/66ef7baf99cc0338c817fabe283dfc75456ddfa9))
+* Introduce the gRPC database interceptors ([cc73f8c](https://git.lo/microservices/sdk/go-sdk/commit/cc73f8c6884822c123e6398758bd2657ab132d9d))
+* Remove the Database context key as now managed by the context/database package ([2984490](https://git.lo/microservices/sdk/go-sdk/commit/29844909f6ef5ab418fd18abe8fc95e7b89366bc))
+
 # [0.6.0](https://git.lo/microservices/sdk/go-sdk/compare/v0.5.0...v0.6.0) (2020-09-10)
 
 
