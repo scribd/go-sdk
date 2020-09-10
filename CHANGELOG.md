@@ -1,3 +1,12 @@
+# [0.6.0](https://git.lo/microservices/sdk/go-sdk/compare/v0.5.0...v0.6.0) (2020-09-10)
+
+
+### Features
+
+* Inject the Metrics in the context using the context/metrics package ([fd03e2b](https://git.lo/microservices/sdk/go-sdk/commit/fd03e2bff9f9d974fa1c14fda76fdb6777a19eb0))
+* Introduce the gRPC metrics interceptors ([c84f618](https://git.lo/microservices/sdk/go-sdk/commit/c84f6185bb6b8c2c14dc9e64b9daa94fbe2e18ad))
+* Remove the Metrics context key as now managed by the context/metrics package ([80a1d68](https://git.lo/microservices/sdk/go-sdk/commit/80a1d686595e6fa004c50f9ccacb61c21055495d))
+
 # [0.5.0](https://git.lo/microservices/sdk/go-sdk/compare/v0.4.0...v0.5.0) (2020-09-09)
 
 
