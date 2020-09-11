@@ -1,12 +1,11 @@
 package middleware
 
 import (
-	"context"
 	"net/http"
 
 	"github.com/google/uuid"
 
-	"git.lo/microservices/sdk/go-sdk/pkg/contextkeys"
+	sdkrequestidcontext "git.lo/microservices/sdk/go-sdk/pkg/context/requestid"
 )
 
 const (
@@ -37,7 +36,7 @@ func (rm RequestIDMiddleware) Handler(next http.Handler) http.Handler {
 			}
 		}
 
-		ctx := context.WithValue(r.Context(), contextkeys.RequestID, requestID)
+		ctx := sdkrequestidcontext.ToContext(r.Context(), requestID)
 
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
