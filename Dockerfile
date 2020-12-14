@@ -2,7 +2,7 @@
 # build stage
 # =============================================================================
 
-FROM golang:1.14.0 as builder
+FROM golang:1.15.6 AS builder
 
 ENV GO111MODULE=on
 
