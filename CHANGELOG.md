@@ -1,3 +1,11 @@
+# [0.8.0](https://git.lo/microservices/sdk/go-sdk/compare/v0.7.0...v0.8.0) (2020-12-16)
+
+
+### Features
+
+* Bump modules to Go 1.15.6 ([7105080](https://git.lo/microservices/sdk/go-sdk/commit/7105080f36960e23ab61503b22b2f7a737ed2fcb))
+* Bump to Go 1.15.6 ([ac25391](https://git.lo/microservices/sdk/go-sdk/commit/ac253911f530f2707c4a186d5f97046349378822))
+
 # [0.7.0](https://git.lo/microservices/sdk/go-sdk/compare/v0.6.0...v0.7.0) (2020-09-10)
 
 
