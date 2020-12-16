@@ -1,6 +1,6 @@
 module git.lo/microservices/sdk/go-sdk
 
-go 1.14
+go 1.15
 
 require (
 	github.com/DATA-DOG/go-txdb v0.1.3
