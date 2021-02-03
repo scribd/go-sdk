@@ -6,7 +6,7 @@ import (
 
 	"github.com/google/uuid"
 
-	"git.lo/microservices/sdk/go-sdk/pkg/contextkeys"
+	"github.com/scribd/go-sdk/pkg/contextkeys"
 )
 
 const (

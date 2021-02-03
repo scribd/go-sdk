@@ -11,8 +11,8 @@ import (
 	grpccodes "google.golang.org/grpc/codes"
 	grpcstatus "google.golang.org/grpc/status"
 
-	sdkcontext "git.lo/microservices/sdk/go-sdk/pkg/context/logger"
-	sdklogger "git.lo/microservices/sdk/go-sdk/pkg/logger"
+	sdkcontext "github.com/scribd/go-sdk/pkg/context/logger"
+	sdklogger "github.com/scribd/go-sdk/pkg/logger"
 )
 
 // LoggerUnaryServerInterceptor returns a unary server interceptors that adds the sdklogger.Logger to the context.

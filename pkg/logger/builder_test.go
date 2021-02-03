@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"testing"
 
-	"git.lo/microservices/sdk/go-sdk/pkg/tracking"
+	"github.com/scribd/go-sdk/pkg/tracking"
 
 	"github.com/stretchr/testify/assert"
 )

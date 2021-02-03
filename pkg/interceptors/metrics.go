@@ -6,8 +6,8 @@ import (
 	grpcmiddleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpc "google.golang.org/grpc"
 
-	sdkcontext "git.lo/microservices/sdk/go-sdk/pkg/context/metrics"
-	sdkmetrics "git.lo/microservices/sdk/go-sdk/pkg/metrics"
+	sdkcontext "github.com/scribd/go-sdk/pkg/context/metrics"
+	sdkmetrics "github.com/scribd/go-sdk/pkg/metrics"
 )
 
 // MetricsUnaryServerInterceptor returns a unary server interceptors that adds sdkmetrics.Metrics to the context.

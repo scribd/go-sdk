@@ -1,4 +1,4 @@
-module git.lo/microservices/sdk/go-sdk
+module github.com/scribd/go-sdk
 
 go 1.15
 

@@ -6,7 +6,7 @@ import (
 	"os"
 	"path"
 
-	"git.lo/microservices/sdk/go-sdk/pkg/tracking"
+	"github.com/scribd/go-sdk/pkg/tracking"
 
 	"github.com/sirupsen/logrus"
 	lumberjack "gopkg.in/natefinch/lumberjack.v2"

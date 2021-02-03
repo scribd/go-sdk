@@ -3,7 +3,7 @@ package logger
 import (
 	"bytes"
 
-	"git.lo/microservices/sdk/go-sdk/pkg/tracking"
+	"github.com/scribd/go-sdk/pkg/tracking"
 )
 
 // Builder is a Logger builder.

@@ -6,7 +6,7 @@ import (
 
 	grpcctxtags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
 
-	sdklogger "git.lo/microservices/sdk/go-sdk/pkg/logger"
+	sdklogger "github.com/scribd/go-sdk/pkg/logger"
 )
 
 type ctxLoggerMarker struct{}

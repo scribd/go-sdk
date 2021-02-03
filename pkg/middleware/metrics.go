@@ -3,8 +3,8 @@ package middleware
 import (
 	"net/http"
 
-	sdkmetricscontext "git.lo/microservices/sdk/go-sdk/pkg/context/metrics"
-	sdkmetrics "git.lo/microservices/sdk/go-sdk/pkg/metrics"
+	sdkmetricscontext "github.com/scribd/go-sdk/pkg/context/metrics"
+	sdkmetrics "github.com/scribd/go-sdk/pkg/metrics"
 )
 
 // MetricsMiddleware wraps an instantiated Metrics client that will be

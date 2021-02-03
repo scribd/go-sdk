@@ -7,7 +7,7 @@ import (
 	gorm "github.com/jinzhu/gorm"
 	grpc "google.golang.org/grpc"
 
-	sdkcontext "git.lo/microservices/sdk/go-sdk/pkg/context/database"
+	sdkcontext "github.com/scribd/go-sdk/pkg/context/database"
 )
 
 // DatabaseUnaryServerInterceptor returns a unary server interceptor that adds gorm.DB to the context.

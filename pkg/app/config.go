@@ -5,7 +5,7 @@ import (
 	"path"
 	"time"
 
-	cbuilder "git.lo/microservices/sdk/go-sdk/internal/pkg/configuration/builder"
+	cbuilder "github.com/scribd/go-sdk/internal/pkg/configuration/builder"
 
 	"github.com/spf13/viper"
 )

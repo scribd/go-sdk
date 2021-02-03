@@ -3,8 +3,8 @@ package middleware
 import (
 	"net/http"
 
-	sdkdatabasecontext "git.lo/microservices/sdk/go-sdk/pkg/context/database"
-	sdkinstrumentation "git.lo/microservices/sdk/go-sdk/pkg/instrumentation"
+	sdkdatabasecontext "github.com/scribd/go-sdk/pkg/context/database"
+	sdkinstrumentation "github.com/scribd/go-sdk/pkg/instrumentation"
 
 	"github.com/jinzhu/gorm"
 )
