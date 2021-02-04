@@ -230,7 +230,7 @@ package main
 import (
     "testing"
 
-    sdkconfig "git.lo/microservices/sdk/go-sdk/pkg/configuration"
+    sdkconfig "github.com/scribd/go-sdk/pkg/configuration"
 }
 
 var (
@@ -271,7 +271,7 @@ package main
 import (
 	"log"
 
-	sdklogger "git.lo/microservices/sdk/go-sdk/pkg/logger"
+	sdklogger "github.com/scribd/go-sdk/pkg/logger"
 )
 
 var (
@@ -477,8 +477,8 @@ package main
 import (
 	"log"
 
-	sdklogger   "git.lo/microservices/sdk/go-sdk/pkg/logger"
-	sdktracking "git.lo/microservices/sdk/go-sdk/pkg/tracking"
+	sdklogger   "github.com/scribd/go-sdk/pkg/logger"
+	sdktracking "github.com/scribd/go-sdk/pkg/tracking"
 )
 
 var (
@@ -828,7 +828,7 @@ import (
 	"log"
 	"time"
 
-	"git.lo/microservices/sdk/go-sdk/pkg/metrics"
+	"github.com/scribd/go-sdk/pkg/metrics"
 )
 
 func main() {
@@ -880,8 +880,8 @@ package sdk
 import (
 	"log"
 
-	sdkconfig "git.lo/microservices/sdk/go-sdk/pkg/configuration"
-	sdklogger "git.lo/microservices/sdk/go-sdk/pkg/logger"
+	sdkconfig "github.com/scribd/go-sdk/pkg/configuration"
+	sdklogger "github.com/scribd/go-sdk/pkg/logger"
 )
 
 var (
@@ -964,7 +964,7 @@ In this case, perform the following steps:
    that uses `go-sdk` as a dependency:
 
    ```go
-   replace git.lo/microservices/sdk/go-sdk => git.lo/microservices/sdk/go-sdk.git <username/branch-name>
+   replace github.com/scribd/go-sdk => github.com/scribd/go-sdk.git <username/branch-name>
    ```
 
 3. From the project root, fetch the new branch by running:
@@ -977,7 +977,7 @@ In this case, perform the following steps:
    So after running it, the `replace` statement will look like this:
 
    ```go
-   replace git.lo/microservices/sdk/go-sdk => git.lo/microservices/sdk/go-sdk.git <pseudo-version>
+   replace github.com/scribd/go-sdk => github.com/scribd/go-sdk.git <pseudo-version>
    ```
 
    Therefore, you will need to repeat steps 1, 2 and 3 each time you add new
@@ -988,7 +988,7 @@ In this case, perform the following steps:
    you need to, once again, alter the `replace` statement in your `go.mod` file:
 
    ```go
-   replace git.lo/microservices/sdk/go-sdk => git.lo/microservices/sdk/go-sdk.git <tag-name>
+   replace github.com/scribd/go-sdk => github.com/scribd/go-sdk.git <tag-name>
    ```
 
 ## Release
@@ -1002,13 +1002,13 @@ Releases are done from the `origin/master` branch using a manual step at the end
 In order to create a new release:
 
 1. Merge / push changes to `origin/master`
-2. Open the `origin/master` [GitLab CI/CD pipeline](https://git.lo/microservices/sdk/go-sdk/pipelines)
+2. Open the `origin/master` [GitLab CI/CD pipeline](https://github.com/scribd/go-sdk/pipelines)
 3. Press ▶️on the release step
 
 A version bump will happen automatically and the type of version bump
 (patch, minor, major) depends on the commits introduced since the last release.
 
-The `semantic-release` configuration is in [`.releaserc.yml`](https://git.lo/microservices/sdk/go-sdk/blob/master/.releaserc.yml).
+The `semantic-release` configuration is in [`.releaserc.yml`](https://github.com/scribd/go-sdk/blob/master/.releaserc.yml).
 
 ## Maintainers
 

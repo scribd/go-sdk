@@ -5,9 +5,9 @@ import (
 	"net/http"
 	"time"
 
-	sdkloggercontext "git.lo/microservices/sdk/go-sdk/pkg/context/logger"
-	sdkinstrumentation "git.lo/microservices/sdk/go-sdk/pkg/instrumentation"
-	sdklogger "git.lo/microservices/sdk/go-sdk/pkg/logger"
+	sdkloggercontext "github.com/scribd/go-sdk/pkg/context/logger"
+	sdkinstrumentation "github.com/scribd/go-sdk/pkg/instrumentation"
+	sdklogger "github.com/scribd/go-sdk/pkg/logger"
 )
 
 const (

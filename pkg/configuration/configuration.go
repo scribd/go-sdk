@@ -1,12 +1,12 @@
 package configuration
 
 import (
-	app "git.lo/microservices/sdk/go-sdk/pkg/app"
-	database "git.lo/microservices/sdk/go-sdk/pkg/database"
-	instrumentation "git.lo/microservices/sdk/go-sdk/pkg/instrumentation"
-	logger "git.lo/microservices/sdk/go-sdk/pkg/logger"
-	server "git.lo/microservices/sdk/go-sdk/pkg/server"
-	tracking "git.lo/microservices/sdk/go-sdk/pkg/tracking"
+	app "github.com/scribd/go-sdk/pkg/app"
+	database "github.com/scribd/go-sdk/pkg/database"
+	instrumentation "github.com/scribd/go-sdk/pkg/instrumentation"
+	logger "github.com/scribd/go-sdk/pkg/logger"
+	server "github.com/scribd/go-sdk/pkg/server"
+	tracking "github.com/scribd/go-sdk/pkg/tracking"
 )
 
 // Config is an app-wide configuration

@@ -9,9 +9,9 @@ import (
 	"time"
 	"unicode"
 
-	sdkdatabasecontext "git.lo/microservices/sdk/go-sdk/pkg/context/database"
-	sdkloggercontext "git.lo/microservices/sdk/go-sdk/pkg/context/logger"
-	sdklogger "git.lo/microservices/sdk/go-sdk/pkg/logger"
+	sdkdatabasecontext "github.com/scribd/go-sdk/pkg/context/database"
+	sdkloggercontext "github.com/scribd/go-sdk/pkg/context/logger"
+	sdklogger "github.com/scribd/go-sdk/pkg/logger"
 )
 
 // DatabaseLoggingMiddleware wraps an instantiated sdk.Logger that will be injected

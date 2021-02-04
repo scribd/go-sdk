@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 
-	cbuilder "git.lo/microservices/sdk/go-sdk/internal/pkg/configuration/builder"
+	cbuilder "github.com/scribd/go-sdk/internal/pkg/configuration/builder"
 )
 
 // Config is the database connection configuration.

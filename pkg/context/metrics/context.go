@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	sdkmetrics "git.lo/microservices/sdk/go-sdk/pkg/metrics"
+	sdkmetrics "github.com/scribd/go-sdk/pkg/metrics"
 )
 
 type ctxMetricsMarker struct{}

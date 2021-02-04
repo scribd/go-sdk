@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	cbuilder "git.lo/microservices/sdk/go-sdk/internal/pkg/configuration/builder"
+	cbuilder "github.com/scribd/go-sdk/internal/pkg/configuration/builder"
 )
 
 // Config stores the configuration for the tracking.
