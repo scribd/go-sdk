@@ -1,3 +1,15 @@
+# [1.0.0](https://git.lo/microservices/sdk/go-sdk/compare/v0.8.0...v1.0.0) (2021-02-04)
+
+
+### Code Refactoring
+
+* Rename module name to github.com/scribd/go-sdk ([923a8ae](https://git.lo/microservices/sdk/go-sdk/commit/923a8ae9f8b3f38734ec5d737956ba8fb59cf772))
+
+
+### BREAKING CHANGES
+
+* Rename module name to github.com/scribd/go-sdk as we are migrating from gitlab to github.
+
 # [0.8.0](https://github.com/scribd/go-sdk/compare/v0.7.0...v0.8.0) (2020-12-16)
 
 
