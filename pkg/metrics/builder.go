@@ -5,6 +5,10 @@ import (
 	datadogstatsd "github.com/DataDog/datadog-go/statsd"
 )
 
+const (
+	datadogServiceSuffix = "app"
+)
+
 // Builder is a Metrics builder.
 type Builder struct {
 	config *Config
@@ -33,9 +37,11 @@ func (b *Builder) Build() (Metrics, error) {
 	// Namespace to prepend to all statsd calls.
 	dogstatsd.Namespace = b.config.App + "."
 
+	serviceName := fmt.Sprintf("%s-%s", b.config.App, datadogServiceSuffix)
+
 	// Tags are global tags to be added to every statsd call.
 	dogstatsd.Tags = []string{
-		fmt.Sprintf("service:%s", b.config.App),
+		fmt.Sprintf("service:%s", serviceName),
 		fmt.Sprintf("env:%s", b.config.Environment),
 	}
 
