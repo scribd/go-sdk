@@ -19,10 +19,14 @@ jobs:
         # https://github.com/rlespinasse/github-slug-action
         uses: rlespinasse/github-slug-action@v3.x
 
-      - name: Build image
-        run: |
-          docker build --pull --build-arg GIT_COMMIT=${{ env.GITHUB_SHA_SHORT }} --tag=${{ github.repository }}:${{ env.GITHUB_SHA_SHORT }} .
-          docker tag ${{ github.repository }}:${{ env.GITHUB_SHA_SHORT }} ${{ github.repository }}:${{ env.GITHUB_REF_SLUG }}
+      - uses: docker/build-push-action@v2
+        # GitHub Action to build and push Docker images with Buildx
+        # https://github.com/docker/build-push-action
+        name: Build image
+        with:
+          push: false
+          target: builder
+          tags: ${{ github.repository }}:${{ env.GITHUB_SHA_SHORT }}
 
   check:
     name: check
@@ -43,6 +47,7 @@ jobs:
         name: Build image
         with:
           push: false
+          target: builder
           tags: ${{ github.repository }}:${{ env.GITHUB_SHA_SHORT }}
 
       - uses: addnab/docker-run-action@v2
@@ -60,11 +65,10 @@ jobs:
         # https://github.com/marketplace/actions/docker-run-action
         name: Run linter
         env:
-          CI_GOLANGCI_LINT_VERSION: "1.27.0"
+          CI_GOLANGCI_LINT_VERSION: "1.20.1"
         with:
           image: ${{ github.repository }}:${{ env.GITHUB_SHA_SHORT }}
-          # run: curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s -- -b $(go env GOPATH)/bin v${{ env.CI_GOLANGCI_LINT_VERSION }} && mage fmt:lint
-          run: mage fmt:lint
+          run: curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s -- -b $(go env GOPATH)/bin v${{ env.CI_GOLANGCI_LINT_VERSION }} && mage fmt:lint
 
   test:
     name: test
@@ -86,6 +90,7 @@ jobs:
         name: Build image
         with:
           push: false
+          target: builder
           tags: ${{ github.repository }}:${{ env.GITHUB_SHA_SHORT }}
 
       - uses: addnab/docker-run-action@v2
