@@ -1,3 +1,19 @@
+# [1.1.0](https://github.com/scribd/go-sdk/compare/v1.0.0...v1.1.0) (2021-03-02)
+
+
+### Bug Fixes
+
+* **ci:** Fix CI pipeline by using builder Docker layer as a target and download golangci-lint manually ([dcc1143](https://github.com/scribd/go-sdk/commit/dcc1143d884b37dfb5dde1b34bdfb8936c5100b6))
+* **go:** Clean up go.sum ([ed7348a](https://github.com/scribd/go-sdk/commit/ed7348a37b13d395121b551b93973ceff18ea907))
+* Add the missing -app suffix to the service name in metrics ([d6f2f0e](https://github.com/scribd/go-sdk/commit/d6f2f0ecfec3ff97e736f00bb65c07034867226c))
+
+
+### Features
+
+* **ci:** Add the CI Action pipeline ([d1ab240](https://github.com/scribd/go-sdk/commit/d1ab240aff73a328e765e44de007ad91d35158dd))
+* **ci:** Add the Release Action pipeline ([b1c3222](https://github.com/scribd/go-sdk/commit/b1c32221ca7e10400a5533359dbff449fd027902))
+* **ci:** Cache docker layers ([2329506](https://github.com/scribd/go-sdk/commit/2329506abe0749ff5289c663e0b8e471d83e5db0))
+
 # [1.0.0](https://git.lo/microservices/sdk/go-sdk/compare/v0.8.0...v1.0.0) (2021-02-04)
 
 
