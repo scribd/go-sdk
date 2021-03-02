@@ -14,12 +14,12 @@
 * **ci:** Add the Release Action pipeline ([b1c3222](https://github.com/scribd/go-sdk/commit/b1c32221ca7e10400a5533359dbff449fd027902))
 * **ci:** Cache docker layers ([2329506](https://github.com/scribd/go-sdk/commit/2329506abe0749ff5289c663e0b8e471d83e5db0))
 
-# [1.0.0](https://git.lo/microservices/sdk/go-sdk/compare/v0.8.0...v1.0.0) (2021-02-04)
+# [1.0.0](https://github.com/scribd/go-sdk/compare/v0.8.0...v1.0.0) (2021-02-04)
 
 
 ### Code Refactoring
 
-* Rename module name to github.com/scribd/go-sdk ([923a8ae](https://git.lo/microservices/sdk/go-sdk/commit/923a8ae9f8b3f38734ec5d737956ba8fb59cf772))
+* Rename module name to github.com/scribd/go-sdk ([923a8ae](https://github.com/scribd/go-sdk/commit/923a8ae9f8b3f38734ec5d737956ba8fb59cf772))
 
 
 ### BREAKING CHANGES

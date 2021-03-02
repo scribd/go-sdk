@@ -595,7 +595,7 @@ follows:
 package main
 
 import (
-	sdkdb "git.lo/microservices/chassis/go-sdk/pkg/database"
+	sdkdb "github.com/scribd/go-sdk/pkg/database"
 )
 
 func main() {
@@ -622,7 +622,7 @@ package main
 import (
 	"fmt"
 
-	sdkdb "git.lo/microservices/chassis/go-sdk/pkg/database"
+	sdkdb "github.com/scribd/go-sdk/pkg/database"
 	"github.com/jinzhu/gorm"
 )
 
