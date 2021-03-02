@@ -1,0 +1,90 @@
+name: Release
+
+on: workflow_dispatch
+
+env:
+  AWS_REGION: us-east-2
+  DOCKER_BUILDKIT: 1
+  DOCKER_CACHE_PATH: ${{ github.workspace }}/tmp/docker-cache
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-18.04
+    needs: []
+    steps:
+      - name: Checkout
+        # A GitHub Action to checkout a repository.
+        # https://github.com/actions/checkout
+        uses: actions/checkout@v2
+        with:
+           token: ${{ secrets.SCRIBD_GITHUB_GENERIC_TOKEN }}
+
+      - name: Inject slug/short variables
+        # A GitHub Action to expose the slug values of some GitHub ENV variables
+        # https://github.com/rlespinasse/github-slug-action
+        uses: rlespinasse/github-slug-action@v3.x
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.DEPLOYER_PRODUCTION_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.DEPLOYER_PRODUCTION_SECRET_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Create release
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: scribd/semantic-release
+        run: |
+          docker pull $ECR_REGISTRY/$ECR_REPOSITORY:latest
+          docker run --rm \
+            -v ${{ github.workspace }}:/src \
+            -w /src \
+            -e CI=true \
+            -e GITHUB_ACTIONS=true \
+            -e GITHUB_TOKEN=${{ secrets.SCRIBD_GITHUB_GENERIC_TOKEN }} \
+            -e GITHUB_REPOSITORY=${{ github.repository }} \
+            -e GITHUB_WORKSPACE=${{ github.workspace }} \
+            -e GITHUB_SHA=${{ github.sha }} \
+            -e GITHUB_REF=${{ github.ref }} \
+            $ECR_REGISTRY/$ECR_REPOSITORY:latest --publish
+
+      - name: Output release version
+        id: output-release-version
+        run: |
+          echo "::set-output name=release-version::$(git rev-list --tags --max-count=1 | xargs git describe --tags | cut -c2-)"
+
+      - name: Logout of Amazon ECR
+        if: always()
+        run: docker logout ${{ steps.login-ecr.outputs.registry }}
+
+  notify:
+    name: notify:slack
+    runs-on: ubuntu-18.04
+    env:
+      GITHUB_TOKEN: ${{ secrets.SCRIBD_GITHUB_GENERIC_TOKEN }}
+      SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+      SLACK_USERNAME: scribdbot
+      SLACK_CHANNEL: '#service-foundations-release'
+      SLACK_ICON: 'https://github.com/scribdbot.png?size=48'
+      SLACK_FOOTER: ""
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Send Slack notification
+        uses: rtCamp/action-slack-notify@v2.1.0
+        if: failure()
+        env:
+          SLACK_COLOR: 'danger'
+          SLACK_MESSAGE: Build of commit <https://github.com/scribd/go-sdk/commit/${{ github.sha }}|${{ env.GITHUB_SHA_SHORT }}> on `main` branch of <https://github.com/${{ github.repository }}|${{ github.repository }}> failed.
+
+      - name: Send Slack notification
+        uses: rtCamp/action-slack-notify@v2.1.0
+        if: success()
+        env:
+          SLACK_COLOR: 'good'
+          SLACK_MESSAGE: Build of commit <https://github.com/scribd/go-sdk/commit/${{ github.sha }}|${{ env.GITHUB_SHA_SHORT }}> on `main` branch of <https://github.com/${{ github.repository }}|${{ github.repository }}> succeeded.
