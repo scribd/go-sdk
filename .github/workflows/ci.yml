@@ -154,7 +154,7 @@ jobs:
       SLACK_CHANNEL: '#service-foundations-release'
       SLACK_ICON: 'https://github.com/scribdbot.png?size=48'
       SLACK_FOOTER: ""
-    needs: build
+    needs: [build, check, test]
     if: github.ref == 'refs/heads/main'
     steps:
       - name: Send Slack notification
