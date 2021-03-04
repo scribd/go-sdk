@@ -997,18 +997,18 @@ This project is using [semantic-release](https://semantic-release.gitbook.io/sem
 and [conventional-commits](https://www.conventionalcommits.org/en/v1.0.0/),
 with the [`angular` preset](https://github.com/conventional-changelog/conventional-changelog/tree/master/packages/conventional-changelog-angular).
 
-Releases are done from the `origin/master` branch using a manual step at the end of the CI/CD pipeline.
+Releases are done from the `origin/main` branch using a manual step at the end of the CI/CD pipeline.
 
 In order to create a new release:
 
-1. Merge / push changes to `origin/master`
-2. Open the `origin/master` [GitLab CI/CD pipeline](https://github.com/scribd/go-sdk/pipelines)
-3. Press ▶️on the release step
+1. Merge / push changes to `origin/main`
+2. Open the `origin/main` [GitHub Action Release pipeline](https://github.com/scribd/go-sdk/actions/workflows/release.yml)
+3. Press ▶️ on the "Run workflow" step
 
 A version bump will happen automatically and the type of version bump
 (patch, minor, major) depends on the commits introduced since the last release.
 
-The `semantic-release` configuration is in [`.releaserc.yml`](https://github.com/scribd/go-sdk/blob/master/.releaserc.yml).
+The `semantic-release` configuration is in [`.releaserc.yml`](https://github.com/scribd/go-sdk/blob/main/.releaserc.yml).
 
 ## Maintainers
 
