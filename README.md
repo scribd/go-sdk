@@ -35,6 +35,7 @@ SDK, the Go version.
    - [Running tests within the docker environment](#running-tests-within-the-docker-environment)
    - [Entering the docker environment](#entering-the-docker-environment)
    - [Using a development build of go-sdk](#using-a-development-build-of-go-sdk)
+   - [Commit messages](#commit-messages)
 - [Release](#release)
 - [Maintainers](#maintainers)
 
@@ -990,6 +991,21 @@ In this case, perform the following steps:
    ```go
    replace github.com/scribd/go-sdk => github.com/scribd/go-sdk.git <tag-name>
    ```
+
+### Commit messages
+
+In order to generate a consistent and readable CHANGELOG, the commit title should being with a capital letter.
+
+Examples:
+```
+// incorrect
+feat(ci): some CI changes
+
+// correct
+feat(ci): Some CI changes
+```
+
+[The GitHub workflow checks the commit title correctness](https://github.com/scribd/go-sdk/blob/main/.github/workflows/pr-check.yml).
 
 ## Release
 
