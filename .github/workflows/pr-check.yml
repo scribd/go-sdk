@@ -1,0 +1,29 @@
+name: 'Commit Message Check'
+on:
+  pull_request:
+    types:
+      - opened
+      - edited
+      - reopened
+      - synchronize
+  pull_request_target:
+    types:
+      - opened
+      - edited
+      - reopened
+      - synchronize
+
+jobs:
+  check-commit-message:
+    name: Check Commit Message
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Check Commit Message Title
+        uses: gsactions/commit-message-checker@v1
+        with:
+          pattern: '^(?:feat|fix|docs|style|refactor|perf|test|chore)\(?(?:\w+|\s|\-|_)?\)?:\s[A-Z]\w+'
+          error: 'The commit title does not follow the requirements. Please check the commit message requirements here: https://github.com/scribd/go-sdk#commit-messages'
+          accessToken: ${{ secrets.SCRIBD_GITHUB_GENERIC_TOKEN }}
+          excludeTitle: true
+          excludeDescription: true
+          checkAllCommitMessages: true
