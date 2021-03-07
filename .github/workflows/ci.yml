@@ -28,7 +28,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ${{ env.BUILDX_CACHE_PATH }}
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          key: ${{ runner.os }}-buildx-${{ hashFiles('Dockerfile,**/go.sum,**/*.go') }}
           restore-keys: |
             ${{ runner.os }}-buildx-
 
@@ -64,7 +64,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ${{ env.BUILDX_CACHE_PATH }}
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          key: ${{ runner.os }}-buildx-${{ hashFiles('Dockerfile,**/go.sum,**/*.go') }}
           restore-keys: |
             ${{ runner.os }}-buildx-
 
@@ -101,7 +101,7 @@ jobs:
 
   test:
     name: test
-    needs: [build, check]
+    needs: build
     runs-on: ubuntu-18.04
     steps:
       - name: Checkout
@@ -120,7 +120,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ${{ env.BUILDX_CACHE_PATH }}
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          key: ${{ runner.os }}-buildx-${{ hashFiles('Dockerfile,**/go.sum,**/*.go') }}
           restore-keys: |
             ${{ runner.os }}-buildx-
 
