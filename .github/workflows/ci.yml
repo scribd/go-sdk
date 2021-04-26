@@ -88,16 +88,10 @@ jobs:
           image: ${{ github.repository }}:${{ env.GITHUB_SHA_SHORT }}
           run: mage fmt:check
 
-      - uses: addnab/docker-run-action@v2
-        # Run an image built by a previous step.
-        # https://github.com/addnab/docker-run-action
-        # https://github.com/marketplace/actions/docker-run-action
-        name: Run linter
-        env:
-          CI_GOLANGCI_LINT_VERSION: "1.20.1"
+      - name: Run linter
+        uses: golangci/golangci-lint-action@v2
         with:
-          image: ${{ github.repository }}:${{ env.GITHUB_SHA_SHORT }}
-          run: curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s -- -b $(go env GOPATH)/bin v${{ env.CI_GOLANGCI_LINT_VERSION }} && mage fmt:lint
+          version: v1.20.1
 
   test:
     name: test
