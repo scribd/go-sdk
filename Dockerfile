@@ -25,7 +25,7 @@ FROM builder AS development
 
 RUN go get -v \
 	github.com/go-delve/delve/cmd/dlv@v1.4.0 \
-	github.com/golangci/golangci-lint/cmd/golangci-lint@v1.20.1
+	github.com/golangci/golangci-lint/cmd/golangci-lint@v1.39.0
 
 ENV GOBIN=/go/bin
 COPY --from=builder $GOBIN/mage /usr/bin/mage
