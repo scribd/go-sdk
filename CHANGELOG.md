@@ -1,3 +1,19 @@
+# [1.2.0](https://github.com/scribd/go-sdk/compare/v1.1.0...v1.2.0) (2021-04-30)
+
+
+### Bug Fixes
+
+* Update pkg/version accordingly when releasing new version ([8772dfb](https://github.com/scribd/go-sdk/commit/8772dfbda6791e23945813cbbc814f6af706fe26))
+
+
+### Features
+
+* **ci:** Add commit message check workflow ([b1476d6](https://github.com/scribd/go-sdk/commit/b1476d69446715d9b70703c6ba1711a7d1436e43))
+* **ci:** Add datadog metrics for CI pipeline ([73b16a8](https://github.com/scribd/go-sdk/commit/73b16a8c2e642afc4a1aa5d53634df67864ed450))
+* **ci:** Add datadog metrics for release pipeline ([7b8e195](https://github.com/scribd/go-sdk/commit/7b8e195d871eff1c82dbaf08cbb906cafd14bd09))
+* **ci:** Add velocity metrics for the repo ([f918947](https://github.com/scribd/go-sdk/commit/f918947321aeb8ecd338caa9f7e2ba6acc0b4f90))
+* **ci:** Remove unsupported event from commit message check ([e33a978](https://github.com/scribd/go-sdk/commit/e33a978007e5ff0493b9199f79205c9228ff25bd))
+
 # [1.1.0](https://github.com/scribd/go-sdk/compare/v1.0.0...v1.1.0) (2021-03-02)
 
 
