@@ -17,6 +17,8 @@ COPY . .
 ENV GOBIN=/go/bin
 RUN go install cmd/mage/mage.go
 
+RUN CGO_ENABLED=0 GOOS=linux go build ./...
+
 # =============================================================================
 # linter stage
 # =============================================================================
