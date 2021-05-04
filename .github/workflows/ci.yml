@@ -95,7 +95,7 @@ jobs:
         name: Run linter
         with:
           image: ${{ github.repository }}:${{ env.GITHUB_SHA_SHORT }}
-          run: go build ./... && mage fmt:lint
+          run: mage fmt:lint
 
   test:
     name: test
