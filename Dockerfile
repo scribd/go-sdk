@@ -18,6 +18,16 @@ ENV GOBIN=/go/bin
 RUN go install cmd/mage/mage.go
 
 # =============================================================================
+# linter stage
+# =============================================================================
+
+FROM builder AS linter
+
+# binary will be $(go env GOPATH)/bin/golangci-lint
+RUN curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh \
+	| sh -s -- -b $(go env GOPATH)/bin v1.39.0
+
+# =============================================================================
 # development stage
 # =============================================================================
 
