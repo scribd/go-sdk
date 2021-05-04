@@ -74,7 +74,7 @@ jobs:
         name: Build image
         with:
           push: false
-          target: development
+          target: linter
           tags: ${{ github.repository }}:${{ env.GITHUB_SHA_SHORT }}
           cache-from: type=local,src=${{ env.BUILDX_CACHE_PATH }}
           load: true
