@@ -1,4 +1,4 @@
-name: Velocity Workflow
+name: Velocity
 on:
   pull_request:
     types: [opened, closed]
