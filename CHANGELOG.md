@@ -23,6 +23,31 @@
 * **Dockerfile:** Bump to Go 1.16.4 ([fdc116e](https://github.com/scribd/go-sdk/commit/fdc116ee138df96f4fc6ff25904de19bdd5d3db9))
 * **go:** Bump to Go 1.16.4 ([038076b](https://github.com/scribd/go-sdk/commit/038076b42266ca3a79a1bddd7e98d5be54d493b0))
 
+# [1.2.0](https://github.com/scribd/go-sdk/compare/v1.1.0...v1.2.0) (2021-05-11)
+
+
+### Bug Fixes
+
+* Update pkg/version accordingly when releasing new version ([8772dfb](https://github.com/scribd/go-sdk/commit/8772dfbda6791e23945813cbbc814f6af706fe26))
+
+
+### Features
+
+* **ci:** Add a linter stage in Dockerfile ([cc3ee11](https://github.com/scribd/go-sdk/commit/cc3ee1140711253c8f60c3cbeb3df704c426dccd))
+* **ci:** Add commit message check workflow ([b1476d6](https://github.com/scribd/go-sdk/commit/b1476d69446715d9b70703c6ba1711a7d1436e43))
+* **ci:** Add datadog metrics for CI pipeline ([73b16a8](https://github.com/scribd/go-sdk/commit/73b16a8c2e642afc4a1aa5d53634df67864ed450))
+* **ci:** Add datadog metrics for release pipeline ([7b8e195](https://github.com/scribd/go-sdk/commit/7b8e195d871eff1c82dbaf08cbb906cafd14bd09))
+* **ci:** Add velocity metrics for the repo ([f918947](https://github.com/scribd/go-sdk/commit/f918947321aeb8ecd338caa9f7e2ba6acc0b4f90))
+* **ci:** Build the development stage from the linter stage ([2b62f8d](https://github.com/scribd/go-sdk/commit/2b62f8d40439ddbb3dd5dbcc29f068c85f204bf0))
+* **ci:** Build the SDK before the linter stage in Dockerfile ([c04bdf0](https://github.com/scribd/go-sdk/commit/c04bdf0a4bdd660af4d939927b8877964e7e093e))
+* **ci:** Bump golangci-lint to v1.39.0 ([838b1a4](https://github.com/scribd/go-sdk/commit/838b1a406e32b5faa474e277782db80016933181))
+* **ci:** Remove the unnecessary build ([9cd7436](https://github.com/scribd/go-sdk/commit/9cd7436240aa7dd66384c9dd3f9ed26235ffc8d1))
+* **ci:** Remove unsupported event from commit message check ([e33a978](https://github.com/scribd/go-sdk/commit/e33a978007e5ff0493b9199f79205c9228ff25bd))
+* **ci:** Run the fmt checks at the linter stage ([f67348f](https://github.com/scribd/go-sdk/commit/f67348f78596cfcac86d759cdee1934e7b2f710b))
+* **ci:** Use mage to run golangci-lint-action in Docker ([8bc71aa](https://github.com/scribd/go-sdk/commit/8bc71aa41cfe5a10c7b388cbfe35d9429c39afd6))
+* **Dockerfile:** Bump to Go 1.16.4 ([fdc116e](https://github.com/scribd/go-sdk/commit/fdc116ee138df96f4fc6ff25904de19bdd5d3db9))
+* **go:** Bump to Go 1.16.4 ([038076b](https://github.com/scribd/go-sdk/commit/038076b42266ca3a79a1bddd7e98d5be54d493b0))
+
 # [1.1.0](https://github.com/scribd/go-sdk/compare/v1.0.0...v1.1.0) (2021-03-02)
 
 
