@@ -6,6 +6,44 @@ env:
   AWS_REGION: us-east-2
   DOCKER_BUILDKIT: 1
   DOCKER_CACHE_PATH: ${{ github.workspace }}/tmp/docker-cache
+  NOTIFICATION_FIELDS: >
+    [
+      {
+        title: 'Repository',
+        value: `${process.env.AS_REPO}`,
+        short: true
+      },
+      {
+        title: 'Environment',
+        value: `${process.env.GITHUB_REF_SLUG}`,
+        short: true
+      },
+      {
+        title: 'Author',
+        value: `${process.env.AS_AUTHOR}`,
+        short: true
+      },
+      {
+        title: 'Commit',
+        value: `${process.env.AS_COMMIT}`,
+        short: true
+      },
+      {
+        title: 'Job',
+        value: `${process.env.AS_JOB}`,
+        short: true
+      },
+      {
+        title: 'Duration',
+        value: `${process.env.AS_TOOK}`,
+        short: true
+      },
+      {
+        title: 'Commit Message',
+        value: `${process.env.AS_MESSAGE}`,
+        short: false
+      }
+    ]
 
 jobs:
   release:
@@ -54,14 +92,45 @@ jobs:
             -e GITHUB_REF=${{ github.ref }} \
             $ECR_REGISTRY/$ECR_REPOSITORY:latest --publish
 
-      - name: Output release version
-        id: output-release-version
-        run: |
-          echo "::set-output name=release-version::$(git rev-list --tags --max-count=1 | xargs git describe --tags | cut -c2-)"
-
       - name: Logout of Amazon ECR
         if: always()
         run: docker logout ${{ steps.login-ecr.outputs.registry }}
+
+      - name: Set status emoji
+        id: release-status
+        if: always()
+        run: |
+          if [ "${{ job.status }}" = "success" ]; then
+              echo "::set-output name=emoji::large_green_square"
+              echo "::set-output name=color::good"
+          elif [ "${{ job.status }}" = "failure" ]; then
+              echo "::set-output name=emoji::large_red_square"
+              echo "::set-output name=color::danger"
+          else
+              echo "::set-output name=emoji::large_orange_square"
+              echo "::set-output name=color::warning"
+          fi
+
+      - name: Send Slack notification
+        if: always()
+        uses: 8398a7/action-slack@v3.9.0
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+        with:
+          author_name: "GitHub on ${{ github.repository }}"
+          fields: repo,message,commit,author,action,eventName,ref,workflow,job,took
+          status: custom
+          job_name: 'Release'
+          custom_payload: |
+            {
+              text: `:${{ steps.release-status.outputs.emoji }}: *Workflow ${ process.env.AS_WORKFLOW } ${{ job.status }}*`,
+              attachments: [
+                {
+                  color: '${{ steps.release-status.outputs.color }}',
+                  fields: ${{ env.NOTIFICATION_FIELDS }}
+                }
+              ]
+            }
 
   metrics:
     needs: [release]
@@ -79,30 +148,3 @@ jobs:
         env:
           DATADOG_API_KEY: ${{ secrets.DATADOG_API_KEY }}
           OCTOKIT_TOKEN: ${{ secrets.SCRIBD_GITHUB_GENERIC_TOKEN }}
-
-  notify:
-    name: notify:slack
-    runs-on: ubuntu-18.04
-    env:
-      GITHUB_TOKEN: ${{ secrets.SCRIBD_GITHUB_GENERIC_TOKEN }}
-      SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-      SLACK_USERNAME: scribdbot
-      SLACK_CHANNEL: '#service-foundations-release'
-      SLACK_ICON: 'https://github.com/scribdbot.png?size=48'
-      SLACK_FOOTER: ""
-    needs: [release]
-    if: github.ref == 'refs/heads/main'
-    steps:
-      - name: Send Slack notification
-        uses: rtCamp/action-slack-notify@v2.1.0
-        if: failure()
-        env:
-          SLACK_COLOR: 'danger'
-          SLACK_MESSAGE: Build of commit <https://github.com/scribd/go-sdk/commit/${{ github.sha }}|${{ env.GITHUB_SHA_SHORT }}> on `main` branch of <https://github.com/${{ github.repository }}|${{ github.repository }}> failed.
-
-      - name: Send Slack notification
-        uses: rtCamp/action-slack-notify@v2.1.0
-        if: success()
-        env:
-          SLACK_COLOR: 'good'
-          SLACK_MESSAGE: Build of commit <https://github.com/scribd/go-sdk/commit/${{ github.sha }}|${{ env.GITHUB_SHA_SHORT }}> on `main` branch of <https://github.com/${{ github.repository }}|${{ github.repository }}> succeeded.
