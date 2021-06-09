@@ -92,17 +92,12 @@ jobs:
             -e GITHUB_REF=${{ github.ref }} \
             $ECR_REGISTRY/$ECR_REPOSITORY:latest --publish
 
-      - name: Output release version
-        id: output-release-version
-        run: |
-          echo "::set-output name=release-version::$(git rev-list --tags --max-count=1 | xargs git describe --tags | cut -c2-)"
-
       - name: Logout of Amazon ECR
         if: always()
         run: docker logout ${{ steps.login-ecr.outputs.registry }}
 
       - name: Set status emoji
-        id: build-status
+        id: release-status
         if: always()
         run: |
           if [ "${{ job.status }}" = "success" ]; then
@@ -128,10 +123,10 @@ jobs:
           job_name: 'Release'
           custom_payload: |
             {
-              text: `:${{ steps.build-status.outputs.emoji }}: *Workflow ${ process.env.AS_WORKFLOW } ${{ job.status }}*`,
+              text: `:${{ steps.release-status.outputs.emoji }}: *Workflow ${ process.env.AS_WORKFLOW } ${{ job.status }}*`,
               attachments: [
                 {
-                  color: '${{ steps.build-status.outputs.color }}',
+                  color: '${{ steps.release-status.outputs.color }}',
                   fields: ${{ env.NOTIFICATION_FIELDS }}
                 }
               ]
