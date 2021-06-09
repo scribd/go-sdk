@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/scribd/go-sdk/compare/v1.2.0...v1.2.1) (2021-06-09)
+
+
+### Bug Fixes
+
+* **ci:** Remove CI workflow Slack notification ([7501035](https://github.com/scribd/go-sdk/commit/7501035fe0d5e9fd9663a9691a2d1d2d7435efd0))
+
 # [1.2.0](https://github.com/scribd/go-sdk/compare/v1.1.0...v1.2.0) (2021-05-11)
 
 
