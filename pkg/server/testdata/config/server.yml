@@ -1,0 +1,19 @@
+common: &common
+  cors:
+    enabled: false
+
+test: &test
+  <<: *common
+  cors:
+    enabled: true
+    settings:
+      - path: "*"
+        allowed_origins: ["*"]
+        allowed_methods: ["GET"]
+        allowed_headers: ["Allowed-Header"]
+        exposed_headers: ["Exposed-Header"]
+        allow_credentials: true
+        max_age: 600
+
+development:
+  <<: *test
