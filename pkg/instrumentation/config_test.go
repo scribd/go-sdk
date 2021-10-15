@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
 	"testing"
 
 	assert "github.com/stretchr/testify/assert"
@@ -53,7 +54,9 @@ func TestNewConfigWithAppRoot(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			os.Setenv("APP_ROOT", filepath.Join("/", "sdk", "pkg", "instrumentation", "testfiles"))
+			_, filename, _, _ := runtime.Caller(0)
+			tmpRootParent := filepath.Dir(filename)
+			os.Setenv("APP_ROOT", filepath.Join(tmpRootParent, "testfiles"))
 
 			c, err := NewConfig()
 			require.Nil(t, err)
@@ -66,7 +69,10 @@ func TestNewConfigWithAppRoot(t *testing.T) {
 func overrideAppRootAndTest(testedVariable string, testFunc func(string)) {
 	currentAppRoot := os.Getenv("APP_ROOT")
 	defer os.Setenv("APP_ROOT", currentAppRoot)
-	os.Setenv("APP_ROOT", filepath.Join("/", "sdk", "pkg", "instrumentation", "testfiles"))
+
+	_, filename, _, _ := runtime.Caller(0)
+	tmpRootParent := filepath.Dir(filename)
+	os.Setenv("APP_ROOT", filepath.Join(tmpRootParent, "testfiles"))
 
 	overwrittenValue := "false"
 	currentEnvValue := os.Getenv(testedVariable)

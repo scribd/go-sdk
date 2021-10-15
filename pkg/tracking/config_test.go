@@ -3,6 +3,7 @@ package tracking
 import (
 	"os"
 	"path/filepath"
+	"runtime"
 	"testing"
 
 	assert "github.com/stretchr/testify/assert"
@@ -53,13 +54,15 @@ func TestNewConfig(t *testing.T) {
 		},
 	}
 
+	_, filename, _, _ := runtime.Caller(0)
+	tmpRootParent := filepath.Dir(filename)
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			os.Setenv("APP_VERSION", tc.release)
 			os.Setenv("APP_SERVER_NAME", tc.serverName)
 
 			if tc.withConfig {
-				os.Setenv("APP_ROOT", filepath.Join("/", "sdk", "pkg", "tracking", "testdata"))
+				os.Setenv("APP_ROOT", filepath.Join(tmpRootParent, "testdata"))
 			}
 
 			c, err := NewConfig()
