@@ -56,7 +56,7 @@ func TestNewConfigWithAppRoot(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			_, filename, _, _ := runtime.Caller(0)
 			tmpRootParent := filepath.Dir(filename)
-			os.Setenv("APP_ROOT", filepath.Join(tmpRootParent, "testfiles"))
+			os.Setenv("APP_ROOT", filepath.Join(tmpRootParent, "testdata"))
 
 			c, err := NewConfig()
 			require.Nil(t, err)
@@ -72,7 +72,7 @@ func overrideAppRootAndTest(testedVariable string, testFunc func(string)) {
 
 	_, filename, _, _ := runtime.Caller(0)
 	tmpRootParent := filepath.Dir(filename)
-	os.Setenv("APP_ROOT", filepath.Join(tmpRootParent, "testfiles"))
+	os.Setenv("APP_ROOT", filepath.Join(tmpRootParent, "testdata"))
 
 	overwrittenValue := "false"
 	currentEnvValue := os.Getenv(testedVariable)
