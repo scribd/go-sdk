@@ -1,6 +1,10 @@
 common: &common
   enabled: false
 
+development:
+  <<: *common
+  enabled: true
+
 test:
   <<: *common
   enabled: true
