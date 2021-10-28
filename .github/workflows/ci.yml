@@ -157,4 +157,4 @@ jobs:
           metrics-type: 'job_metrics'
         env:
           DATADOG_API_KEY: ${{ secrets.DATADOG_API_KEY }}
-          OCTOKIT_TOKEN: ${{ secrets.SCRIBD_GITHUB_GENERIC_TOKEN }}
+          OCTOKIT_TOKEN: ${{ secrets.GITHUB_TOKEN }}

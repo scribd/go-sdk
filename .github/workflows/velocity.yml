@@ -19,7 +19,7 @@ jobs:
         id: actorTeams
         with:
           username: ${{ github.event.pull_request.user.login }}
-          GITHUB_TOKEN: ${{ secrets.SCRIBD_GITHUB_GENERIC_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - id: datadog-metrics
         uses: scribd/github-action-datadog-reporting@v1
@@ -29,4 +29,4 @@ jobs:
           teams: ${{ steps.actorTeams.outputs.teams }}
         env:
           DATADOG_API_KEY: ${{ secrets.DATADOG_API_KEY }}
-          OCTOKIT_TOKEN: ${{ secrets.SCRIBD_GITHUB_GENERIC_TOKEN }}
+          OCTOKIT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
