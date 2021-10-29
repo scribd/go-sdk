@@ -56,7 +56,7 @@ jobs:
         # https://github.com/actions/checkout
         uses: actions/checkout@v2
         with:
-           token: ${{ secrets.SCRIBD_GITHUB_GENERIC_TOKEN }}
+           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Inject slug/short variables
         # A GitHub Action to expose the slug values of some GitHub ENV variables
@@ -85,7 +85,7 @@ jobs:
             -w /src \
             -e CI=true \
             -e GITHUB_ACTIONS=true \
-            -e GITHUB_TOKEN=${{ secrets.SCRIBD_GITHUB_GENERIC_TOKEN }} \
+            -e GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} \
             -e GITHUB_REPOSITORY=${{ github.repository }} \
             -e GITHUB_WORKSPACE=${{ github.workspace }} \
             -e GITHUB_SHA=${{ github.sha }} \
@@ -131,20 +131,3 @@ jobs:
                 }
               ]
             }
-
-  metrics:
-    needs: [release]
-    runs-on: ubuntu-18.04
-    name: Datadog reports
-    if: ${{ always() }}
-    steps:
-      - uses: actions/setup-ruby@v1
-        with:
-          ruby-version: 2.6
-      - uses: scribd/github-action-datadog-reporting@v1
-        with:
-          datadog-metric-prefix: 'github.action'
-          metrics-type: 'job_metrics'
-        env:
-          DATADOG_API_KEY: ${{ secrets.DATADOG_API_KEY }}
-          OCTOKIT_TOKEN: ${{ secrets.SCRIBD_GITHUB_GENERIC_TOKEN }}
