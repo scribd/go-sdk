@@ -85,7 +85,7 @@ jobs:
             -w /src \
             -e CI=true \
             -e GITHUB_ACTIONS=true \
-            -e GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} \
+            -e GITHUB_TOKEN=${{ secrets.SCRIBD_GITHUB_RELEASE_TOKEN }} \
             -e GITHUB_REPOSITORY=${{ github.repository }} \
             -e GITHUB_WORKSPACE=${{ github.workspace }} \
             -e GITHUB_SHA=${{ github.sha }} \
