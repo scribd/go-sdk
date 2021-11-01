@@ -1,3 +1,11 @@
+# [1.3.0](https://github.com/scribd/go-sdk/compare/v1.2.3...v1.3.0) (2021-11-01)
+
+
+### Features
+
+* Add CORS middleware ([74a61f7](https://github.com/scribd/go-sdk/commit/74a61f7a687656d6953b4789d5a34fac54828f5c))
+* Add CORS settings to server ([4789fc7](https://github.com/scribd/go-sdk/commit/4789fc7096fdbd710be241971ea8836e86407f15))
+
 ## [1.2.3](https://github.com/scribd/go-sdk/compare/v1.2.2...v1.2.3) (2021-11-01)
 
 
