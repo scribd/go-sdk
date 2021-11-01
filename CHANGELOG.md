@@ -1,3 +1,10 @@
+## [1.2.3](https://github.com/scribd/go-sdk/compare/v1.2.2...v1.2.3) (2021-11-01)
+
+
+### Bug Fixes
+
+* **ci:** Do not persist Github token when checking out in Release workflow ([b96c6b0](https://github.com/scribd/go-sdk/commit/b96c6b05249dc451fbe2abb773f32e2cf379974f))
+
 ## [1.2.2](https://github.com/scribd/go-sdk/compare/v1.2.1...v1.2.2) (2021-11-01)
 
 
