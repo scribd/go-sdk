@@ -20,6 +20,9 @@ SDK, the Go version.
       - [Formatting and handlers](#formatting-and-handlers)
       - [Sentry error reporting](#sentry-error-reporting)
    - [Database Connection](#database-connection)
+   - [Server](#server)
+     - [CORS settings](#cors-settings)
+     - [CORS middleware](#cors-middleware)
    - [ORM Integration](#orm-integration)
       - [Usage of ORM](#usage-of-orm)
 - [APM &amp; Instrumentation](#apm--instrumentation)
@@ -580,6 +583,83 @@ test:
 
 production:
   <<: *common
+```
+
+### Server
+
+`go-sdk` provides a convenient way to create a basic Server configuration.
+
+| Setting  | Description                      | YAML variable | Environment variable (ENV) |
+| -------- | -------------------------------- | ------------- | -------------------------- |
+| Host     | Server host                      | `host`        | `APP_SERVER_HOST`          |
+| HTTPPort | HTTP port                        | `http_port`   | `APP_SERVER_HTTP_PORT`     |
+| GRPCPort | gRPC port                        | `grpc_port`   | `APP_SERVER_GRPC_PORT`     |
+| CORS     | CORS settings                    | `cors`        |                            |
+
+An example `server.yml`:
+
+```yaml
+common: &common
+  http_port: 8080
+  cors:
+    enabled: true
+    settings:
+      - path: "*"
+        allowed_origins: ["*"]
+        allowed_methods: ["GET"]
+        allowed_headers: ["Allowed-Header"]
+        exposed_headers: ["Exposed-Header"]
+        allow_credentials: true
+        max_age: 600
+```
+
+#### CORS settings
+
+CORS stands for [Cross Origin Resource Sharing](http://www.w3.org/TR/cors/). `go-sdk` provides a basic
+optional configuration for the CORS settings that are passed to the HTTP middleware.
+
+| Setting  | Description                      | YAML variable | Environment variable (ENV) | Default |
+| -------- | -------------------------------- | ------------- | -------------------------- | ------- |
+| Enabled  | Whether CORS enabled or not      | `enabled`     | `APP_SERVER_CORS_ENABLED`  | false   |
+| Settings | List of CORS Settings            | `settings`    |                            |         |
+
+**PLEASE NOTE:** there is no way to specify `Settings` via environment variables as it is presented as
+a nested structure. To configure the CORS, use the `server.yaml` file
+
+For the full list of the CORS settings please refer to the inline documentation of the [server package](https://github.com/scribd/go-sdk/blob/main/pkg/server/config.go)
+Also, consider looking into the documentation of the [cors library](https://github.com/rs/cors#parameters) which
+currently lays under the hood of the [CORS middleware](https://github.com/scribd/go-sdk/tree/main/pkg/middleware/cors.go).
+
+#### CORS middleware
+
+CORS [middleware](https://github.com/scribd/go-sdk/tree/main/pkg/middleware/cors.go) is a tiny wrapper around the [cors library](https://github.com/rs/cors#parameters).
+It aims to provide an extensive way to configure CORS and at the same time not bind services to a particular
+implementation.
+
+Below is an example of the CORS middleware initialization:
+
+```go
+package main
+
+import (
+	"github.com/scribd/go-sdk/pkg/server"
+	"log"
+)
+
+func main() {
+	config, err := server.NewConfig()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	corsMiddleware := middleware.NewCorsMiddleware(config.Cors.Settings[0])
+
+	// possible Server implementation
+	httpServer := server.
+		NewHTTPServer(host, httpPort, applicationEnv, applicationName).
+		MountMiddleware(corsMiddleware.Handler).
+		MountRoutes(routes)
+}
 ```
 
 ### ORM Integration
