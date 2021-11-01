@@ -1,3 +1,11 @@
+## [1.2.2](https://github.com/scribd/go-sdk/compare/v1.2.1...v1.2.2) (2021-11-01)
+
+
+### Bug Fixes
+
+* **ci:** Use seperate PAT for release workflow ([7b019a9](https://github.com/scribd/go-sdk/commit/7b019a9dac1cd00a406cfbe1f3ca843e9b05273f))
+* **CI:** Use automatic token authentication via GITHUB_TOKEN in actions ([41fd4cf](https://github.com/scribd/go-sdk/commit/41fd4cfc175355726a9df013bda61207049b19ed))
+
 ## [1.2.1](https://github.com/scribd/go-sdk/compare/v1.2.0...v1.2.1) (2021-06-09)
 
 
