@@ -50,5 +50,5 @@ func (Fmt) Check() error {
 // Runs the linter.
 func (Fmt) Lint() error {
 	lintCmd := "golangci-lint"
-	return sh.RunV(lintCmd, "run")
+	return sh.RunV(lintCmd, "run", "--timeout", "10m0s")
 }
