@@ -1,3 +1,10 @@
+# [1.4.0](https://github.com/scribd/go-sdk/compare/v1.3.0...v1.4.0) (2021-11-17)
+
+
+### Features
+
+* Update modules dependencies ([e4eaa07](https://github.com/scribd/go-sdk/commit/e4eaa07f60018bd118fd236925708ed068d98c27))
+
 # [1.3.0](https://github.com/scribd/go-sdk/compare/v1.2.3...v1.3.0) (2021-11-01)
 
 
