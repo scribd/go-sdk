@@ -1,3 +1,10 @@
+## [1.4.1](https://github.com/scribd/go-sdk/compare/v1.4.0...v1.4.1) (2021-11-18)
+
+
+### Bug Fixes
+
+* Downgrade cors library to v1.7.0 ([7faef78](https://github.com/scribd/go-sdk/commit/7faef78108a2a4a93ee01d19a0a114b3b26330a8))
+
 # [1.4.0](https://github.com/scribd/go-sdk/compare/v1.3.0...v1.4.0) (2021-11-17)
 
 
