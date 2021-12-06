@@ -736,7 +736,7 @@ documentation](https://gorm.io/docs/).
 The `go-sdk` provides an easy way to add application performance monitoring
 (APM) & instrumentation to a service. It provides DataDog APM using the
 [`dd-trace-go`](https://github.com/DataDog/dd-trace-go) library. `dd-trace-go`
-provides HTTP router instrumentation, database connection & ORM instrumentation
+provides gRPC server & client interceptors, HTTP router instrumentation, database connection & ORM instrumentation
 and AWS session instrumentation. All of the traces and data are opaquely sent
 to DataDog.
 
@@ -782,6 +782,53 @@ func NewHTTPServer(host, port, applicationEnv, applicationName string) *HTTPServ
 		srv:            srv,
 		applicationEnv: applicationEnv,
 	}
+}
+```
+
+### gRPC server and client interceptors
+
+`go-sdk` ships with gRPC instrumentation, based on DataDog's
+`dd-trace-go` library. It creates new gRPC interceptors for the server & client. Thus,
+requests will create traces that will be sent opaquely to the DataDog agent.
+
+Example usage of the instrumentation:
+
+```go
+// gRPC client example
+
+si := grpctrace.StreamClientInterceptor(grpctrace.WithServiceName("client-application"))
+ui := grpctrace.UnaryClientInterceptor(grpctrace.WithServiceName("client-application"))
+
+conn, err := grpc.Dial("<gRPC host>", grpc.WithStreamInterceptor(si), grpc.WithUnaryInterceptor(ui))
+if err != nil {
+    log.Fatalf("Failed to init gRPC connection: %s", err)
+}
+defer conn.Close()
+```
+
+```go
+// gRPC server example
+
+grpcServer, err := server.NewGrpcServer(
+    host,
+    grpcPort,
+    []grpc.ServerOption{
+        grpc.ChainUnaryInterceptor(
+            sdkinterceptors.TracingUnaryServerInterceptor(applicationName),
+            sdkinterceptors.LoggerUnaryServerInterceptor(logger),
+            sdkinterceptors.MetricsUnaryServerInterceptor(metrics),
+            sdkinterceptors.DatabaseUnaryServerInterceptor(database),
+            kitgrpc.Interceptor,
+        ),
+        grpc.ChainStreamInterceptor(
+            sdkinterceptors.TracingStreamServerInterceptor(applicationName),
+            sdkinterceptors.LoggerStreamServerInterceptor(logger),
+            sdkinterceptors.MetricsStreamServerInterceptor(metrics),
+            sdkinterceptors.DatabaseStreamServerInterceptor(database),
+        ),
+    }...)
+if err != nil {
+    logger.Fatalf("Failed to create gRPC Server: %s", err)
 }
 ```
 
