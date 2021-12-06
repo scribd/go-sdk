@@ -1,3 +1,11 @@
+# [1.5.0](https://github.com/scribd/go-sdk/compare/v1.4.1...v1.5.0) (2021-12-06)
+
+
+### Features
+
+* Add server and client gRPC trace interceptors ([ac66d1b](https://github.com/scribd/go-sdk/commit/ac66d1b2ddda9ff6a43ce20314cd5cbc76b3756d))
+* Correlate traces and logs for gRPC ([e2f7f4c](https://github.com/scribd/go-sdk/commit/e2f7f4c2546e9568014b533043735881671ae101))
+
 ## [1.4.1](https://github.com/scribd/go-sdk/compare/v1.4.0...v1.4.1) (2021-11-18)
 
 
