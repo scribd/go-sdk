@@ -12,6 +12,7 @@ import (
 	grpcstatus "google.golang.org/grpc/status"
 
 	sdkcontext "github.com/scribd/go-sdk/pkg/context/logger"
+	sdkinstrumentation "github.com/scribd/go-sdk/pkg/instrumentation"
 	sdklogger "github.com/scribd/go-sdk/pkg/logger"
 )
 
@@ -62,6 +63,7 @@ func newLoggerForCall(
 	method string,
 	startTime time.Time,
 ) context.Context {
+	logContext := sdkinstrumentation.TraceLogs(ctx)
 	callLog := logger.WithFields(
 		sdklogger.Fields{
 			"system":          "grpc",
@@ -69,6 +71,10 @@ func newLoggerForCall(
 			"grpc.service":    path.Dir(method)[1:],
 			"grpc.method":     path.Base(method),
 			"grpc.start_time": startTime.Format(time.RFC3339),
+			"dd": sdklogger.Fields{
+				"trace_id": logContext.TraceID,
+				"span_id":  logContext.SpanID,
+			},
 		})
 
 	if d, ok := ctx.Deadline(); ok {
