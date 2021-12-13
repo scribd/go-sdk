@@ -20,7 +20,7 @@ require (
 	github.com/sirupsen/logrus v1.7.0
 	github.com/spf13/viper v1.4.0
 	github.com/stretchr/testify v1.7.0
-	google.golang.org/grpc v1.31.0
+	google.golang.org/grpc v1.32.0
 	gopkg.in/DataDog/dd-trace-go.v1 v1.34.0
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0
 )
