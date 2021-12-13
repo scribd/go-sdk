@@ -43,10 +43,11 @@ func (dlm DatabaseLoggingMiddleware) Handler(next http.Handler) http.Handler {
 			return
 		}
 
-		d.LogMode(true)
-		d.SetLogger(newGormLogger(l))
+		newDb := d.New()
+		newDb.LogMode(true)
+		newDb.SetLogger(newGormLogger(l))
 
-		ctx := sdkdatabasecontext.ToContext(r.Context(), d)
+		ctx := sdkdatabasecontext.ToContext(r.Context(), newDb)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
