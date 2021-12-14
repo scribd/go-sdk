@@ -1,3 +1,20 @@
+# [1.6.0](https://github.com/scribd/go-sdk/compare/v1.5.0...v1.6.0) (2021-12-14)
+
+
+### Bug Fixes
+
+* Create new gorm db instance in database_logger middleware when set logger settings to avoid data races ([5380a87](https://github.com/scribd/go-sdk/commit/5380a8726210fb8908399dc430684b0f10973b84))
+* Update database gRPC interceptors to include DB tracing (parity with database middleware) ([616c45d](https://github.com/scribd/go-sdk/commit/616c45dfb8a86f6dc2ad7ec435a5291150716d2c))
+
+
+### Features
+
+* Add database logging gRPC server interceptors ([ef8ea53](https://github.com/scribd/go-sdk/commit/ef8ea532bbd02f9a9a62c28f96e46132ea0aa93c))
+* Add mage command to generate test proto files ([6e2ffc5](https://github.com/scribd/go-sdk/commit/6e2ffc556a5a5b8fd37c517bd8dd18b25567e41c))
+* Create test grpc service ([b84d88e](https://github.com/scribd/go-sdk/commit/b84d88eb90d8b4b9a77866c8ce5874ba84a178d1))
+* Move gorm logger to logger package ([8fe5b26](https://github.com/scribd/go-sdk/commit/8fe5b26e6344e21f8607c83eb21428a939ce8d2f))
+* Upgrade grpc to v1.32.0 ([3c9127d](https://github.com/scribd/go-sdk/commit/3c9127d8e4606c90aa71a2e39967d4102e355bba))
+
 # [1.5.0](https://github.com/scribd/go-sdk/compare/v1.4.1...v1.5.0) (2021-12-06)
 
 
