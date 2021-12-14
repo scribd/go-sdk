@@ -8,6 +8,7 @@ import (
 	grpc "google.golang.org/grpc"
 
 	sdkcontext "github.com/scribd/go-sdk/pkg/context/database"
+	sdkinstrumentation "github.com/scribd/go-sdk/pkg/instrumentation"
 )
 
 // DatabaseUnaryServerInterceptor returns a unary server interceptor that adds gorm.DB to the context.
@@ -18,7 +19,9 @@ func DatabaseUnaryServerInterceptor(db *gorm.DB) grpc.UnaryServerInterceptor {
 		info *grpc.UnaryServerInfo,
 		handler grpc.UnaryHandler,
 	) (interface{}, error) {
-		newCtx := sdkcontext.ToContext(ctx, db)
+		newDb := sdkinstrumentation.TraceDatabase(ctx, db)
+		newCtx := sdkcontext.ToContext(ctx, newDb)
+
 		return handler(newCtx, req)
 	}
 }
@@ -31,7 +34,8 @@ func DatabaseStreamServerInterceptor(db *gorm.DB) grpc.StreamServerInterceptor {
 		info *grpc.StreamServerInfo,
 		handler grpc.StreamHandler,
 	) error {
-		newCtx := sdkcontext.ToContext(stream.Context(), db)
+		newDb := sdkinstrumentation.TraceDatabase(stream.Context(), db)
+		newCtx := sdkcontext.ToContext(stream.Context(), newDb)
 		wrapped := grpcmiddleware.WrapServerStream(stream)
 		wrapped.WrappedContext = newCtx
 

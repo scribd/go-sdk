@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package gosdk.testproto;
+
+option go_package="gosdk/testproto";
+
+message Empty {
+}
+
+message GetRequest {
+}
+
+message GetListRequest {
+}
+
+message GetResponse {
+  string Value = 1;
+}
+
+service TestService {
+  rpc Get(GetRequest) returns (GetResponse) {}
+
+  rpc GetList(GetListRequest) returns (stream GetResponse) {}
+}
+

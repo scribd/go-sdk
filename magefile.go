@@ -22,6 +22,18 @@ func (Test) Run() error {
 	return sh.RunWith(env, goCmd, "test", "./...", "-count=1", "-v")
 }
 
+// Generates proto test files.
+func (Test) GenerateProto() error {
+	return sh.RunV(
+		"protoc",
+		"--proto_path=./pkg/testing/testproto",
+		"--go_out=./pkg/testing/testproto",
+		"--go_opt=paths=source_relative",
+		"--go-grpc_out=./pkg/testing/testproto",
+		"--go-grpc_opt=paths=source_relative",
+		"sdktest.proto")
+}
+
 type Fmt mg.Namespace
 
 // Runs gofmt.

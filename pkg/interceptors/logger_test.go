@@ -29,7 +29,7 @@ const bufSize = 1024 * 1024
 func TestLoggerUnaryServerInterceptors(t *testing.T) {
 	var buffer bytes.Buffer
 
-	l, err := getLogger(&buffer)
+	l, err := getLogger("info", &buffer)
 	require.Nil(t, err)
 
 	mt := mocktracer.Start()
@@ -75,7 +75,7 @@ func TestLoggerUnaryServerInterceptors(t *testing.T) {
 func TestLoggerStreamServerInterceptors(t *testing.T) {
 	var buffer bytes.Buffer
 
-	l, err := getLogger(&buffer)
+	l, err := getLogger("info", &buffer)
 	require.Nil(t, err)
 
 	mt := mocktracer.Start()
@@ -133,11 +133,11 @@ func TestLoggerStreamServerInterceptors(t *testing.T) {
 	checkLoggerFields(t, fieldsStream)
 }
 
-func getLogger(buf *bytes.Buffer) (sdklogger.Logger, error) {
+func getLogger(logLevel string, buf *bytes.Buffer) (sdklogger.Logger, error) {
 	config := &sdklogger.Config{
 		ConsoleEnabled:    true,
 		ConsoleJSONFormat: true,
-		ConsoleLevel:      "info",
+		ConsoleLevel:      logLevel,
 		FileEnabled:       false,
 	}
 

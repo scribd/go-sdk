@@ -835,7 +835,7 @@ if err != nil {
 ### Database instrumentation & ORM logging
 
 `go-sdk` ships with two database-related middlewares: `Database` &
-`DatabaseLogging`.
+`DatabaseLogging` for both HTTP and gRPC servers.
 
 The `Database` middleware which instruments the
 [Gorm-powered](https://github.com/jinzhu/gorm) database connection. It utilizes
@@ -848,9 +848,10 @@ The `DatabaseLogging` middleware checks for a logger injected in the request
 which in turn uses the logger to produce database query logs. A nice
 side-effect of this approach is that, if the logger is tagged with a
 `request_id`, there's a logs correlation between the HTTP requests and the
-database queries.
+database queries. Also, if the logger is tagged with `treace_id` we can easily
+correlate logs with traces and see corresponding database queries.
 
-Example usage of the middlewares:
+#### HTTP server middleware example
 
 ```go
 func main() {
@@ -862,6 +863,33 @@ func main() {
 		MountMiddleware(databaseMiddleware.Handler).
 		MountMiddleware(databaseLoggingMiddleware.Handler).
 		MountRoutes(routes)
+}
+```
+
+#### gRPC server interceptors example
+
+```go
+func main() {
+    grpcServer, err := server.NewGrpcServer(
+        host,
+        grpcPort,
+        []grpc.ServerOption{
+            grpc.ChainUnaryInterceptor(
+                sdkinterceptors.TracingUnaryServerInterceptor(applicationName),
+                sdkinterceptors.LoggerUnaryServerInterceptor(logger),
+                sdkinterceptors.MetricsUnaryServerInterceptor(metrics),
+                sdkinterceptors.DatabaseUnaryServerInterceptor(database),
+                sdkinterceptors.DatabaseLoggingUnaryServerInterceptor(),
+                kitgrpc.Interceptor,
+            ),
+            grpc.ChainStreamInterceptor(
+                sdkinterceptors.TracingStreamServerInterceptor(applicationName),
+                sdkinterceptors.LoggerStreamServerInterceptor(logger),
+                sdkinterceptors.MetricsStreamServerInterceptor(metrics),
+                sdkinterceptors.DatabaseStreamServerInterceptor(database),
+                sdkinterceptors.DatabaseLoggingStreamServerInterceptor(),
+            ),
+        }...)
 }
 ```
 
