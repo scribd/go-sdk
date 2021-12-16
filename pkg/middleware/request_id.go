@@ -29,10 +29,8 @@ func (rm RequestIDMiddleware) Handler(next http.Handler) http.Handler {
 		requestID := r.Header.Get(RequestIDHeader)
 
 		if requestID == "" {
-			if uuid, err := uuid.NewRandom(); err == nil {
-				requestID = uuid.String()
-				r.Header.Set(RequestIDHeader, requestID)
-
+			if uuidObject, err := uuid.NewRandom(); err == nil {
+				requestID = uuidObject.String()
 			}
 		}
 

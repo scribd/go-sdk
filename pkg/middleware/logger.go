@@ -6,6 +6,7 @@ import (
 	"time"
 
 	sdkloggercontext "github.com/scribd/go-sdk/pkg/context/logger"
+	sdkrequestidcontext "github.com/scribd/go-sdk/pkg/context/requestid"
 	sdkinstrumentation "github.com/scribd/go-sdk/pkg/instrumentation"
 	sdklogger "github.com/scribd/go-sdk/pkg/logger"
 )
@@ -35,14 +36,22 @@ func NewLoggingMiddleware(l sdklogger.Logger) LoggingMiddleware {
 // Handler implements the middlewares.Handlerer interface: it returns a
 // http.Handler to be mounted as middleware.
 // This handler logs every HTTP requests that it receives with its internal
-// logger estracting various details from the request itself and calculates
+// logger extracting various details from the request itself and calculates
 // the total elapsed time per request in milliseconds.
 func (lm LoggingMiddleware) Handler(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		logContext := sdkinstrumentation.TraceLogs(r.Context())
+
+		requestID, err := sdkrequestidcontext.Extract(r.Context())
+		if err != nil {
+			lm.logger.WithFields(sdklogger.Fields{
+				"error": err.Error(),
+			}).Tracef("Could not retrieve request id from the context")
+		}
+
 		logger := lm.logger.WithFields(sdklogger.Fields{
 			"http": sdklogger.Fields{
-				"request_id": r.Header.Get(RequestIDHeader),
+				"request_id": requestID,
 			},
 			"dd": sdklogger.Fields{
 				"trace_id": logContext.TraceID,
@@ -69,7 +78,7 @@ func (lm LoggingMiddleware) Handler(next http.Handler) http.Handler {
 		logger = logger.WithFields(sdklogger.Fields{
 			"http": sdklogger.Fields{
 				"remote_addr":            r.RemoteAddr,
-				"request_id":             r.Header.Get(RequestIDHeader),
+				"request_id":             requestID,
 				"request_ip":             r.Header.Get(ForwardedForHeader),
 				"request_method":         r.Method,
 				"request_path":           r.URL.EscapedPath(),
