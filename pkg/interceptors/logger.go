@@ -12,6 +12,7 @@ import (
 	grpcstatus "google.golang.org/grpc/status"
 
 	sdkcontext "github.com/scribd/go-sdk/pkg/context/logger"
+	sdkrequestidcontext "github.com/scribd/go-sdk/pkg/context/requestid"
 	sdkinstrumentation "github.com/scribd/go-sdk/pkg/instrumentation"
 	sdklogger "github.com/scribd/go-sdk/pkg/logger"
 )
@@ -64,12 +65,21 @@ func newLoggerForCall(
 	startTime time.Time,
 ) context.Context {
 	logContext := sdkinstrumentation.TraceLogs(ctx)
+
+	requestID, err := sdkrequestidcontext.Extract(ctx)
+	if err != nil {
+		logger.WithFields(sdklogger.Fields{
+			"error": err.Error(),
+		}).Tracef("Could not retrieve request id from the context")
+	}
+
 	callLog := logger.WithFields(
 		sdklogger.Fields{
 			"system":          "grpc",
 			"span.kind":       "server",
 			"grpc.service":    path.Dir(method)[1:],
 			"grpc.method":     path.Base(method),
+			"grpc.request_id": requestID,
 			"grpc.start_time": startTime.Format(time.RFC3339),
 			"dd": sdklogger.Fields{
 				"trace_id": logContext.TraceID,

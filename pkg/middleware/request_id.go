@@ -1,12 +1,11 @@
 package middleware
 
 import (
-	"context"
 	"net/http"
 
 	"github.com/google/uuid"
 
-	"github.com/scribd/go-sdk/pkg/contextkeys"
+	"github.com/scribd/go-sdk/pkg/context/requestid"
 )
 
 const (
@@ -30,14 +29,12 @@ func (rm RequestIDMiddleware) Handler(next http.Handler) http.Handler {
 		requestID := r.Header.Get(RequestIDHeader)
 
 		if requestID == "" {
-			if uuid, err := uuid.NewRandom(); err == nil {
-				requestID = uuid.String()
-				r.Header.Set(RequestIDHeader, requestID)
-
+			if uuidObject, err := uuid.NewRandom(); err == nil {
+				requestID = uuidObject.String()
 			}
 		}
 
-		ctx := context.WithValue(r.Context(), contextkeys.RequestID, requestID)
+		ctx := requestid.ToContext(r.Context(), requestID)
 
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
