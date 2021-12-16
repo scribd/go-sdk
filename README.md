@@ -6,39 +6,46 @@ SDK, the Go version.
 
 - [Prerequisites](#prerequisites)
 - [SDK functionality](#sdk-functionality)
-   - [Application Configuration](#application-configuration)
-      - [Predefined application-agnostic configurations](#predefined-application-agnostic-configurations)
-      - [Custom application-specific configurations](#custom-application-specific-configurations)
-      - [Environment-awareness](#environment-awareness)
-      - [Using application configuration in tests](#using-application-configuration-in-tests)
-   - [Logger](#logger)
-      - [Initialization and default configuration](#initialization-and-default-configuration)
-      - [Environment-awareness](#environment-awareness-1)
-      - [Log levels](#log-levels)
-      - [Structured logging](#structured-logging)
-   - [Logging &amp; tracing middleware](#logging--tracing-middleware)
-      - [Formatting and handlers](#formatting-and-handlers)
-      - [Sentry error reporting](#sentry-error-reporting)
-   - [Database Connection](#database-connection)
-   - [Server](#server)
-     - [CORS settings](#cors-settings)
-     - [CORS middleware](#cors-middleware)
-   - [ORM Integration](#orm-integration)
-      - [Usage of ORM](#usage-of-orm)
-- [APM &amp; Instrumentation](#apm--instrumentation)
-   - [Request ID middleware](#request-id-middleware)
-   - [HTTP Router Instrumentation](#http-router-instrumentation)
-   - [Database instrumentation &amp; ORM logging](#database-instrumentation--orm-logging)
-   - [AWS Session instrumentation](#aws-session-instrumentation)
-   - [Profiling](#profiling)
-   - [Custom Metrics](#custom-metrics)
-- [Using the go-sdk in isolation](#using-the-go-sdk-in-isolation)
+    - [Application Configuration](#application-configuration)
+        - [Predefined application-agnostic configurations](#predefined-application-agnostic-configurations)
+        - [Custom application-specific configurations](#custom-application-specific-configurations)
+        - [Environment-awareness](#environment-awareness)
+        - [Using application configuration in tests](#using-application-configuration-in-tests)
+    - [Logger](#logger)
+        - [Initialization and default configuration](#initialization-and-default-configuration)
+        - [Environment-awareness](#environment-awareness-1)
+        - [Log levels](#log-levels)
+        - [Structured logging](#structured-logging)
+    - [Logging & tracing middleware](#logging---tracing-middleware)
+        - [HTTP server middleware](#http-server-middleware)
+        - [gRPC server interceptors](#grpc-server-interceptors)
+        - [Formatting and handlers](#formatting-and-handlers)
+        - [Sentry error reporting](#sentry-error-reporting)
+    - [Database Connection](#database-connection)
+    - [Server](#server)
+        - [CORS settings](#cors-settings)
+        - [CORS middleware](#cors-middleware)
+    - [ORM Integration](#orm-integration)
+        - [Usage of ORM](#usage-of-orm)
+- [APM & Instrumentation](#apm---instrumentation)
+    - [Request ID middleware](#request-id-middleware)
+        - [HTTP server Request ID middleware](#http-server-request-id-middleware)
+        - [gRPC server Request ID interceptors](#grpc-server-request-id-interceptors)
+    - [HTTP Router Instrumentation](#http-router-instrumentation)
+    - [gRPC server and client interceptors](#grpc-server-and-client-interceptors)
+    - [Database instrumentation & ORM logging](#database-instrumentation---orm-logging)
+        - [HTTP server middleware example](#http-server-middleware-example)
+        - [gRPC server interceptors example](#grpc-server-interceptors-example)
+    - [AWS Session instrumentation](#aws-session-instrumentation)
+    - [Profiling](#profiling)
+    - [Custom Metrics](#custom-metrics)
+- [Using the `go-sdk` in isolation](#using-the--go-sdk--in-isolation)
 - [Developing the SDK](#developing-the-sdk)
-   - [Building the docker environment](#building-the-docker-environment)
-   - [Running tests within the docker environment](#running-tests-within-the-docker-environment)
-   - [Entering the docker environment](#entering-the-docker-environment)
-   - [Using a development build of go-sdk](#using-a-development-build-of-go-sdk)
-   - [Commit messages](#commit-messages)
+    - [Building the docker environment](#building-the-docker-environment)
+    - [Running tests within the docker environment](#running-tests-within-the-docker-environment)
+    - [Entering the docker environment](#entering-the-docker-environment)
+    - [Using a development build of `go-sdk`](#using-a-development-build-of--go-sdk-)
+    - [Commit messages](#commit-messages)
 - [Release](#release)
 - [Maintainers](#maintainers)
 
@@ -402,13 +409,10 @@ The list of fields are:
 
 ### Logging & tracing middleware
 
-`go-sdk` ships with a `Logger` middleware. When used, it assigns a random
-UUID as a `RequestID`, if none exists, and it opens a new span using Datadog's
-`ddtrace` library. The span has a corresponding `SpanID` that is used to easily
-create sub-spans for application performance monitoring (APM). The `RequestID`
-is used for request-scoped logs correlation.
+`go-sdk` ships with a `Logger` middleware. When used, it tries to retrieve the `RequestID`, `TraceID` and `SpanID`
+from the incoming context. Then, middleware assigns those values to the log entries for further correlation.
 
-Example usage of the middleware:
+#### HTTP server middleware
 
 ```go
 func main() {
@@ -418,6 +422,28 @@ func main() {
 		NewHTTPServer(host, httpPort, applicationEnv, applicationName).
 		MountMiddleware(loggingMiddleware.Handler).
 		MountRoutes(routes)
+}
+```
+
+#### gRPC server interceptors
+
+```go
+func main() {
+    rpcServer, err := server.NewGrpcServer(
+        host,
+        grpcPort,
+        []grpc.ServerOption{
+            grpc.ChainUnaryInterceptor(
+                sdkinterceptors.TracingUnaryServerInterceptor(applicationName),
+                sdkinterceptors.RequestIDUnaryServerInterceptor(),
+                sdkinterceptors.LoggerUnaryServerInterceptor(logger),
+            ),
+            grpc.ChainStreamInterceptor(
+                sdkinterceptors.TracingStreamServerInterceptor(applicationName),
+                sdkinterceptors.RequestIDStreamServerInterceptor(),
+                sdkinterceptors.LoggerStreamServerInterceptor(logger),
+            ),
+        }...)
 }
 ```
 
@@ -743,8 +769,11 @@ to DataDog.
 ### Request ID middleware
 
 For easier identification of requests and their tracing within components of a
-single service, and across-services, `go-sdk` ships has a `RequestID`
-middleware. It checks every incoming request for a `X-Request-Id` HTTP header
+single service, and across-services, `go-sdk` has a `RequestID` middleware.
+
+#### HTTP server Request ID middleware
+
+As an HTTP middleware, it checks every incoming request for a `X-Request-Id` HTTP header
 and sets the value of the header as a field in the request `Context`. In case
 there's no `RequestID` present, it will generate a UUID and assign it in the
 request `Context`.
@@ -759,6 +788,34 @@ func main() {
 		NewHTTPServer(host, httpPort, applicationEnv, applicationName).
 		MountMiddleware(requestIDMiddleware.Handler).
 		MountRoutes(routes)
+}
+```
+
+#### gRPC server Request ID interceptors
+
+For the gRPC server, sdk provides unary and stream interceptors. It checks every incoming request
+for a `x-request-id` [grpc metadata](https://github.com/grpc/grpc-go/blob/master/Documentation/grpc-metadata.md) header and sets the value of the header as a field in the request `Context`.
+In case there's no `RequestID` present, it will generate a UUID and assign it in the request `Context`.
+
+Example usage of interceptors:
+
+```go
+func main() {
+    grpcServer, err := server.NewGrpcServer(
+        host,
+        grpcPort,
+        []grpc.ServerOption{
+            grpc.ChainUnaryInterceptor(
+                sdkinterceptors.TracingUnaryServerInterceptor(applicationName),
+                sdkinterceptors.RequestIDUnaryServerInterceptor(),
+                sdkinterceptors.LoggerUnaryServerInterceptor(logger),
+            ),
+            grpc.ChainStreamInterceptor(
+                sdkinterceptors.TracingStreamServerInterceptor(applicationName),
+                sdkinterceptors.RequestIDStreamServerInterceptor(),
+                sdkinterceptors.LoggerStreamServerInterceptor(logger),
+            ),
+        }...)
 }
 ```
 
