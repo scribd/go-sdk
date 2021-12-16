@@ -1,3 +1,18 @@
+# [1.7.0](https://github.com/scribd/go-sdk/compare/v1.6.0...v1.7.0) (2021-12-16)
+
+
+### Bug Fixes
+
+* Retrieve request id from the context in logger middleware instead of getting it from the request header ([0d74e33](https://github.com/scribd/go-sdk/commit/0d74e33541ddc8c950f32698189e3712df71ad8a))
+
+
+### Features
+
+* Add context helpers for request id ([7997f79](https://github.com/scribd/go-sdk/commit/7997f79ecc440bd88854522f35302fba3aac9347))
+* Add request ID gRPC interceptors ([5e73a20](https://github.com/scribd/go-sdk/commit/5e73a20ce2acbf979d42af8d66de94df01d7ab0c))
+* Pass request id in logger interceptor ([46c8596](https://github.com/scribd/go-sdk/commit/46c859667c3723736d6608b443de3fd5d4a3b5a9))
+* Use pkg/context/requestid for request_id middleware ([20e2349](https://github.com/scribd/go-sdk/commit/20e234932c9a5e1400fb9592064f6c59aa734dac))
+
 # [1.6.0](https://github.com/scribd/go-sdk/compare/v1.5.0...v1.6.0) (2021-12-14)
 
 
