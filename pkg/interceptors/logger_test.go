@@ -39,6 +39,7 @@ func TestLoggerUnaryServerInterceptors(t *testing.T) {
 	s := grpc.NewServer([]grpc.ServerOption{
 		grpc.ChainUnaryInterceptor(
 			TracingUnaryServerInterceptor("test"),
+			RequestIDUnaryServerInterceptor(),
 			LoggerUnaryServerInterceptor(l),
 		),
 	}...)
@@ -85,6 +86,7 @@ func TestLoggerStreamServerInterceptors(t *testing.T) {
 	s := grpc.NewServer([]grpc.ServerOption{
 		grpc.ChainStreamInterceptor(
 			TracingStreamServerInterceptor("test"),
+			RequestIDStreamServerInterceptor(),
 			LoggerStreamServerInterceptor(l),
 		),
 	}...)
@@ -155,6 +157,7 @@ func checkLoggerFields(t *testing.T, fields map[string]interface{}) {
 	assert.NotEmpty(t, fields["grpc.start_time"])
 	assert.NotEmpty(t, fields["grpc.code"])
 	assert.NotEmpty(t, fields["grpc.time_ms"])
+	assert.NotEmpty(t, fields["grpc.request_id"])
 
 	var dd = (fields["dd"]).(map[string]interface{})
 
