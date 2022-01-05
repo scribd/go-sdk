@@ -8,7 +8,7 @@ require (
 	github.com/Microsoft/go-winio v0.5.1 // indirect
 	github.com/aws/aws-sdk-go v1.25.33
 	github.com/getsentry/sentry-go v0.12.0
-	github.com/google/go-cmp v0.5.5
+	github.com/google/go-cmp v0.5.6
 	github.com/google/uuid v1.3.0
 	github.com/grpc-ecosystem/go-grpc-middleware v1.0.0
 	github.com/jinzhu/gorm v1.9.11
@@ -18,10 +18,10 @@ require (
 	github.com/philhofer/fwd v1.0.0 // indirect
 	github.com/rs/cors v1.7.0
 	github.com/sirupsen/logrus v1.7.0
-	github.com/spf13/viper v1.4.0
+	github.com/spf13/viper v1.10.1
 	github.com/stretchr/testify v1.7.0
-	google.golang.org/grpc v1.32.0
-	google.golang.org/protobuf v1.25.0
+	google.golang.org/grpc v1.43.0
+	google.golang.org/protobuf v1.27.1
 	gopkg.in/DataDog/dd-trace-go.v1 v1.34.0
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0
 )
