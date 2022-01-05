@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"github.com/jinzhu/gorm"
 	"github.com/scribd/go-sdk/pkg/testing/testproto"
+	"google.golang.org/grpc/credentials/insecure"
 	"io"
 	golog "log"
 	"net"
@@ -85,7 +86,7 @@ func TestDatabaseLoggingUnaryServerInterceptor(t *testing.T) {
 		grpc.WithContextDialer(func(ctx context.Context, s string) (net.Conn, error) {
 			return lis.Dial()
 		}),
-		grpc.WithInsecure())
+		grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		t.Fatalf("Failed to dial bufnet: %v", err)
 	}
@@ -158,7 +159,7 @@ func TestDatabaseLoggingStreamServerInterceptors(t *testing.T) {
 	ctx := context.Background()
 	conn, err := grpc.DialContext(ctx,
 		"bufnet",
-		grpc.WithInsecure(),
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithContextDialer(func(ctx context.Context, s string) (net.Conn, error) {
 			return lis.Dial()
 		}))

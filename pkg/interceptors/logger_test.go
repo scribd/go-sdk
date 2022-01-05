@@ -14,6 +14,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/test/bufconn"
 	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/mocktracer"
 
@@ -56,7 +57,7 @@ func TestLoggerUnaryServerInterceptors(t *testing.T) {
 		grpc.WithContextDialer(func(ctx context.Context, s string) (net.Conn, error) {
 			return lis.Dial()
 		}),
-		grpc.WithInsecure())
+		grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		t.Fatalf("Failed to dial bufnet: %v", err)
 	}
@@ -102,7 +103,7 @@ func TestLoggerStreamServerInterceptors(t *testing.T) {
 	ctx := context.Background()
 	conn, err := grpc.DialContext(ctx,
 		"bufnet",
-		grpc.WithInsecure(),
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithContextDialer(func(ctx context.Context, s string) (net.Conn, error) {
 			return lis.Dial()
 		}))
