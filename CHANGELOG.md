@@ -1,3 +1,11 @@
+# [1.7.1](https://github.com/scribd/go-sdk/compare/v1.7.0...v1.7.1) (2022-01-10)
+
+
+### Security Fixes
+
+* Upgrade sentry-go module to version v0.12.0 ([4bbe60c](https://github.com/scribd/go-sdk/commit/4bbe60ca19d45e607bb77acffd95ce545819cf2c))
+* Upgrade viper module to version  v1.10.1 ([2ab5fb5](https://github.com/scribd/go-sdk/commit/2ab5fb5486176b90556426f94a4c8ab38da64b61))
+
 # [1.7.0](https://github.com/scribd/go-sdk/compare/v1.6.0...v1.7.0) (2021-12-16)
 
 
