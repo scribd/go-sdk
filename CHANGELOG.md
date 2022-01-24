@@ -1,3 +1,12 @@
+# [1.8.0](https://github.com/scribd/go-sdk/compare/v1.7.1...v1.8.0) (2022-01-24)
+
+
+### Features
+
+* Support //go:build lines together with // +build ([4cbdd4d](https://github.com/scribd/go-sdk/commit/4cbdd4df028266015d456ebf2c72186c135f5f60))
+* **Dockerfile:** Bump to Go 1.17.6 ([4080b1d](https://github.com/scribd/go-sdk/commit/4080b1df82bca1161b02c32d1f7cff8bced4aeff))
+* **go:** Bump to Go 1.17 ([8d5cc40](https://github.com/scribd/go-sdk/commit/8d5cc404f683e18d13fa821f7a06b8e776e252e2))
+
 # [1.7.1](https://github.com/scribd/go-sdk/compare/v1.7.0...v1.7.1) (2022-01-10)
 
 
