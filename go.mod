@@ -1,6 +1,6 @@
 module github.com/scribd/go-sdk
 
-go 1.16
+go 1.17
 
 require (
 	github.com/DATA-DOG/go-txdb v0.1.3
