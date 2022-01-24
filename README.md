@@ -51,7 +51,7 @@ SDK, the Go version.
 
 ## Prerequisites
 
-* [Go](https://golang.org) (version `1.16.4`).
+* [Go](https://golang.org) (version `1.17.6`).
 * [Docker](https://www.docker.com/) (version `19.03.2`).
 
 ## SDK functionality
@@ -1152,7 +1152,7 @@ You can enter the docker environment to build, run and debug your service:
 ```
 $ docker-compose run --rm sdk /bin/bash
 root@1f31fa8e5c49:/sdk# go version
-go version go1.16.4 linux/amd64
+go version go1.17.6 linux/amd64
 ```
 
 Refer to the
