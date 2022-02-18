@@ -1,7 +1,6 @@
 package instrumentation
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -62,11 +61,43 @@ func TestNewConfigWithAppRoot(t *testing.T) {
 			require.Nil(t, err)
 
 			assert.Equal(t, c.Enabled, tc.enabled)
+			assert.Equal(t, c.CodeHotspotsEnabled, tc.enabled)
 		})
 	}
 }
 
-func overrideAppRootAndTest(testedVariable string, testFunc func(string)) {
+func TestNewConfigWithAppRootAndOverwriteFromEnvTheEnableFlag(t *testing.T) {
+	type keyValue struct {
+		key, value string
+
+		check func(c *Config) bool
+	}
+
+	testCases := []struct {
+		name string
+		keys []keyValue
+	}{
+		{
+			name: "NewWithConfigWithEnvVariablesOverwritten",
+			keys: []keyValue{
+				{
+					key:   "APP_DATADOG_ENABLED",
+					value: "false",
+					check: func(c *Config) bool {
+						return !c.Enabled
+					},
+				},
+				{
+					key:   "APP_DATADOG_CODE_HOTSPOTS_ENABLED",
+					value: "false",
+					check: func(c *Config) bool {
+						return !c.CodeHotspotsEnabled
+					},
+				},
+			},
+		},
+	}
+
 	currentAppRoot := os.Getenv("APP_ROOT")
 	defer os.Setenv("APP_ROOT", currentAppRoot)
 
@@ -74,33 +105,20 @@ func overrideAppRootAndTest(testedVariable string, testFunc func(string)) {
 	tmpRootParent := filepath.Dir(filename)
 	os.Setenv("APP_ROOT", filepath.Join(tmpRootParent, "testdata"))
 
-	overwrittenValue := "false"
-	currentEnvValue := os.Getenv(testedVariable)
-	os.Setenv(testedVariable, overwrittenValue)
-	defer os.Setenv(testedVariable, currentEnvValue)
-
-	testFunc(overwrittenValue)
-}
-
-func TestNewConfigWithAppRootAndOverwriteFromEnvTheEnableFlag(t *testing.T) {
-	testCases := []struct {
-		name    string
-		keyName string
-	}{
-		{
-			name:    "NewWithConfigFileWorks",
-			keyName: "APP_DATADOG_ENABLED",
-		},
-	}
-
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			overrideAppRootAndTest(tc.keyName, func(overwrittenValue string) {
-				c, err := NewConfig()
-				require.Nil(t, err)
+			for _, kv := range tc.keys {
+				func(kv keyValue) {
+					currentEnvValue := os.Getenv(kv.key)
+					os.Setenv(kv.key, kv.value)
+					defer os.Setenv(kv.key, currentEnvValue)
 
-				assert.Equal(t, fmt.Sprintf("%t", c.Enabled), overwrittenValue)
-			})
+					c, err := NewConfig()
+					require.Nil(t, err)
+
+					assert.True(t, kv.check(c))
+				}(kv)
+			}
 		})
 	}
 }

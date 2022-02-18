@@ -1,6 +1,10 @@
 package instrumentation
 
-import "gopkg.in/DataDog/dd-trace-go.v1/profiler"
+import (
+	"time"
+
+	"gopkg.in/DataDog/dd-trace-go.v1/profiler"
+)
 
 // Profiler wraps DataDog profiles exporter.
 type Profiler struct {
@@ -28,6 +32,14 @@ func (p *Profiler) Stop() {
 // You can include common options like: profiler.WithService(appName), profiler.WithVersion(version).
 func NewProfiler(config *Config, options ...profiler.Option) *Profiler {
 	options = append(options, profiler.WithEnv(config.environment))
+
+	if config.CodeHotspotsEnabled {
+		options = append(
+			options,
+			profiler.CPUDuration(time.Minute),
+			profiler.WithPeriod(time.Minute),
+		)
+	}
 
 	return &Profiler{
 		enabled: config.Enabled,
