@@ -4,7 +4,9 @@ common: &common
 development:
   <<: *common
   enabled: true
+  code_hotspots_enabled: true
 
 test:
   <<: *common
   enabled: true
+  code_hotspots_enabled: true

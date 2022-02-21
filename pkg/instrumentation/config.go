@@ -9,6 +9,8 @@ import (
 type Config struct {
 	environment string
 	Enabled     bool `mapstructure:"enabled"`
+	// Enable Profiler Code Hostspots feature
+	CodeHotspotsEnabled bool `mapstructure:"code_hotspots_enabled"`
 }
 
 // NewConfig returns a new ServerConfig instance.

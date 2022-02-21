@@ -35,6 +35,14 @@ func NewTracer(config *Config, options ...tracer.StartOption) *Tracer {
 		tracer.WithGlobalTag("env", config.environment),
 	)
 
+	if config.CodeHotspotsEnabled {
+		options = append(
+			options,
+			tracer.WithProfilerCodeHotspots(true),
+			tracer.WithProfilerEndpoints(true),
+		)
+	}
+
 	return &Tracer{
 		Enabled:     config.Enabled,
 		Environment: config.environment,
