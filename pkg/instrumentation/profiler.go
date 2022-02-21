@@ -31,7 +31,11 @@ func (p *Profiler) Stop() {
 // NewProfiler constructs new profiler with options.
 // You can include common options like: profiler.WithService(appName), profiler.WithVersion(version).
 func NewProfiler(config *Config, options ...profiler.Option) *Profiler {
-	options = append(options, profiler.WithEnv(config.environment))
+	options = append(
+		options,
+		profiler.WithEnv(config.environment),
+		profiler.WithVersion(config.ServiceVersion),
+	)
 
 	if config.CodeHotspotsEnabled {
 		options = append(

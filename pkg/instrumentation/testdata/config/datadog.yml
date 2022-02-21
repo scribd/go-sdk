@@ -1,5 +1,6 @@
 common: &common
   enabled: false
+  service_version: ""
 
 development:
   <<: *common

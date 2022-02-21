@@ -62,6 +62,7 @@ func TestNewConfigWithAppRoot(t *testing.T) {
 
 			assert.Equal(t, c.Enabled, tc.enabled)
 			assert.Equal(t, c.CodeHotspotsEnabled, tc.enabled)
+			assert.Equal(t, c.ServiceVersion, "")
 		})
 	}
 }
@@ -92,6 +93,13 @@ func TestNewConfigWithAppRootAndOverwriteFromEnvTheEnableFlag(t *testing.T) {
 					value: "false",
 					check: func(c *Config) bool {
 						return !c.CodeHotspotsEnabled
+					},
+				},
+				{
+					key:   "APP_DATADOG_SERVICE_VERSION",
+					value: "v1.0.0",
+					check: func(c *Config) bool {
+						return c.ServiceVersion == "v1.0.0"
 					},
 				},
 			},

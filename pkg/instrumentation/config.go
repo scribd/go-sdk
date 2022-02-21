@@ -9,7 +9,9 @@ import (
 type Config struct {
 	environment string
 	Enabled     bool `mapstructure:"enabled"`
-	// Enable Profiler Code Hostspots feature
+
+	ServiceVersion string `mapstructure:"service_version"`
+	// Enable Profiler Code Hotspots feature
 	CodeHotspotsEnabled bool `mapstructure:"code_hotspots_enabled"`
 }
 
