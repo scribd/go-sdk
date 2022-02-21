@@ -1,3 +1,11 @@
+# [1.9.0](https://github.com/scribd/go-sdk/compare/v1.8.0...v1.9.0) (2022-02-21)
+
+
+### Features
+
+* Provide a way to configure profiling code hostpots ([79b9a45](https://github.com/scribd/go-sdk/commit/79b9a45949cd5b3e8a1226abcea0d19b67a0e4a2))
+* Upgrade dd-trace-go to v1.36.0 version ([11370a1](https://github.com/scribd/go-sdk/commit/11370a1c8659d41c1447b8709db9c4f3702e65bb))
+
 # [1.8.0](https://github.com/scribd/go-sdk/compare/v1.7.1...v1.8.0) (2022-01-24)
 
 
