@@ -1,3 +1,11 @@
+# [1.10.0](https://github.com/scribd/go-sdk/compare/v1.9.0...v1.10.0) (2022-03-24)
+
+
+### Features
+
+* Add PubSub configuration ([1576521](https://github.com/scribd/go-sdk/commit/15765218470b17face9b2917aab7c29048b88557))
+* Expose PubSub config via main config entrypoint ([9dbb14c](https://github.com/scribd/go-sdk/commit/9dbb14cca2ff7e9da9a669b191d42ec35eccc95c))
+
 # [1.9.0](https://github.com/scribd/go-sdk/compare/v1.8.0...v1.9.0) (2022-02-21)
 
 
