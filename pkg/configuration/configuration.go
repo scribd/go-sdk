@@ -5,6 +5,7 @@ import (
 	database "github.com/scribd/go-sdk/pkg/database"
 	instrumentation "github.com/scribd/go-sdk/pkg/instrumentation"
 	logger "github.com/scribd/go-sdk/pkg/logger"
+	"github.com/scribd/go-sdk/pkg/pubsub"
 	server "github.com/scribd/go-sdk/pkg/server"
 	tracking "github.com/scribd/go-sdk/pkg/tracking"
 )
@@ -17,6 +18,7 @@ type Config struct {
 	Logger          *logger.Config
 	Server          *server.Config
 	Tracking        *tracking.Config
+	PubSub          *pubsub.Config
 }
 
 // NewConfig returns a new Config instance
@@ -53,12 +55,18 @@ func NewConfig() (*Config, error) {
 		return config, err
 	}
 
+	pubsubConfig, err := pubsub.NewConfig()
+	if err != nil {
+		return config, err
+	}
+
 	config.App = appConfig
 	config.Database = dbConfig
 	config.Instrumentation = instrumentationConfig
 	config.Logger = loggerConfig
 	config.Server = serverConfig
 	config.Tracking = trackingConfig
+	config.PubSub = pubsubConfig
 
 	return config, nil
 }
