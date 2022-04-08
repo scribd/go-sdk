@@ -51,5 +51,7 @@ func NewConfig() (*Config, error) {
 		return config, fmt.Errorf("unable to decode into struct: %s", err.Error())
 	}
 
+	config.Kafka.BrokerUrls = vConf.GetStringSlice("kafka.broker_urls")
+
 	return config, nil
 }
