@@ -9,6 +9,7 @@ SDK, the Go version.
     - [Application Configuration](#application-configuration)
         - [Predefined application-agnostic configurations](#predefined-application-agnostic-configurations)
         - [Custom application-specific configurations](#custom-application-specific-configurations)
+        - [Complex values representation](#complex-values-representation)
         - [Environment-awareness](#environment-awareness)
         - [Using application configuration in tests](#using-application-configuration-in-tests)
     - [Logger](#logger)
@@ -147,6 +148,43 @@ APP_SETTINGS_NAME=my-really-awesome-app
 ```
 
 The environment variable has the precedence over the configuration file.
+
+#### Complex values representation
+
+Since `yaml` data type support is much richer than environment variables we have to take extra care if we want to
+override `yaml` complex data types such as `list` and `dictionary`.
+
+To represent the `list` we can use space-separated values:
+
+```bash
+APP_SETTINGS_NAME="value1 value2"
+```
+
+And then, on the application side we have to convert it to a string slice manually:
+
+```go
+// if the value is the part of `settings.yml`
+stringSlice := sdk.Config.App.StringSlice("name")
+
+// or calling the Viper's API directly
+stringSlice := viper.GetStringSlice("app.settings.name")
+```
+
+To represent the `dictionary` we can use a JSON:
+
+```bash
+APP_SETTINGS_NAME="{\"key\":\"value\"}"
+```
+
+And then, on the application side we have to convert it to a string map manually:
+
+```go
+// if the value is the part of `settings.yml`
+stringMap := sdk.Config.App.StringMapString("name")
+
+// or calling the Viper's API directly
+stringMap := viper.GetStringMapString("app.settings.name")
+```
 
 #### Environment-awareness
 
