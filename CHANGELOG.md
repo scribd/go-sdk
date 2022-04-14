@@ -1,3 +1,10 @@
+## [1.10.1](https://github.com/scribd/go-sdk/compare/v1.10.0...v1.10.1) (2022-04-14)
+
+
+### Bug Fixes
+
+* Convert broker urls to string slice explicitly ([0c0713e](https://github.com/scribd/go-sdk/commit/0c0713edad89c53159e0c923c3225b26754fac77))
+
 # [1.10.0](https://github.com/scribd/go-sdk/compare/v1.9.0...v1.10.0) (2022-03-24)
 
 
