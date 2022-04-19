@@ -28,6 +28,8 @@ SDK, the Go version.
         - [CORS middleware](#cors-middleware)
     - [ORM Integration](#orm-integration)
         - [Usage of ORM](#usage-of-orm)
+    - [PubSub](#pubsub)
+        - [Kafka specific configuration](#kafka-specific-configuration)
 - [APM & Instrumentation](#apm---instrumentation)
     - [Request ID middleware](#request-id-middleware)
         - [HTTP server Request ID middleware](#http-server-request-id-middleware)
@@ -91,6 +93,8 @@ The list of predefined top-level configurations:
   `config/database.yml` configuration file.
 * `Redis`, containing the application Redis configuration, expects a
   `config/redis.yml` configuration file. (TBD)
+* `PubSub`, containing the application pubsub configuration, expects a
+  `config/pubsub.yml` configuration file.
 * <insert new configuration here>
 
 For example, to get the host and the port at which the HTTP server listens on
@@ -794,6 +798,66 @@ func main() {
 
 To learn more about Gorm, you can start with its [official
 documentation](https://gorm.io/docs/).
+
+### PubSub
+
+`go-sdk` provides a convenient way to create a basic [PubSub](https://en.wikipedia.org/wiki/Publish%E2%80%93subscribe_pattern) configuration.
+
+Top-level configuration is split into sections specific for the vendor. Let's look into the sample `pubsub.yml` file:
+
+```yaml
+common: &common
+  kafka:
+    # Set by APP_PUBSUB_KAFKA_BROKER_URLS env variable
+    broker_urls:
+      - "localhost:9092"
+    # Set by APP_PUBSUB_KAFKA_CLIENT_ID env variable
+    client_id: "test-app"
+    # Set by APP_PUBSUB_KAFKA_CERT_PEM env variable
+    cert_pem: "pem string"
+    # Set by APP_PUBSUB_KAFKA_CERT_PEM_KEY env variable
+    cert_pem_key: "pem key"
+    security_protocol: "ssl"
+    ssl_verification_enabled: true
+    publisher:
+      # Set by APP_PUBSUB_KAFKA_PUBLISHER_MAX_ATTEMPTS env variable
+      max_attempts: 3
+      write_timeout: "10s"
+      topic: "test-topic"
+    subscriber:
+      topic: "test-topic"
+      group_id: ""
+```
+
+#### Kafka specific configuration
+
+Kafka top-level configuration contains generic options that fit both publisher and subscriber:
+
+| Setting                  | Description                                                       | YAML variable              | Environment variable (ENV)                  | Type         | Possible Values                          |
+|--------------------------|-------------------------------------------------------------------|----------------------------|---------------------------------------------|--------------|------------------------------------------|
+| Broker URLs              | Broker URLs to connect to                                         | `broker_urls`              | `APP_PUBSUB_KAFKA_BROKER_URLS`              | list(string) | localhost:9093                           |
+| Client ID                | Client identifier                                                 | `client_id`                | `APP_PUBSUB_KAFKA_CLIENT_ID`                | string       | go-chassis-app                           |
+| Cert PEM                 | Client's public key string (PEM format) used for authentication   | `cert_pem`                 | `APP_PUBSUB_KAFKA_CERT_PEM`                 | string       | long PEM string                          |
+| Cert PEM Key             | Client's private key string (PEM format) used for authentication  | `cert_pem_key`             | `APP_PUBSUB_KAFKA_CERT_PEM_KEY`             | string       | long PEM key string                      |
+| Security Protocol        | Protocol used to communicate with brokers                         | `security_protocol`        | `APP_PUBSUB_KAFKA_SECURITY_PROTOCOL`        | string       | plaintext, ssl, sasl_plaintext, sasl_ssl |
+| SSL verification enabled | Enable OpenSSL's builtin broker (server) certificate verification | `ssl_verification_enabled` | `APP_PUBSUB_KAFKA_SSL_VERIFICATION_ENABLED` | bool         | true, false                              |
+
+To break it down further `Publisher` and `Subscriber` have their own set of configuration options:
+
+**Publisher**:
+
+| Setting                  | Description                                                                                                                     | YAML variable              | Environment variable (ENV)                  | Type   | Possible Values                          |
+|--------------------------|---------------------------------------------------------------------------------------------------------------------------------|----------------------------|---------------------------------------------|--------|------------------------------------------|
+| Max attempts             | Maximum amount of times to retry sending a failing Message                                                                      | `max_attempts`             | `APP_PUBSUB_KAFKA_PUBLISHER_MAX_ATTEMPTS`   | int    | 3                                        |
+| Write timeout            | Local message timeout. This value is only enforced locally and limits the time a produced message waits for successful delivery | `write_timeout`            | `APP_PUBSUB_KAFKA_PUBLISHER_WRITE_TIMEOUT`  | string | 10s                                      |
+| Topic                    | Topic name                                                                                                                      | `topic`                    | `APP_PUBSUB_KAFKA_PUBLISHER_TOPIC`          | string | topic                                    |
+
+**Subscriber**:
+
+| Setting  | Description                                                                            | YAML variable | Environment variable (ENV)             | Type   | Possible Values |
+|----------|----------------------------------------------------------------------------------------|---------------|----------------------------------------|--------|-----------------|
+| Topic    | Topic name                                                                             | `topic`       | `APP_PUBSUB_KAFKA_SUBSCRIBER_TOPIC`    | string | topic           |
+| Group ID | Client group id string. All clients sharing the same group.id belong to the same group | `group_id`    | `APP_PUBSUB_KAFKA_SUBSCRIBER_GROUP_ID` | string | service-name    |
 
 ## APM & Instrumentation
 
