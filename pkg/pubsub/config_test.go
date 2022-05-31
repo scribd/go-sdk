@@ -34,9 +34,10 @@ func TestNewConfig(t *testing.T) {
 
 func TestNewConfigWithAppRoot(t *testing.T) {
 	testCases := []struct {
-		name  string
-		env   string
-		kafka Kafka
+		name    string
+		env     string
+		kafka   Kafka
+		wantErr bool
 
 		envOverrides [][]string
 	}{
@@ -82,6 +83,99 @@ func TestNewConfigWithAppRoot(t *testing.T) {
 
 			envOverrides: [][]string{{"APP_PUBSUB_KAFKA_BROKER_URLS", "localhost:9092 localhost:9093"}},
 		},
+		{
+			name: "NewWithConfigFileWorks (TLS config override)",
+			env:  "test",
+			kafka: Kafka{
+				BrokerUrls:       []string{"localhost:9092"},
+				ClientId:         "test-app",
+				Cert:             "pem string",
+				CertKey:          "pem key",
+				SecurityProtocol: "ssl",
+				Publisher: Publisher{
+					MaxAttempts:  3,
+					WriteTimeout: 10 * time.Second,
+					Topic:        "test-topic",
+				},
+				Subscriber: Subscriber{
+					Topic: "test-topic",
+				},
+				SSLVerificationEnabled: true,
+				TLS: TLS{
+					Enabled: true,
+					Cert:    "pem string",
+					CertKey: "pem key",
+				},
+			},
+			envOverrides: [][]string{
+				{"APP_PUBSUB_KAFKA_TLS_ENABLED", "true"},
+				{"APP_PUBSUB_KAFKA_TLS_CERT_PEM", "pem string"},
+				{"APP_PUBSUB_KAFKA_TLS_CERT_PEM_KEY", "pem key"},
+			},
+		},
+		{
+			name: "NewWithConfigFileWorks (SASL config override, error)",
+			env:  "test",
+			kafka: Kafka{
+				BrokerUrls:       []string{"localhost:9092"},
+				ClientId:         "test-app",
+				Cert:             "pem string",
+				CertKey:          "pem key",
+				SecurityProtocol: "ssl",
+				Publisher: Publisher{
+					MaxAttempts:  3,
+					WriteTimeout: 10 * time.Second,
+					Topic:        "test-topic",
+				},
+				Subscriber: Subscriber{
+					Topic: "test-topic",
+				},
+				SASL: SASL{
+					Enabled:   true,
+					Mechanism: "test",
+				},
+				SSLVerificationEnabled: true,
+			},
+			envOverrides: [][]string{
+				{"APP_PUBSUB_KAFKA_SASL_ENABLED", "true"},
+				{"APP_PUBSUB_KAFKA_SASL_MECHANISM", "test"},
+			},
+			wantErr: true,
+		},
+		{
+			name: "NewWithConfigFileWorks (SASL config override, error)",
+			env:  "test",
+			kafka: Kafka{
+				BrokerUrls:       []string{"localhost:9092"},
+				ClientId:         "test-app",
+				Cert:             "pem string",
+				CertKey:          "pem key",
+				SecurityProtocol: "ssl",
+				Publisher: Publisher{
+					MaxAttempts:  3,
+					WriteTimeout: 10 * time.Second,
+					Topic:        "test-topic",
+				},
+				Subscriber: Subscriber{
+					Topic: "test-topic",
+				},
+				SASL: SASL{
+					Enabled:   true,
+					Mechanism: "aws_msk_iam",
+					AWSMskIam: SASLAwsMskIam{
+						AccessKey: "access key",
+						SecretKey: "secret key",
+					},
+				},
+				SSLVerificationEnabled: true,
+			},
+			envOverrides: [][]string{
+				{"APP_PUBSUB_KAFKA_SASL_ENABLED", "true"},
+				{"APP_PUBSUB_KAFKA_SASL_MECHANISM", "aws_msk_iam"},
+				{"APP_PUBSUB_KAFKA_SASL_AWS_MSK_IAM_ACCESS_KEY", "access key"},
+				{"APP_PUBSUB_KAFKA_SASL_AWS_MSK_IAM_SECRET_KEY", "secret key"},
+			},
+		},
 	}
 
 	currentAppRoot := os.Getenv("APP_ROOT")
@@ -105,9 +199,13 @@ func TestNewConfigWithAppRoot(t *testing.T) {
 			os.Setenv("APP_ROOT", filepath.Join(tmpRootParent, "testdata"))
 
 			c, err := NewConfig()
-			require.Nil(t, err)
+			if tc.wantErr {
+				require.NotNil(t, err)
+			} else {
+				require.Nil(t, err)
+			}
 
-			assert.Equal(t, c.Kafka, tc.kafka)
+			assert.Equal(t, tc.kafka, c.Kafka)
 
 			// teardown
 			if len(envVariables) > 0 {

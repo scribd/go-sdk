@@ -23,6 +23,23 @@ test: &test
     subscriber:
       topic: "test-topic"
       group_id: ""
+    tls:
+      enabled: false
+      ca: ""
+      cert_pem: ""
+      cert_pem_key: ""
+      passphrase: ""
+      insecure_skip_verify: false
+    sasl:
+      enabled: false
+      mechanism: ""
+      username: ""
+      password: ""
+      aws_msk_iam:
+        access_key: ""
+        secret_key: ""
+        session_token: ""
+        user_agent: ""
 
 development:
   <<: *test
