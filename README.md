@@ -833,14 +833,14 @@ common: &common
 
 Kafka top-level configuration contains generic options that fit both publisher and subscriber:
 
-| Setting                  | Description                                                       | YAML variable              | Environment variable (ENV)                  | Type         | Possible Values                          |
-|--------------------------|-------------------------------------------------------------------|----------------------------|---------------------------------------------|--------------|------------------------------------------|
-| Broker URLs              | Broker URLs to connect to                                         | `broker_urls`              | `APP_PUBSUB_KAFKA_BROKER_URLS`              | list(string) | localhost:9093                           |
-| Client ID                | Client identifier                                                 | `client_id`                | `APP_PUBSUB_KAFKA_CLIENT_ID`                | string       | go-chassis-app                           |
-| Cert PEM                 | Client's public key string (PEM format) used for authentication   | `cert_pem`                 | `APP_PUBSUB_KAFKA_CERT_PEM`                 | string       | long PEM string                          |
-| Cert PEM Key             | Client's private key string (PEM format) used for authentication  | `cert_pem_key`             | `APP_PUBSUB_KAFKA_CERT_PEM_KEY`             | string       | long PEM key string                      |
-| Security Protocol        | Protocol used to communicate with brokers                         | `security_protocol`        | `APP_PUBSUB_KAFKA_SECURITY_PROTOCOL`        | string       | plaintext, ssl, sasl_plaintext, sasl_ssl |
-| SSL verification enabled | Enable OpenSSL's builtin broker (server) certificate verification | `ssl_verification_enabled` | `APP_PUBSUB_KAFKA_SSL_VERIFICATION_ENABLED` | bool         | true, false                              |
+| Setting                  | Description                                                       | YAML variable              | Environment variable (ENV)                  | Type         | Possible Values                                       |
+|--------------------------|-------------------------------------------------------------------|----------------------------|---------------------------------------------|--------------|-------------------------------------------------------|
+| Broker URLs              | Broker URLs to connect to                                         | `broker_urls`              | `APP_PUBSUB_KAFKA_BROKER_URLS`              | list(string) | localhost:9093                                        |
+| Client ID                | Client identifier                                                 | `client_id`                | `APP_PUBSUB_KAFKA_CLIENT_ID`                | string       | go-chassis-app                                        |
+| Cert PEM                 | Client's public key string (PEM format) used for authentication   | `cert_pem`                 | `APP_PUBSUB_KAFKA_CERT_PEM`                 | string       | long PEM string (deprecated)                          |
+| Cert PEM Key             | Client's private key string (PEM format) used for authentication  | `cert_pem_key`             | `APP_PUBSUB_KAFKA_CERT_PEM_KEY`             | string       | long PEM key string (deprecated)                      |
+| Security Protocol        | Protocol used to communicate with brokers                         | `security_protocol`        | `APP_PUBSUB_KAFKA_SECURITY_PROTOCOL`        | string       | plaintext, ssl, sasl_plaintext, sasl_ssl (deprecated) |
+| SSL verification enabled | Enable OpenSSL's builtin broker (server) certificate verification | `ssl_verification_enabled` | `APP_PUBSUB_KAFKA_SSL_VERIFICATION_ENABLED` | bool         | true, false (deprecated)                              |
 
 To break it down further `Publisher` and `Subscriber` have their own set of configuration options:
 
@@ -858,6 +858,33 @@ To break it down further `Publisher` and `Subscriber` have their own set of conf
 |----------|----------------------------------------------------------------------------------------|---------------|----------------------------------------|--------|-----------------|
 | Topic    | Topic name                                                                             | `topic`       | `APP_PUBSUB_KAFKA_SUBSCRIBER_TOPIC`    | string | topic           |
 | Group ID | Client group id string. All clients sharing the same group.id belong to the same group | `group_id`    | `APP_PUBSUB_KAFKA_SUBSCRIBER_GROUP_ID` | string | service-name    |
+
+
+To authenticate the requests to Kafka, Go SDK provides a configuration set for TLS and [SASL](https://en.wikipedia.org/wiki/Simple_Authentication_and_Security_Layer)
+
+**TLS**:
+
+| Setting               | Description                                                      | YAML variable          | Environment variable (ENV)                  | Type   | Possible Values                  |
+|-----------------------|------------------------------------------------------------------|------------------------|---------------------------------------------|--------|----------------------------------|
+| Enabled               | Whether TLS authentication is enabled or not                     | `enabled`              | `APP_PUBSUB_KAFKA_TLS_ENABLED`              | bool   | true, false                      |
+| Root certificate      | Ca Root CA certificate                                           | `ca`                   | `APP_PUBSUB_KAFKA_TLS_CA`                   | string | Root CA                          |
+| Cert PEM              | Client's public key string (PEM format) used for authentication  | `cert_pem`             | `APP_PUBSUB_KAFKA_TLS_CERT_PEM`             | string | long PEM string (deprecated)     |
+| Cert PEM Key          | Client's private key string (PEM format) used for authentication | `cert_pem_key`         | `APP_PUBSUB_KAFKA_TLS_CERT_PEM_KEY`         | string | long PEM key string (deprecated) |
+| Passphrase            | Passphrase is used in case the private key needs to be decrypted | `passphrase`           | `APP_PUBSUB_KAFKA_TLS_PASSPHRASE`           | string | pass phrase                      |
+| Skip TLS verification | Turn on / off TLS verification                                   | `insecure_skip_verify` | `APP_PUBSUB_KAFKA_TLS_INSECURE_SKIP_VERIFY` | bool   | true, false                      |
+
+**SASL**:
+
+| Setting                | Description                                                                                                                                                                                             | YAML variable   | Environment variable (ENV)                        | Type   | Possible Values    |
+|------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------|---------------------------------------------------|--------|--------------------|
+| Enabled                | Whether SASL authentication is enabled or not                                                                                                                                                           | `enabled`       | `APP_PUBSUB_KAFKA_SASL_ENABLED`                   | bool   | true, false        |
+| Mechanism              | Mechanism is a string representation of the SASL mechanism. Only "plain" and "aws_msk_iam" are supported                                                                                                | `mechanism`     | `APP_PUBSUB_KAFKA_SASL_MECHANISM`                 | string | plain, aws_msk_iam |
+| Username               | The username to authenticate Kafka requests                                                                                                                                                             | `username`      | `APP_PUBSUB_KAFKA_SASL_USERNAME`                  | string | username           |
+| Password               | The password to authenticate Kafka requests                                                                                                                                                             | `paswword`      | `APP_PUBSUB_KAFKA_SASL_PASSWORD`                  | string | password           |
+| AWS MSK IAM access key | AWS MSK IAM access key to authenticate AWS MSK requests                                                                                                                                                 | `access_key`    | `APP_PUBSUB_KAFKA_SASL_AWS_MSK_IAM_ACCESS_KEY`    | string | access key         |
+| AWS MSK IAM secret key | AWS MSK IAM secret key to authenticate AWS MSK requests                                                                                                                                                 | `secret_key`    | `APP_PUBSUB_KAFKA_SASL_AWS_MSK_IAM_SECRET_KEY`    | string | secret key         |
+| AWS STS Session Token  | SessionToken is used to authenticate AWS MSK requests via AWS STS service.<br/>For more information please check the [documentation](https://docs.aws.amazon.com/STS/latest/APIReference/welcome.html). | `session_token` | `APP_PUBSUB_KAFKA_SASL_AWS_MSK_IAM_SESSION_TOKEN` | string | token              |
+| User agent             | The client's user agent string                                                                                                                                                                          | `user_agent`    | `APP_PUBSUB_KAFKA_SASL_AWS_MSK_IAM_USER_AGENT`    | string | user agent         |
 
 ## APM & Instrumentation
 
