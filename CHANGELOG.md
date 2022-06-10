@@ -1,3 +1,11 @@
+# [1.11.0](https://github.com/scribd/go-sdk/compare/v1.10.1...v1.11.0) (2022-06-10)
+
+
+### Features
+
+* Extend PubSub configuration to include TLS and SASL auth ([f723b44](https://github.com/scribd/go-sdk/commit/f723b447cfadbb2e0c06ddc192776c2eea7894d4))
+* Trace producers and consumers of the kafka client ([2d4ddf8](https://github.com/scribd/go-sdk/commit/2d4ddf84ecb34f5d8aa960aef6983d74e581c065))
+
 ## [1.10.1](https://github.com/scribd/go-sdk/compare/v1.10.0...v1.10.1) (2022-04-14)
 
 
