@@ -841,23 +841,26 @@ Kafka top-level configuration contains generic options that fit both publisher a
 | Cert PEM Key             | Client's private key string (PEM format) used for authentication  | `cert_pem_key`             | `APP_PUBSUB_KAFKA_CERT_PEM_KEY`             | string       | long PEM key string (deprecated)                      |
 | Security Protocol        | Protocol used to communicate with brokers                         | `security_protocol`        | `APP_PUBSUB_KAFKA_SECURITY_PROTOCOL`        | string       | plaintext, ssl, sasl_plaintext, sasl_ssl (deprecated) |
 | SSL verification enabled | Enable OpenSSL's builtin broker (server) certificate verification | `ssl_verification_enabled` | `APP_PUBSUB_KAFKA_SSL_VERIFICATION_ENABLED` | bool         | true, false (deprecated)                              |
+| Enable Metrics           | Enable publishing metrics for Kafka client broker connection      | `metrics_enabled`          | `APP_PUBSUB_KAFKA_METRICS_ENABLED`          | bool         | true, false                                           |
 
 To break it down further `Publisher` and `Subscriber` have their own set of configuration options:
 
 **Publisher**:
 
-| Setting                  | Description                                                                                                                     | YAML variable              | Environment variable (ENV)                  | Type   | Possible Values                          |
-|--------------------------|---------------------------------------------------------------------------------------------------------------------------------|----------------------------|---------------------------------------------|--------|------------------------------------------|
-| Max attempts             | Maximum amount of times to retry sending a failing Message                                                                      | `max_attempts`             | `APP_PUBSUB_KAFKA_PUBLISHER_MAX_ATTEMPTS`   | int    | 3                                        |
-| Write timeout            | Local message timeout. This value is only enforced locally and limits the time a produced message waits for successful delivery | `write_timeout`            | `APP_PUBSUB_KAFKA_PUBLISHER_WRITE_TIMEOUT`  | string | 10s                                      |
-| Topic                    | Topic name                                                                                                                      | `topic`                    | `APP_PUBSUB_KAFKA_PUBLISHER_TOPIC`          | string | topic                                    |
+| Setting        | Description                                                                                                                     | YAML variable     | Environment variable (ENV)                   | Type   | Possible Values |
+|----------------|---------------------------------------------------------------------------------------------------------------------------------|-------------------|----------------------------------------------|--------|-----------------|
+| Max attempts   | Maximum amount of times to retry sending a failing Message                                                                      | `max_attempts`    | `APP_PUBSUB_KAFKA_PUBLISHER_MAX_ATTEMPTS`    | int    | 3               |
+| Write timeout  | Local message timeout. This value is only enforced locally and limits the time a produced message waits for successful delivery | `write_timeout`   | `APP_PUBSUB_KAFKA_PUBLISHER_WRITE_TIMEOUT`   | string | 10s             |
+| Topic          | Topic name                                                                                                                      | `topic`           | `APP_PUBSUB_KAFKA_PUBLISHER_TOPIC`           | string | topic           |
+| Enable Metrics | Enable publishing metrics for Kafka producer                                                                                    | `metrics_enabled` | `APP_PUBSUB_KAFKA_PUBLISHER_METRICS_ENABLED` | bool   | true, false     |
 
 **Subscriber**:
 
-| Setting  | Description                                                                            | YAML variable | Environment variable (ENV)             | Type   | Possible Values |
-|----------|----------------------------------------------------------------------------------------|---------------|----------------------------------------|--------|-----------------|
-| Topic    | Topic name                                                                             | `topic`       | `APP_PUBSUB_KAFKA_SUBSCRIBER_TOPIC`    | string | topic           |
-| Group ID | Client group id string. All clients sharing the same group.id belong to the same group | `group_id`    | `APP_PUBSUB_KAFKA_SUBSCRIBER_GROUP_ID` | string | service-name    |
+| Setting        | Description                                                                            | YAML variable     | Environment variable (ENV)                    | Type   | Possible Values |
+|----------------|----------------------------------------------------------------------------------------|-------------------|-----------------------------------------------|--------|-----------------|
+| Topic          | Topic name                                                                             | `topic`           | `APP_PUBSUB_KAFKA_SUBSCRIBER_TOPIC`           | string | topic           |
+| Group ID       | Client group id string. All clients sharing the same group id belong to the same group | `group_id`        | `APP_PUBSUB_KAFKA_SUBSCRIBER_GROUP_ID`        | string | service-name    |
+| Enable Metrics | Enable publishing metrics for Kafka consumer                                           | `metrics_enabled` | `APP_PUBSUB_KAFKA_SUBSCRIBER_METRICS_ENABLED` | bool   | true, false     |
 
 
 To authenticate the requests to Kafka, Go SDK provides a configuration set for TLS and [SASL](https://en.wikipedia.org/wiki/Simple_Authentication_and_Security_Layer)
