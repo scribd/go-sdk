@@ -40,6 +40,8 @@ SDK, the Go version.
         - [HTTP server middleware example](#http-server-middleware-example)
         - [gRPC server interceptors example](#grpc-server-interceptors-example)
     - [AWS Session instrumentation](#aws-session-instrumentation)
+    - [PubSub instrumentation and logging](#pubsub-instrumentation-and-logging)
+      - [Kafka](#kafka)
     - [Profiling](#profiling)
     - [Custom Metrics](#custom-metrics)
 - [Using the `go-sdk` in isolation](#using-the--go-sdk--in-isolation)
@@ -1116,6 +1118,116 @@ arugment of the function, which allows the tracing chain to be continued inside
 the SDK call stack. To learn more about these functions you can start by
 reading about them on [the AWS developer
 blog](https://aws.amazon.com/blogs/developer/v2-aws-sdk-for-go-adds-context-to-api-operations).
+
+### PubSub instrumentation and logging
+
+#### Kafka
+
+`go-sdk` provides a flexible way to instrument the Kafka client with logging, tracing and metrics capabilities.
+
+The [franz-go](https://github.com/twmb/franz-go/) Kafka client library is wrapped by the `go-sdk` and traces calls to Kafka.
+
+For logging, `go-sdk` provides a [franz-go compatible](https://pkg.go.dev/github.com/twmb/franz-go/pkg/kgo#WithLogger) logger which is basically a plugin
+around the SDK's `logger.Logger` interface. This logger will print `franz-go` log stubs depending on a configured log level.
+
+```go
+import (
+    "github.com/twmb/franz-go/pkg/kgo"
+
+    sdkkafkalogger "github.com/scribd/go-sdk/pkg/logger/kafka"
+)
+
+func main() {
+    kafkaClientOpts := []kgo.Opt{
+        kgo.WithLogger(
+            sdkkafkalogger.NewKafkaLogger(
+                logger,
+                sdkkafkalogger.WithLevel(sdklogger.Level(config.Logger.ConsoleLevel)),
+            ),
+        ),
+    }
+}
+```
+
+For metrics, `go-sdk` provides a `franz-go` plugin to publish metrics to DataDog via DogStatsd. It is implemented as a
+[hook](https://pkg.go.dev/github.com/twmb/franz-go/pkg/kgo#WithHooks). Metrics are split into three categories: `broker`, `producer` and `consumer`.
+
+**Broker metrics**
+
+Broker metrics represent a set of metrics around the broker connection. If enabled, the following metrics will be published:
+
+```
+count metrics
+#{service_name}.kafka_client.broker.read_errors_total{node="#{node}"}
+#{service_name}.kafka_client.broker.read_bytes_total{node="#{node}"}
+#{service_name}.kafka_client.broker.write_errors_total{node="#{node}"}
+#{service_name}.kafka_client.broker.write_bytes_total{node="#{node}"}
+#{service_name}.kafka_client.broker.disconnects_total{node="#{node}"}
+#{service_name}.kafka_client.broker.connect_errors_total{node="#{node}"}
+#{service_name}.kafka_client.broker.connects_total{node="#{node}"}
+
+time metrics
+#{service_name}.kafka_client.broker.write_latency{node="#{node}"}
+#{service_name}.kafka_client.broker.write_wait_latency{node="#{node}"}
+#{service_name}.kafka_client.broker.read_latency{node="#{node}"}
+#{service_name}.kafka_client.broker.read_wait_latency{node="#{node}"}
+
+histogram metrics
+#{service_name}.kafka_client.broker.throttle_latency{node="#{node}"}
+```
+
+**Producer metrics**
+
+Producer metrics represent a set of metrics around the producer. If enabled, the following metrics will be published:
+
+```
+count metrics
+#{service_name}.kafka_client.producer.records_error
+#{service_name}.kafka_client.producer.records_unbuffered
+#{service_name}.kafka_client.producer.records_buffered
+#{service_name}.kafka_client.producer.produce_bytes_uncompressed_total{node="#{node}",topic="#{topic}",partition="#{partition}"}
+#{service_name}.kafka_client.producer.produce_bytes_compressed_total{node="#{node}",topic="#{topic}",partition="#{partition}"}
+```
+
+**Consumer metrics**
+
+Consumer metrics represent a set of metrics around the consumer. If enabled, the following metrics will be published:
+
+```
+count metrics
+#{service_name}.kafka_client.consumer.records_unbuffered
+#{service_name}.kafka_client.consumer.records_buffered
+#{service_name}.kafka_client.consumer.fetch_bytes_uncompressed_total{node="#{node}",topic="#{topic}",partition="#{partition}"}
+#{service_name}.kafka_client.consumer.fetch_bytes_compressed_total{node="#{node}",topic="#{topic}",partition="#{partition}"}
+```
+
+By default, all metrics will be published without sampling (rate `1.0`). The client can specify the sampling rate per
+metric type and/or per metric name:
+
+```go
+import (
+    "github.com/twmb/franz-go/pkg/kgo"
+
+    sdkkafkamertics "github.com/scribd/go-sdk/pkg/metrics/kafka"
+)
+
+func main() {
+    kafkaClientOpts := []kgo.Opt{
+        // no sampling rate specified
+        kgo.WithHooks(sdkkafkamertics.NewBrokerMetrics(metrics)),
+        // sampling rate of 0.5 will be applied for all producer metrics
+        kgo.WithHooks(sdkkafkamertics.NewProducerMetrics(metrics, sdkkafkamertics.WithSampleRate(0.5))),
+        // sampling rate of 0.3 will be applied to consumer metric name provided only,
+        // other metrics will be published with default sample rate
+        kgo.WithHooks(sdkkafkamertics.NewConsumerMetrics(
+            metrics,
+            sdkkafkamertics.WithSampleRatesPerMetric(map[string]float64{
+                "kafka_client.consumer.records_buffered": 0.3,
+            }),
+        )),
+    }
+}
+```
 
 ### Profiling
 
