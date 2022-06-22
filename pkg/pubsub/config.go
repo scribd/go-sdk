@@ -27,6 +27,8 @@ type (
 		Topic string `mapstructure:"topic"`
 		// Enabled whether the publisher is enabled or not
 		Enabled bool `mapstructure:"enabled"`
+		// MetricsEnabled controls if metrics publishing is enabled or not
+		MetricsEnabled bool `mapstructure:"metrics_enabled"`
 	}
 
 	Subscriber struct {
@@ -36,6 +38,8 @@ type (
 		GroupId string `mapstructure:"group_id"`
 		// Enabled whether the subscriber id enabled or not
 		Enabled bool `mapstructure:"enabled"`
+		// MetricsEnabled controls if metrics publishing is enabled or not
+		MetricsEnabled bool `mapstructure:"metrics_enabled"`
 	}
 
 	TLS struct {
@@ -110,6 +114,9 @@ type (
 		TLS TLS `mapstructure:"tls"`
 		// SASL configuration
 		SASL SASL `mapstructure:"sasl"`
+
+		// MetricsEnabled controls if metrics publishing is enabled or not
+		MetricsEnabled bool `mapstructure:"metrics_enabled"`
 	}
 )
 

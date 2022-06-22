@@ -40,6 +40,8 @@ SDK, the Go version.
         - [HTTP server middleware example](#http-server-middleware-example)
         - [gRPC server interceptors example](#grpc-server-interceptors-example)
     - [AWS Session instrumentation](#aws-session-instrumentation)
+    - [PubSub instrumentation and logging](#pubsub-instrumentation-and-logging)
+      - [Kafka](#kafka)
     - [Profiling](#profiling)
     - [Custom Metrics](#custom-metrics)
 - [Using the `go-sdk` in isolation](#using-the--go-sdk--in-isolation)
@@ -841,23 +843,26 @@ Kafka top-level configuration contains generic options that fit both publisher a
 | Cert PEM Key             | Client's private key string (PEM format) used for authentication  | `cert_pem_key`             | `APP_PUBSUB_KAFKA_CERT_PEM_KEY`             | string       | long PEM key string (deprecated)                      |
 | Security Protocol        | Protocol used to communicate with brokers                         | `security_protocol`        | `APP_PUBSUB_KAFKA_SECURITY_PROTOCOL`        | string       | plaintext, ssl, sasl_plaintext, sasl_ssl (deprecated) |
 | SSL verification enabled | Enable OpenSSL's builtin broker (server) certificate verification | `ssl_verification_enabled` | `APP_PUBSUB_KAFKA_SSL_VERIFICATION_ENABLED` | bool         | true, false (deprecated)                              |
+| Enable Metrics           | Enable publishing metrics for Kafka client broker connection      | `metrics_enabled`          | `APP_PUBSUB_KAFKA_METRICS_ENABLED`          | bool         | true, false                                           |
 
 To break it down further `Publisher` and `Subscriber` have their own set of configuration options:
 
 **Publisher**:
 
-| Setting                  | Description                                                                                                                     | YAML variable              | Environment variable (ENV)                  | Type   | Possible Values                          |
-|--------------------------|---------------------------------------------------------------------------------------------------------------------------------|----------------------------|---------------------------------------------|--------|------------------------------------------|
-| Max attempts             | Maximum amount of times to retry sending a failing Message                                                                      | `max_attempts`             | `APP_PUBSUB_KAFKA_PUBLISHER_MAX_ATTEMPTS`   | int    | 3                                        |
-| Write timeout            | Local message timeout. This value is only enforced locally and limits the time a produced message waits for successful delivery | `write_timeout`            | `APP_PUBSUB_KAFKA_PUBLISHER_WRITE_TIMEOUT`  | string | 10s                                      |
-| Topic                    | Topic name                                                                                                                      | `topic`                    | `APP_PUBSUB_KAFKA_PUBLISHER_TOPIC`          | string | topic                                    |
+| Setting        | Description                                                                                                                     | YAML variable     | Environment variable (ENV)                   | Type   | Possible Values |
+|----------------|---------------------------------------------------------------------------------------------------------------------------------|-------------------|----------------------------------------------|--------|-----------------|
+| Max attempts   | Maximum amount of times to retry sending a failing Message                                                                      | `max_attempts`    | `APP_PUBSUB_KAFKA_PUBLISHER_MAX_ATTEMPTS`    | int    | 3               |
+| Write timeout  | Local message timeout. This value is only enforced locally and limits the time a produced message waits for successful delivery | `write_timeout`   | `APP_PUBSUB_KAFKA_PUBLISHER_WRITE_TIMEOUT`   | string | 10s             |
+| Topic          | Topic name                                                                                                                      | `topic`           | `APP_PUBSUB_KAFKA_PUBLISHER_TOPIC`           | string | topic           |
+| Enable Metrics | Enable publishing metrics for Kafka producer                                                                                    | `metrics_enabled` | `APP_PUBSUB_KAFKA_PUBLISHER_METRICS_ENABLED` | bool   | true, false     |
 
 **Subscriber**:
 
-| Setting  | Description                                                                            | YAML variable | Environment variable (ENV)             | Type   | Possible Values |
-|----------|----------------------------------------------------------------------------------------|---------------|----------------------------------------|--------|-----------------|
-| Topic    | Topic name                                                                             | `topic`       | `APP_PUBSUB_KAFKA_SUBSCRIBER_TOPIC`    | string | topic           |
-| Group ID | Client group id string. All clients sharing the same group.id belong to the same group | `group_id`    | `APP_PUBSUB_KAFKA_SUBSCRIBER_GROUP_ID` | string | service-name    |
+| Setting        | Description                                                                            | YAML variable     | Environment variable (ENV)                    | Type   | Possible Values |
+|----------------|----------------------------------------------------------------------------------------|-------------------|-----------------------------------------------|--------|-----------------|
+| Topic          | Topic name                                                                             | `topic`           | `APP_PUBSUB_KAFKA_SUBSCRIBER_TOPIC`           | string | topic           |
+| Group ID       | Client group id string. All clients sharing the same group id belong to the same group | `group_id`        | `APP_PUBSUB_KAFKA_SUBSCRIBER_GROUP_ID`        | string | service-name    |
+| Enable Metrics | Enable publishing metrics for Kafka consumer                                           | `metrics_enabled` | `APP_PUBSUB_KAFKA_SUBSCRIBER_METRICS_ENABLED` | bool   | true, false     |
 
 
 To authenticate the requests to Kafka, Go SDK provides a configuration set for TLS and [SASL](https://en.wikipedia.org/wiki/Simple_Authentication_and_Security_Layer)
@@ -1113,6 +1118,116 @@ arugment of the function, which allows the tracing chain to be continued inside
 the SDK call stack. To learn more about these functions you can start by
 reading about them on [the AWS developer
 blog](https://aws.amazon.com/blogs/developer/v2-aws-sdk-for-go-adds-context-to-api-operations).
+
+### PubSub instrumentation and logging
+
+#### Kafka
+
+`go-sdk` provides a flexible way to instrument the Kafka client with logging, tracing and metrics capabilities.
+
+The [franz-go](https://github.com/twmb/franz-go/) Kafka client library is wrapped by the `go-sdk` and traces calls to Kafka.
+
+For logging, `go-sdk` provides a [franz-go compatible](https://pkg.go.dev/github.com/twmb/franz-go/pkg/kgo#WithLogger) logger which is basically a plugin
+around the SDK's `logger.Logger` interface. This logger will print `franz-go` log stubs depending on a configured log level.
+
+```go
+import (
+    "github.com/twmb/franz-go/pkg/kgo"
+
+    sdkkafkalogger "github.com/scribd/go-sdk/pkg/logger/kafka"
+)
+
+func main() {
+    kafkaClientOpts := []kgo.Opt{
+        kgo.WithLogger(
+            sdkkafkalogger.NewKafkaLogger(
+                logger,
+                sdkkafkalogger.WithLevel(sdklogger.Level(config.Logger.ConsoleLevel)),
+            ),
+        ),
+    }
+}
+```
+
+For metrics, `go-sdk` provides a `franz-go` plugin to publish metrics to DataDog via DogStatsd. It is implemented as a
+[hook](https://pkg.go.dev/github.com/twmb/franz-go/pkg/kgo#WithHooks). Metrics are split into three categories: `broker`, `producer` and `consumer`.
+
+**Broker metrics**
+
+Broker metrics represent a set of metrics around the broker connection. If enabled, the following metrics will be published:
+
+```
+count metrics
+#{service_name}.kafka_client.broker.read_errors_total{node="#{node}"}
+#{service_name}.kafka_client.broker.read_bytes_total{node="#{node}"}
+#{service_name}.kafka_client.broker.write_errors_total{node="#{node}"}
+#{service_name}.kafka_client.broker.write_bytes_total{node="#{node}"}
+#{service_name}.kafka_client.broker.disconnects_total{node="#{node}"}
+#{service_name}.kafka_client.broker.connect_errors_total{node="#{node}"}
+#{service_name}.kafka_client.broker.connects_total{node="#{node}"}
+
+time metrics
+#{service_name}.kafka_client.broker.write_latency{node="#{node}"}
+#{service_name}.kafka_client.broker.write_wait_latency{node="#{node}"}
+#{service_name}.kafka_client.broker.read_latency{node="#{node}"}
+#{service_name}.kafka_client.broker.read_wait_latency{node="#{node}"}
+
+histogram metrics
+#{service_name}.kafka_client.broker.throttle_latency{node="#{node}"}
+```
+
+**Producer metrics**
+
+Producer metrics represent a set of metrics around the producer. If enabled, the following metrics will be published:
+
+```
+count metrics
+#{service_name}.kafka_client.producer.records_error
+#{service_name}.kafka_client.producer.records_unbuffered
+#{service_name}.kafka_client.producer.records_buffered
+#{service_name}.kafka_client.producer.produce_bytes_uncompressed_total{node="#{node}",topic="#{topic}",partition="#{partition}"}
+#{service_name}.kafka_client.producer.produce_bytes_compressed_total{node="#{node}",topic="#{topic}",partition="#{partition}"}
+```
+
+**Consumer metrics**
+
+Consumer metrics represent a set of metrics around the consumer. If enabled, the following metrics will be published:
+
+```
+count metrics
+#{service_name}.kafka_client.consumer.records_unbuffered
+#{service_name}.kafka_client.consumer.records_buffered
+#{service_name}.kafka_client.consumer.fetch_bytes_uncompressed_total{node="#{node}",topic="#{topic}",partition="#{partition}"}
+#{service_name}.kafka_client.consumer.fetch_bytes_compressed_total{node="#{node}",topic="#{topic}",partition="#{partition}"}
+```
+
+By default, all metrics will be published without sampling (rate `1.0`). The client can specify the sampling rate per
+metric type and/or per metric name:
+
+```go
+import (
+    "github.com/twmb/franz-go/pkg/kgo"
+
+    sdkkafkamertics "github.com/scribd/go-sdk/pkg/metrics/kafka"
+)
+
+func main() {
+    kafkaClientOpts := []kgo.Opt{
+        // no sampling rate specified
+        kgo.WithHooks(sdkkafkamertics.NewBrokerMetrics(metrics)),
+        // sampling rate of 0.5 will be applied for all producer metrics
+        kgo.WithHooks(sdkkafkamertics.NewProducerMetrics(metrics, sdkkafkamertics.WithSampleRate(0.5))),
+        // sampling rate of 0.3 will be applied to consumer metric name provided only,
+        // other metrics will be published with default sample rate
+        kgo.WithHooks(sdkkafkamertics.NewConsumerMetrics(
+            metrics,
+            sdkkafkamertics.WithSampleRatesPerMetric(map[string]float64{
+                "kafka_client.consumer.records_buffered": 0.3,
+            }),
+        )),
+    }
+}
+```
 
 ### Profiling
 
