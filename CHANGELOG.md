@@ -1,3 +1,12 @@
+# [1.12.0](https://github.com/scribd/go-sdk/compare/v1.11.0...v1.12.0) (2022-06-22)
+
+
+### Features
+
+* Add franz-go plugin to log kafka client using go-sdk logger ([ba9000e](https://github.com/scribd/go-sdk/commit/ba9000e101561cbaf1d96647e531f3ddc294178c))
+* Add franz-go plugin to publish kafka related metrics ([9ad6f12](https://github.com/scribd/go-sdk/commit/9ad6f1289d9be8399d066975f8f07183a9298fbb))
+* Configure PubSub metrics ([d7116b5](https://github.com/scribd/go-sdk/commit/d7116b5597712a23da00804da69e13b0cd46c838))
+
 # [1.11.0](https://github.com/scribd/go-sdk/compare/v1.10.1...v1.11.0) (2022-06-10)
 
 
