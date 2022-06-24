@@ -659,18 +659,23 @@ production:
 
 `go-sdk` provides a convenient way to create a basic Server configuration.
 
-| Setting  | Description                      | YAML variable | Environment variable (ENV) |
-| -------- | -------------------------------- | ------------- | -------------------------- |
-| Host     | Server host                      | `host`        | `APP_SERVER_HOST`          |
-| HTTPPort | HTTP port                        | `http_port`   | `APP_SERVER_HTTP_PORT`     |
-| GRPCPort | gRPC port                        | `grpc_port`   | `APP_SERVER_GRPC_PORT`     |
-| CORS     | CORS settings                    | `cors`        |                            |
+| Setting     | Description                      | YAML variable    | Environment variable (ENV) |
+| --------    | -------------------------------- | -------------    | -------------------------- |
+| Host        | Server host                      | `host`           | `APP_SERVER_HOST`          |
+| HTTPPort    | HTTP port                        | `http_port`      | `APP_SERVER_HTTP_PORT`     |
+| GRPCPort    | gRPC port                        | `grpc_port`      | `APP_SERVER_GRPC_PORT`     |
+| HTTPTimeout | HTTP related timeouts            | `http_timeout`   |                            |
+| CORS        | CORS settings                    | `cors`           |                            |
 
 An example `server.yml`:
 
 ```yaml
 common: &common
   http_port: 8080
+  http_timeout:
+    write: 2s
+    read: 1s
+    idle: 90s
   cors:
     enabled: true
     settings:

@@ -3,6 +3,7 @@ package server
 import (
 	"fmt"
 	"net/http"
+	"time"
 
 	cbuilder "github.com/scribd/go-sdk/internal/pkg/configuration/builder"
 )
@@ -14,11 +15,20 @@ const (
 type (
 	// Config represents a web server configuration
 	Config struct {
-		Host     string `mapstructure:"host"`
-		GRPCPort string `mapstructure:"grpc_port"`
-		HTTPPort string `mapstructure:"http_port"`
+		Host string `mapstructure:"host"`
 
-		Cors Cors `mapstructure:"cors"`
+		HTTPPort    string      `mapstructure:"http_port"`
+		HTTPTimeout HTTPTimeout `mapstructure:"http_timeout"`
+
+		GRPCPort string `mapstructure:"grpc_port"`
+		Cors     Cors   `mapstructure:"cors"`
+	}
+
+	// HTTPTimeout represents collection of different timeout regarding net/http.Server.
+	HTTPTimeout struct {
+		Write time.Duration `mapstructure:"write"`
+		Read  time.Duration `mapstructure:"read"`
+		Idle  time.Duration `mapstructure:"idle"`
 	}
 
 	// Cors struct represents a flag indicating if CORS feature is enabled or not
