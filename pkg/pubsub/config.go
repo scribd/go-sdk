@@ -86,6 +86,10 @@ type (
 		SessionToken string `mapstructure:"session_token"`
 		// The client's user agent string
 		UserAgent string `mapstructure:"user_agent"`
+		// If provided, this role will be used to establish connection to AWS MSK ignoring the static credentials
+		AssumableRole string `mapstructure:"role"`
+		// Will be passed to AWS STS when assuming the role
+		SessionName string `mapstructure:"session_name"`
 	}
 
 	Kafka struct {
