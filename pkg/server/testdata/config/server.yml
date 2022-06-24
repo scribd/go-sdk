@@ -4,6 +4,10 @@ common: &common
 
 test: &test
   <<: *common
+  http_timeout:
+    write: 2s
+    read: 1s
+    idle: 90s
   cors:
     enabled: true
     settings:
