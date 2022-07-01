@@ -1,3 +1,10 @@
+# [1.14.0](https://github.com/scribd/go-sdk/compare/v1.13.0...v1.14.0) (2022-07-01)
+
+
+### Features
+
+* Add assumable role and session name configuration settings to AWS MSK IAM SASL ([ef08bd1](https://github.com/scribd/go-sdk/commit/ef08bd15238ad0d9bdc81294ef45994a93410789))
+
 # [1.12.0](https://github.com/scribd/go-sdk/compare/v1.11.0...v1.12.0) (2022-06-22)
 
 
