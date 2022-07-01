@@ -895,6 +895,8 @@ To authenticate the requests to Kafka, Go SDK provides a configuration set for T
 | AWS MSK IAM secret key | AWS MSK IAM secret key to authenticate AWS MSK requests                                                                                                                                                 | `secret_key`    | `APP_PUBSUB_KAFKA_SASL_AWS_MSK_IAM_SECRET_KEY`    | string | secret key         |
 | AWS STS Session Token  | SessionToken is used to authenticate AWS MSK requests via AWS STS service.<br/>For more information please check the [documentation](https://docs.aws.amazon.com/STS/latest/APIReference/welcome.html). | `session_token` | `APP_PUBSUB_KAFKA_SASL_AWS_MSK_IAM_SESSION_TOKEN` | string | token              |
 | User agent             | The client's user agent string                                                                                                                                                                          | `user_agent`    | `APP_PUBSUB_KAFKA_SASL_AWS_MSK_IAM_USER_AGENT`    | string | user agent         |
+| Assumable role         | This role will be used to establish connection to AWS MSK ignoring the static credentials                                                                                                               | `role`          | `APP_PUBSUB_KAFKA_SASL_AWS_MSK_IAM_ROLE`          | string | AWS ARN string     |
+| Session name           | Will be passed to AWS STS when assuming the role                                                                                                                                                        | `session_name`  | `APP_PUBSUB_KAFKA_SASL_AWS_MSK_IAM_SESSION_NAME`  | string | application        |
 
 ## APM & Instrumentation
 
