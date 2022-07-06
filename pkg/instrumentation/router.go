@@ -27,12 +27,16 @@ type Tracer struct {
 	Options     []tracer.StartOption
 }
 
-// New tracer returns a new tracer with the giver configuration and an optional
+// NewTracer returns a new tracer with the giver configuration and an optional
 // list of ddtrace's tracer.StartOptions.
+//
+// NewTracer assigns universal the version of the service that is running, and will be applied to all spans,
+// regardless of whether span service name and config service name match.
 func NewTracer(config *Config, options ...tracer.StartOption) *Tracer {
 	options = append(
 		options,
 		tracer.WithGlobalTag("env", config.environment),
+		tracer.WithUniversalVersion(config.ServiceVersion),
 	)
 
 	if config.CodeHotspotsEnabled {
