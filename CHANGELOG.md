@@ -1,3 +1,11 @@
+# [1.15.0](https://github.com/scribd/go-sdk/compare/v1.14.0...v1.15.0) (2022-07-06)
+
+
+### Features
+
+* Pass down service version to the DataDog ([fbe0f6c](https://github.com/scribd/go-sdk/commit/fbe0f6c4a7030062ca4920a53ecd446bed9b515b))
+* Upgrade dd-trace-go package version to v1.39.0 ([ef58946](https://github.com/scribd/go-sdk/commit/ef58946ed66388e5b7bf1174fa7962c72ffc39c8))
+
 # [1.14.0](https://github.com/scribd/go-sdk/compare/v1.13.0...v1.14.0) (2022-07-01)
 
 
