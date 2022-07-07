@@ -4,7 +4,7 @@ services:
   sdk:
     build:
       context: .
-      target: builder
+      target: development
     image: microservices/sdk/go-sdk
     environment:
       APP_ENV: test

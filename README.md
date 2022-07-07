@@ -293,7 +293,6 @@ func main() {
 	// or import "github.com/scribd/go-sdk/pkg/configuration/apps"
 	// loggerConfig := apps.Logger{}
 	
-
 	if Logger, err = sdklogger.NewBuilder(config.Logger).Build(); err != nil {
 		log.Fatalf("Failed to load SDK logger: %s", err.Error())
 	}
