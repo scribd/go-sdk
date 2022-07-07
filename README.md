@@ -83,63 +83,51 @@ variables on the fly.
 
 #### Predefined application-agnostic configurations
 
-The predefined configurations have an associated type and expect their
+The predefined configurations are called `Configurables`, they have an associated type and expect their
 respective configuration to be present in a file corresponding to their name.
+`NewConfig` points at `./config` directory by default, alternatively you can use
+`NewConfigWithPath` and pass config relative address to it.
 
-The list of predefined top-level configurations:
-* `Server`, containing the application server configurations, expects a
-  `config/server.yml` configuration file.
-* `Logger`, containing the application logger configuration, expects a
-  `config/logger.yml` configuration file.
-* `Database`, containing the application database configuration, expects a
-  `config/database.yml` configuration file.
-* `Redis`, containing the application Redis configuration, expects a
-  `config/redis.yml` configuration file. (TBD)
-* `PubSub`, containing the application pubsub configuration, expects a
-  `config/pubsub.yml` configuration file.
-* <insert new configuration here>
+```go
+    // import sdkconfig "github.com/scribd/go-sdk/pkg/configuration"
+    // equivalent of sdkconfig.NewConfigWithPath("config", ...)
+	config, err := sdkconfig.NewConfig(
+		sdkconfig.ServerConf,
+		sdkconfig.DatabaseConf,
+		sdkconfig.InstrumentationConf,
+		sdkconfig.LoggerConf,
+		sdkconfig.TrackingConf,
+		sdkconfig.PubSubConf,
+		...
+	)
+	
+	// or
+	sdkconfig.NewConfigWithPath("config", ...)
+```
+
+The list of predefined top-level configuration files lives under
+`pkg/configuration.Configurables`. Specific app structers can be found
+`pkg/configuration/apps`.
 
 For example, to get the host and the port at which the HTTP server listens on
 in an application:
 
 ```go
-host     := sdk.Config.Server.Host
-httpPort := sdk.Config.Server.HTTPPort
+host     := config.Server.Host
+httpPort := config.Server.HTTPPort
 ```
 
-#### Custom application-specific configurations
+#### Application-specific configurations
 
-Additionally, the `go-sdk` allows developers to add custom configuration data
-in a `go-chassis`-powered application, through the `config/settings.yml` file.
-As these configurations are custom and their type cannot (read: shouldn't) be
-inferred by the SDK, it exposes a familiar Viper-like interface for interaction
-with them.
+Environment keys `APP_ROOT` and `APP_NAME` must be set unless will result crash.
+to reach application specifics one can execute:
 
-All of the application-specific configurations can be accessed through the
-`sdk.Config.App` object. For example, given a `config/settings.yml` with the
-following contents:
 
-```yaml
-# config/settings.yml
-common: &common
-  name: "my-awesome-app"
+#### Custom configurations
 
-development:
-  <<: *common
+Under development.
 
-staging:
-  <<: *common
-
-production:
-  <<: *common
-```
-
-To get the application name from the configuration one would use the following
-statement:
-
-```go
-applicationName := sdk.Config.App.GetString("name")
-```
+#### Overriding config using environment variables
 
 The configuration variables can be overridden by a corresponding environment
 variable; these variables must have the following format:
@@ -166,39 +154,26 @@ To represent the `list` we can use space-separated values:
 APP_SETTINGS_NAME="value1 value2"
 ```
 
-And then, on the application side we have to convert it to a string slice manually:
-
-```go
-// if the value is the part of `settings.yml`
-stringSlice := sdk.Config.App.StringSlice("name")
-
-// or calling the Viper's API directly
-stringSlice := viper.GetStringSlice("app.settings.name")
-```
-
 To represent the `dictionary` we can use a JSON:
 
 ```bash
 APP_SETTINGS_NAME="{\"key\":\"value\"}"
 ```
 
-And then, on the application side we have to convert it to a string map manually:
-
-```go
-// if the value is the part of `settings.yml`
-stringMap := sdk.Config.App.StringMapString("name")
-
-// or calling the Viper's API directly
-stringMap := viper.GetStringMapString("app.settings.name")
-```
 
 #### Environment-awareness
 
 Application configurations vary between environments, therefore the `go-sdk` is
 environment-aware. This means that any application that uses the `go-sdk`
-should have an `APP_ENV` environment variable set. Applications built using the
+should have `APP_NAME` and `APP_ENV` environment variables set. Applications built using the
 `go-chassis` have this out of the box. In absence of the `APP_ENV` variable,
-it's defaulted to `development`.
+it's defaulted to `development`. to retrieve them:
+
+```go
+name := config.AppName
+root := config.AppRoot
+env  := config.AppEnv
+```
 
 This means that any configuration files, placed in the `config` directory,
 should contain environment namespacing. For example:
@@ -276,35 +251,6 @@ production:
 Given the configuration above, the SDK will load out-of-the-box the `test`
 configuration and apply it to the logger.
 
-In cases where we want to modify the configuration of an application in a test
-file, we can simply use the constructor that `go-sdk` provides:
-
-```go
-package main
-
-import (
-    "testing"
-
-    sdkconfig "github.com/scribd/go-sdk/pkg/configuration"
-}
-
-var (
-    // Config is SDK-powered application configuration.
-    Config *sdkconfig.Config
-)
-
-func SomeTest(t *testing.T) {
-    if Config, err = sdkconfig.NewConfig(); err != nil {
-        log.Fatalf("Failed to load SDK config: %s", err.Error())
-    }
-
-    // Change application settings
-    Config.App.Set("key", "value")
-
-    // Continue with testing...
-    setting := Config.App.GetString("key") // returns "value"
-}
-```
 
 ### Logger
 
@@ -327,6 +273,7 @@ import (
 	"log"
 
 	sdklogger "github.com/scribd/go-sdk/pkg/logger"
+	sdkconfig "github.com/scribd/go-sdk/pkg/configuration"
 )
 
 var (
@@ -336,11 +283,18 @@ var (
 )
 
 func main() {
-	if loggerConfig, err := sdklogger.NewConfig(); err != nil {
-		log.Fatalf("Failed to initialize SDK logger configuration: %s", err.Error())
+	config, err := sdkconfig.NewConfig(sdkconfig.LoggerConf)
+	if err != nil {
+		log.Fatalf("Failed to initialize SDK configuration: %s", err.Error())
 	}
+	
+	loggerConfig := config.Logger
+	
+	// or import "github.com/scribd/go-sdk/pkg/configuration/apps"
+	// loggerConfig := apps.Logger{}
+	
 
-	if Logger, err = sdklogger.NewBuilder(loggerConfig).Build(); err != nil {
+	if Logger, err = sdklogger.NewBuilder(config.Logger).Build(); err != nil {
 		log.Fatalf("Failed to load SDK logger: %s", err.Error())
 	}
 }
@@ -553,6 +507,7 @@ import (
 
 	sdklogger   "github.com/scribd/go-sdk/pkg/logger"
 	sdktracking "github.com/scribd/go-sdk/pkg/tracking"
+	"github.com/scribd/go-sdk/pkg/configuration/apps"
 )
 
 var (
@@ -562,13 +517,8 @@ var (
 )
 
 func main() {
-	if loggerConfig, err := sdklogger.NewConfig(); err != nil {
-		log.Fatalf("Failed to initialize SDK logger configuration: %s", err.Error())
-	}
-
-	if trackingConfig, err := sdktracking.NewConfig(); err != nil {
-		log.Fatalf("Failed to initialize SDK tracking configuration: %s", err.Error())
-	}
+	loggerConfig := apps.Logger{}
+	trackingConfig := apps.Tracking{}
 
 	if Logger, err = sdklogger.NewBuilder(loggerConfig).SetTracking(trackingConfig).Build(); err != nil {
 		log.Fatalf("Failed to load SDK logger: %s", err.Error())
@@ -717,15 +667,14 @@ Below is an example of the CORS middleware initialization:
 package main
 
 import (
-	"github.com/scribd/go-sdk/pkg/server"
 	"log"
+	
+	"github.com/scribd/go-sdk/pkg/server"
+	"github.com/scribd/go-sdk/pkg/configuration/apps"
 )
 
 func main() {
-	config, err := server.NewConfig()
-	if err != nil {
-		log.Fatal(err)
-	}
+	config := apps.Server{}
 
 	corsMiddleware := middleware.NewCorsMiddleware(config.Cors.Settings[0])
 
@@ -752,11 +701,11 @@ package main
 
 import (
 	sdkdb "github.com/scribd/go-sdk/pkg/database"
+	"github.com/scribd/go-sdk/pkg/configuration/apps"
 )
 
 func main() {
-	// Loads the database configuration.
-	dbConfig, err := sdkdb.NewConfig()
+	dbConfig := apps.Database{}
 
 	// Establishes a gorm database connection using the connection details.
 	dbConn, err := sdkdb.NewConnection(dbConfig)
@@ -1247,7 +1196,7 @@ The default DataDog configuration, which go-sdk uses by default, is following [g
 func main() {
     // Build profiler.
     sdkProfiler := instrumentation.NewProfiler(
-	config.Instrumentation,
+	instrumentationConfig,
 	profiler.WithService(appName),
 	profiler.WithVersion(version),
     )
@@ -1267,8 +1216,8 @@ tags to attach to every metric emitted by the client.
 
 This client is configured by default with:
 
-- `service:$APP_NAME`
-- `env:$ENVIRONMENT`
+- `service: $APP_NAME`
+- `env: $APP_ENV`
 
 Datadog tags documentation is available [here][ddtags].
 
@@ -1299,11 +1248,7 @@ func main() {
 	applicationEnv := "development"
 	applicationName := "go-sdk-example"
 
-	metricsConfig := &metrics.Config{
-		Environment: applicationEnv,
-		App:         applicationName,
-	}
-	client, err := metrics.NewBuilder(metricsConfig).Build()
+	client, err := metrics.NewBuilder(applicationEnv, applicationName).Build()
 	if err != nil {
 		log.Fatalf("Could not initialize Metrics client: %s", err)
 	}
@@ -1319,57 +1264,6 @@ func main() {
 [custom-tags]: <https://docs.datadoghq.com/developers/metrics/dogstatsd_metrics_submission/?tab=go#metric-tagging>
 [rate]: <https://docs.datadoghq.com/developers/metrics/dogstatsd_metrics_submission/?tab=go#metric-submission-options>
 [submit-metric]: <https://docs.datadoghq.com/developers/metrics/dogstatsd_metrics_submission/?tab=go>
-
-## Using the `go-sdk` in isolation
-
-The `go-sdk` is a standalone Go module. This means that it can be imported and
-used in virtually any Go project. Still, there are four conventions that the
-`go-sdk` enforces which **must be present** in the host application:
-1. The presence of the `APP_ENV` environment variable, used for
-   [environment-awareness](#environment-awareness),
-2. Support of a single file format (YAML) for storing configurations,
-3. Support of only a single path to store the configuration, `config/` in the
-   application root, and
-4. The presence of the `APP_ROOT` environment variable, set to the absolute
-   path of the application that it's used in. This is used to locate the
-   `config` directory on disk and load the enclosed YAML files.
-
-A good way to approach initialization of the `go-sdk` in your application can be
-seen in the `go-chassis` itself:
-
-```go
-// internal/pkg/sdk/sdk.go
-package sdk
-
-import (
-	"log"
-
-	sdkconfig "github.com/scribd/go-sdk/pkg/configuration"
-	sdklogger "github.com/scribd/go-sdk/pkg/logger"
-)
-
-var (
-	// Config is SDK-powered application configuration.
-	Config *sdkconfig.Config
-	// Logger is SDK-powered application logger.
-	Logger sdklogger.Logger
-	err    error
-)
-
-func init() {
-	if Config, err = sdkconfig.NewConfig(); err != nil {
-		log.Fatalf("Failed to load SDK config: %s", err.Error())
-	}
-
-	if Logger, err = sdklogger.NewBuilder(loggerConfig).Build(); err != nil {
-		log.Fatalf("Failed to load SDK logger: %s", err.Error())
-	}
-}
-```
-
-**Please note** that while using the `go-sdk` in isolation is possible, it is
-**highly recommended** to use it in combination with the `go-chassis` for the
-best development, debugging and maintenance experience.
 
 ## Developing the SDK
 
@@ -1393,7 +1287,7 @@ for the full list of option and the synopsis of the command.
 Compose provides a way to create and destroy isolated testing environments:
 
 ```sh
-$ docker-compose run --rm sdk mage test:run
+$ docker-compose run --rm sdk mage -v test:run
 ```
 
 ### Entering the docker environment
