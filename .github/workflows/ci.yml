@@ -140,4 +140,4 @@ jobs:
         name: Run tests
         with:
           image: ${{ github.repository }}:${{ env.GITHUB_SHA_SHORT }}
-          run: mage test:run
+          run: APP_ROOT=/sdk mage -v test:run

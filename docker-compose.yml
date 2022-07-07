@@ -4,8 +4,11 @@ services:
   sdk:
     build:
       context: .
-      target: development
+      target: builder
     image: microservices/sdk/go-sdk
+    environment:
+      APP_ENV: test
+      APP_ROOT: /sdk
     volumes:
       - .:/sdk
     security_opt:

@@ -1,0 +1,18 @@
+common: &common
+  enabled: false
+  code_hotspots_enabled: true
+
+development:
+  <<: *common
+
+test:
+  <<: *common
+  enabled: true
+
+staging:
+  <<: *common
+
+production:
+  <<: *common
+  enabled: true
+  code_hotspots_enabled: true

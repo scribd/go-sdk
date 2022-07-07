@@ -3,17 +3,19 @@ package logger
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 	"testing"
 	"time"
+
+	"github.com/scribd/go-sdk/pkg/configuration/apps"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestNewGormLogger(t *testing.T) {
 	tests := []struct {
 		name     string
 		input    []interface{}
-		cfg      Config
+		cfg      apps.Logger
 		isEmpty  bool
 		expected map[string]interface{}
 	}{
@@ -21,7 +23,7 @@ func TestNewGormLogger(t *testing.T) {
 			name:    "Empty on fatal log level",
 			input:   []interface{}{"sql", "test/test", time.Second, "select * from test;", []interface{}{}, int64(10)},
 			isEmpty: true,
-			cfg: Config{
+			cfg: apps.Logger{
 				ConsoleEnabled:    true,
 				ConsoleJSONFormat: true,
 				ConsoleLevel:      "fatal",
@@ -31,7 +33,7 @@ func TestNewGormLogger(t *testing.T) {
 			name:    "Empty on error log level",
 			input:   []interface{}{"sql", "test/test", time.Second, "select * from test;", []interface{}{}, int64(10)},
 			isEmpty: true,
-			cfg: Config{
+			cfg: apps.Logger{
 				ConsoleEnabled:    true,
 				ConsoleJSONFormat: true,
 				ConsoleLevel:      "error",
@@ -41,7 +43,7 @@ func TestNewGormLogger(t *testing.T) {
 			name:    "Empty on warning log level",
 			input:   []interface{}{"sql", "test/test", time.Second, "select * from test;", []interface{}{}, int64(10)},
 			isEmpty: true,
-			cfg: Config{
+			cfg: apps.Logger{
 				ConsoleEnabled:    true,
 				ConsoleJSONFormat: true,
 				ConsoleLevel:      "warning",
@@ -51,7 +53,7 @@ func TestNewGormLogger(t *testing.T) {
 			name:    "Empty on info log level",
 			input:   []interface{}{"sql", "test/test", time.Second, "select * from test;", []interface{}{}, int64(10)},
 			isEmpty: true,
-			cfg: Config{
+			cfg: apps.Logger{
 				ConsoleEnabled:    true,
 				ConsoleJSONFormat: true,
 				ConsoleLevel:      "info",
@@ -60,7 +62,7 @@ func TestNewGormLogger(t *testing.T) {
 		{
 			name:  "Print database log",
 			input: []interface{}{"sql", "test/test", time.Second, "select * from test;", []interface{}{}, int64(10)},
-			cfg: Config{
+			cfg: apps.Logger{
 				ConsoleEnabled:    true,
 				ConsoleJSONFormat: true,
 				ConsoleLevel:      "debug",
@@ -75,7 +77,7 @@ func TestNewGormLogger(t *testing.T) {
 		{
 			name:  "Empty on non sql input in debug mode",
 			input: []interface{}{"test string", "test/test", time.Second, "select * from test;", []interface{}{}, int64(10)},
-			cfg: Config{
+			cfg: apps.Logger{
 				ConsoleEnabled:    true,
 				ConsoleJSONFormat: true,
 				ConsoleLevel:      "debug",
@@ -85,7 +87,7 @@ func TestNewGormLogger(t *testing.T) {
 		{
 			name:  "Print log in trace mode on non sql input",
 			input: []interface{}{"test string", "test/test", time.Second, "select * from test;", []interface{}{}, int64(10)},
-			cfg: Config{
+			cfg: apps.Logger{
 				ConsoleEnabled:    true,
 				ConsoleJSONFormat: true,
 				ConsoleLevel:      "trace",
@@ -98,7 +100,7 @@ func TestNewGormLogger(t *testing.T) {
 			var fields Fields
 			var buffer bytes.Buffer
 
-			b := NewBuilder(&tt.cfg)
+			b := NewBuilder(tt.cfg)
 			l, err := b.BuildTestLogger(&buffer)
 			require.Nil(t, err)
 

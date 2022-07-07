@@ -1,0 +1,29 @@
+common: &common
+  console_enabled: true
+  console_json_format: false
+  console_level: "debug"
+  file_enabled: true
+  file_json_format: false
+  file_level: "debug"
+  file_location: "/opt"
+  file_name: "logger.json"
+
+development:
+  <<: *common
+  file_enabled: false
+
+test:
+  <<: *common
+  console_enabled: false
+
+staging:
+  <<: *common
+  console_json_format: true
+  console_level: "debug"
+  file_enabled: false
+
+production:
+  <<: *common
+  console_json_format: true
+  console_level: "info"
+  file_enabled: false

@@ -1,0 +1,21 @@
+common: &common
+  host: mysql
+  port: 3306
+  username: root
+  password: zeus
+  database: testdb
+  pool: 5
+  timeout: 1s
+
+development:
+  <<: *common
+test:
+  <<: *common
+  host: mysql2
+  username: notrootforsure
+
+staging:
+  <<: *common
+
+production:
+  <<: *common

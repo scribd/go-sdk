@@ -6,6 +6,7 @@ import (
 	"os"
 	"path"
 
+	"github.com/scribd/go-sdk/pkg/configuration/apps"
 	"github.com/scribd/go-sdk/pkg/tracking"
 
 	"github.com/sirupsen/logrus"
@@ -55,7 +56,7 @@ func getFormatter(isJSON bool) logrus.Formatter {
 	}
 }
 
-func newLogrusLogger(config *Config) (*logrus.Logger, error) {
+func newLogrusLogger(config apps.Logger) (*logrus.Logger, error) {
 	logLevel := config.ConsoleLevel
 	if logLevel == "" {
 		logLevel = config.FileLevel
@@ -100,7 +101,7 @@ func newLogrusLogger(config *Config) (*logrus.Logger, error) {
 	return lLogger, nil
 }
 
-func newTestLogrusLogger(config *Config, out *bytes.Buffer) (*logrus.Logger, error) {
+func newTestLogrusLogger(config apps.Logger, out *bytes.Buffer) (*logrus.Logger, error) {
 	lLogger, err := newLogrusLogger(config)
 	lLogger.Out = out
 
@@ -152,7 +153,7 @@ func (l *logrusLogEntry) WithFields(fields Fields) Logger {
 }
 
 // SetTracking configures and enables the error reporting.
-func (l *logrusLogEntry) setTracking(trackingConfig *tracking.Config) error {
+func (l *logrusLogEntry) setTracking(trackingConfig apps.Tracking) error {
 	hook, err := tracking.NewSentryHook(trackingConfig)
 	if err != nil {
 		return err

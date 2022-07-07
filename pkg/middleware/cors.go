@@ -4,8 +4,7 @@ import (
 	"net/http"
 
 	"github.com/rs/cors"
-
-	"github.com/scribd/go-sdk/pkg/server"
+	"github.com/scribd/go-sdk/pkg/configuration/apps"
 )
 
 type (
@@ -16,7 +15,7 @@ type (
 )
 
 // NewCorsMiddleware creates cors.Cors middleware and attaches it to the CorsMiddleware wrapper
-func NewCorsMiddleware(setting server.CorsSetting) *CorsMiddleware {
+func NewCorsMiddleware(setting apps.CorsSetting) *CorsMiddleware {
 	corsHandler := cors.New(cors.Options{
 		AllowedOrigins:         setting.AllowedOrigins,
 		AllowOriginFunc:        setting.AllowOriginFunc,

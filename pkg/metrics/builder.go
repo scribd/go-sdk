@@ -11,13 +11,15 @@ const (
 
 // Builder is a Metrics builder.
 type Builder struct {
-	config *Config
+	Environment string
+	App         string
 }
 
 // NewBuilder initializes a Metrics builder with the given configuration.
-func NewBuilder(config *Config) *Builder {
+func NewBuilder(appName, environment string) *Builder {
 	return &Builder{
-		config: config,
+		Environment: environment,
+		App:         appName,
 	}
 }
 
@@ -31,18 +33,18 @@ func (b *Builder) Build() (Metrics, error) {
 	// environment variables to build a target address.
 	dogstatsd, err := datadogstatsd.New("")
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("new datadog statsd. err: %s", err)
 	}
 
 	// Namespace to prepend to all statsd calls.
-	dogstatsd.Namespace = b.config.App + "."
+	dogstatsd.Namespace = b.App + "."
 
-	serviceName := fmt.Sprintf("%s-%s", b.config.App, datadogServiceSuffix)
+	serviceName := fmt.Sprintf("%s-%s", b.App, datadogServiceSuffix)
 
 	// Tags are global tags to be added to every statsd call.
 	dogstatsd.Tags = []string{
 		fmt.Sprintf("service:%s", serviceName),
-		fmt.Sprintf("env:%s", b.config.Environment),
+		fmt.Sprintf("env:%s", b.Environment),
 	}
 
 	return dogstatsd, nil

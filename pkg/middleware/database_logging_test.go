@@ -16,6 +16,7 @@ import (
 	http2 "gopkg.in/DataDog/dd-trace-go.v1/contrib/net/http"
 	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/mocktracer"
 
+	"github.com/scribd/go-sdk/pkg/configuration/apps"
 	sdkdatabasecontext "github.com/scribd/go-sdk/pkg/context/database"
 	sdklogger "github.com/scribd/go-sdk/pkg/logger"
 )
@@ -70,7 +71,7 @@ func TestNewDatabaseLoggingMiddleware(t *testing.T) {
 	handler := testingDbHandler(t)
 
 	var buffer bytes.Buffer
-	config := &sdklogger.Config{
+	config := apps.Logger{
 		ConsoleEnabled:    true,
 		ConsoleJSONFormat: true,
 		ConsoleLevel:      "debug",

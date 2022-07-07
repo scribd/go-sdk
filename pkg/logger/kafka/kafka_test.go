@@ -9,6 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/twmb/franz-go/pkg/kgo"
 
+	"github.com/scribd/go-sdk/pkg/configuration/apps"
 	"github.com/scribd/go-sdk/pkg/logger"
 )
 
@@ -81,7 +82,7 @@ func TestNewKafkaLogger(t *testing.T) {
 			var fields logger.Fields
 			var buffer bytes.Buffer
 
-			b := logger.NewBuilder(&logger.Config{
+			b := logger.NewBuilder(apps.Logger{
 				ConsoleEnabled:    true,
 				ConsoleJSONFormat: true,
 				ConsoleLevel:      string(tt.level),

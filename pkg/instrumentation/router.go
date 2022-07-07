@@ -3,6 +3,7 @@ package instrumentation
 import (
 	"fmt"
 
+	"github.com/scribd/go-sdk/pkg/configuration/apps"
 	ddmux "gopkg.in/DataDog/dd-trace-go.v1/contrib/gorilla/mux"
 	tracer "gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer"
 )
@@ -32,10 +33,10 @@ type Tracer struct {
 //
 // NewTracer assigns universal the version of the service that is running, and will be applied to all spans,
 // regardless of whether span service name and config service name match.
-func NewTracer(config *Config, options ...tracer.StartOption) *Tracer {
+func NewTracer(config apps.Instrumentation, options ...tracer.StartOption) *Tracer {
 	options = append(
 		options,
-		tracer.WithGlobalTag("env", config.environment),
+		tracer.WithGlobalTag("env", config.Environment),
 		tracer.WithUniversalVersion(config.ServiceVersion),
 	)
 
@@ -49,7 +50,7 @@ func NewTracer(config *Config, options ...tracer.StartOption) *Tracer {
 
 	return &Tracer{
 		Enabled:     config.Enabled,
-		Environment: config.environment,
+		Environment: config.Environment,
 		Options:     options,
 	}
 }

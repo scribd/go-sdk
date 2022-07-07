@@ -8,6 +8,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/scribd/go-sdk/pkg/configuration/apps"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -19,7 +20,7 @@ const (
 
 func logAndAssertContent(
 	t *testing.T,
-	config *Config,
+	config apps.Logger,
 	log func(Logger),
 	withExpectedContent bool,
 ) {
@@ -38,7 +39,7 @@ func logAndAssertContent(
 
 func logAndAssertJSONFields(
 	t *testing.T,
-	config *Config,
+	config apps.Logger,
 	log func(Logger),
 	assertions func(fields Fields),
 ) {
@@ -59,7 +60,7 @@ func logAndAssertJSONFields(
 
 func logAndAssertTextFields(
 	t *testing.T,
-	config *Config,
+	config apps.Logger,
 	log func(Logger),
 	assertions func(fields map[string]string),
 ) {
@@ -90,8 +91,8 @@ func logAndAssertTextFields(
 	assertions(fields)
 }
 
-func logConfigForTest(withJSONFormat bool) *Config {
-	return &Config{
+func logConfigForTest(withJSONFormat bool) apps.Logger {
+	return apps.Logger{
 		ConsoleEnabled:    true,
 		ConsoleJSONFormat: withJSONFormat,
 		ConsoleLevel:      "trace",
@@ -151,13 +152,13 @@ func TestLevelConfiguration(t *testing.T) {
 	messageContent := "test message"
 	testCases := []struct {
 		name                string
-		config              *Config
+		config              apps.Logger
 		log                 func(log Logger)
 		withExpectedContent bool
 	}{
 		{
 			name: "WhenConfigLevelIsTraceDebugIsLogged",
-			config: &Config{
+			config: apps.Logger{
 				ConsoleEnabled:    true,
 				ConsoleJSONFormat: withJSON,
 				ConsoleLevel:      "trace",
@@ -169,7 +170,7 @@ func TestLevelConfiguration(t *testing.T) {
 		},
 		{
 			name: "WhenConfigLevelIsWarnInfoIsNotLogged",
-			config: &Config{
+			config: apps.Logger{
 				ConsoleEnabled:    true,
 				ConsoleJSONFormat: withJSON,
 				ConsoleLevel:      "warn",

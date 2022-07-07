@@ -3,13 +3,14 @@ package database
 import (
 	"github.com/DATA-DOG/go-txdb"
 	"github.com/jinzhu/gorm"
+	"github.com/scribd/go-sdk/pkg/configuration/apps"
 
 	// Imports required gorm MySQL dialect.
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
 
 // NewConnection returns a new Gorm database connection.
-func NewConnection(config *Config, environment string) (*gorm.DB, error) {
+func NewConnection(config apps.Database, environment string) (*gorm.DB, error) {
 	var db *gorm.DB
 	var err error
 

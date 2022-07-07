@@ -3,6 +3,8 @@ package database
 import (
 	"fmt"
 	"strings"
+
+	"github.com/scribd/go-sdk/pkg/configuration/apps"
 )
 
 // ConnectionDetails represents database connection details.
@@ -19,7 +21,7 @@ type ConnectionDetails struct {
 }
 
 // NewConnectionDetails creates a new ConnectionDetails struct from a DB configuration.
-func NewConnectionDetails(config *Config) ConnectionDetails {
+func NewConnectionDetails(config apps.Database) ConnectionDetails {
 	return ConnectionDetails{
 		Dialect:  "mysql",
 		Username: config.Username,

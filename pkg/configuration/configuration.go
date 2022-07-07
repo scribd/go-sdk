@@ -1,72 +1,93 @@
 package configuration
 
 import (
-	app "github.com/scribd/go-sdk/pkg/app"
-	database "github.com/scribd/go-sdk/pkg/database"
-	instrumentation "github.com/scribd/go-sdk/pkg/instrumentation"
-	logger "github.com/scribd/go-sdk/pkg/logger"
-	"github.com/scribd/go-sdk/pkg/pubsub"
-	server "github.com/scribd/go-sdk/pkg/server"
-	tracking "github.com/scribd/go-sdk/pkg/tracking"
+	"fmt"
+	"log"
+	"os"
+
+	"github.com/scribd/go-sdk/pkg/configuration/apps"
+	"github.com/scribd/go-sdk/pkg/configuration/builder"
 )
 
-// Config is an app-wide configuration
-type Config struct {
-	App             *app.Config
-	Database        *database.Config
-	Instrumentation *instrumentation.Config
-	Logger          *logger.Config
-	Server          *server.Config
-	Tracking        *tracking.Config
-	PubSub          *pubsub.Config
+const (
+	defaultEnv       = "development"
+	defaultConfigDir = "config"
+
+	appRootEnvKey = "APP_ROOT"
+	appNameEnvKey = "APP_NAME"
+	envEnvKey     = "APP_ENV"
+)
+
+// Configuration is an app-wide configuration
+type Configuration struct {
+	AppName string
+	AppEnv  string
+	AppRoot string
+
+	Database        apps.Database
+	Server          apps.Server
+	Instrumentation apps.Instrumentation
+	Logger          apps.Logger
+	Tracking        apps.Tracking
+	PubSub          apps.PubSub
 }
 
-// NewConfig returns a new Config instance
-func NewConfig() (*Config, error) {
-	config := &Config{}
+// NewConfig returns a new Config instance in default location.
+func NewConfig(configs ...Configurable) (*Configuration, error) {
+	return NewConfigWithPath(defaultConfigDir, configs...)
+}
 
-	appConfig, err := app.NewDefaultConfig()
-	if err != nil {
-		return config, err
+// NewConfigWithPath returns a new Config instance within a directory.
+// configDir is relative path of config directory.
+func NewConfigWithPath(confDir string, configurables ...Configurable) (*Configuration, error) {
+	appName := getAppNameMust()
+	appRoot := getAppRootMust()
+	appEnv := getEnvMust()
+
+	config := &Configuration{
+		AppName: appName,
+		AppEnv:  appEnv,
+		AppRoot: appRoot,
 	}
 
-	dbConfig, err := database.NewConfig()
-	if err != nil {
-		return config, err
-	}
+	for i := range configurables {
+		// using viper as main builder.
+		builder, err := builder.NewViper(confDir, appName, appEnv, appRoot)
+		if err != nil {
+			return nil, fmt.Errorf("new viper builder. err: %w", err)
+		}
 
-	instrumentationConfig, err := instrumentation.NewConfig()
-	if err != nil {
-		return config, err
+		if err := configurables[i](builder, config); err != nil {
+			return nil, fmt.Errorf("applying configurable. err: %w", err)
+		}
 	}
-
-	loggerConfig, err := logger.NewConfig()
-	if err != nil {
-		return config, err
-	}
-
-	serverConfig, err := server.NewConfig()
-	if err != nil {
-		return config, err
-	}
-
-	trackingConfig, err := tracking.NewConfig()
-	if err != nil {
-		return config, err
-	}
-
-	pubsubConfig, err := pubsub.NewConfig()
-	if err != nil {
-		return config, err
-	}
-
-	config.App = appConfig
-	config.Database = dbConfig
-	config.Instrumentation = instrumentationConfig
-	config.Logger = loggerConfig
-	config.Server = serverConfig
-	config.Tracking = trackingConfig
-	config.PubSub = pubsubConfig
 
 	return config, nil
+}
+
+func getAppNameMust() string {
+	appRoot := os.Getenv(appNameEnvKey)
+	if appRoot == "" {
+		log.Fatalf("env key %s missing", appNameEnvKey)
+	}
+
+	return appRoot
+}
+
+func getAppRootMust() string {
+	appRoot := os.Getenv(appRootEnvKey)
+	if appRoot == "" {
+		log.Fatalf("env key %s missing", appRootEnvKey)
+	}
+
+	return appRoot
+}
+
+func getEnvMust() string {
+	appRoot := os.Getenv(envEnvKey)
+	if appRoot == "" {
+		return defaultEnv
+	}
+
+	return appRoot
 }

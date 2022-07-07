@@ -2,6 +2,7 @@ package tracking
 
 import (
 	"github.com/getsentry/sentry-go"
+	"github.com/scribd/go-sdk/pkg/configuration/apps"
 	"github.com/sirupsen/logrus"
 )
 
@@ -93,7 +94,7 @@ func (hook *Hook) SetEnvironment(environment string) {
 
 // NewSentryHook creates a hook to be added to an instance of logger
 // and initializes the Sentry client.
-func NewSentryHook(config *Config) (*Hook, error) {
+func NewSentryHook(config apps.Tracking) (*Hook, error) {
 	levels := []logrus.Level{
 		logrus.PanicLevel,
 		logrus.FatalLevel,
@@ -111,11 +112,11 @@ func NewSentryHook(config *Config) (*Hook, error) {
 		// The sample rate for event submission (0.0 - 1.0, defaults to 1.0)
 		SampleRate: 1.0,
 		// The server name to be reported.
-		ServerName: config.serverName,
+		ServerName: config.ServerName,
 		// The release to be sent with events.
-		Release: config.release,
+		Release: config.Release,
 		// The environment to be sent with events.
-		Environment: config.environment,
+		Environment: config.Environment,
 	})
 	if err != nil {
 		return nil, err

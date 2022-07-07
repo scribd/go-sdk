@@ -7,6 +7,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/scribd/go-sdk/pkg/configuration/apps"
 	sdklogger "github.com/scribd/go-sdk/pkg/logger"
 
 	"github.com/stretchr/testify/assert"
@@ -43,7 +44,7 @@ func TestOutputStructuredContentFromMiddleware(t *testing.T) {
 	// the loggingMiddleware under test.
 	var buffer bytes.Buffer
 
-	config := &sdklogger.Config{
+	config := apps.Logger{
 		ConsoleEnabled:    true,
 		ConsoleJSONFormat: true,
 		ConsoleLevel:      "info",
@@ -107,7 +108,7 @@ func TestResponseStatusFromMiddleware(t *testing.T) {
 	// the loggingMiddleware under test.
 	var buffer bytes.Buffer
 
-	config := &sdklogger.Config{
+	config := apps.Logger{
 		ConsoleEnabled:    true,
 		ConsoleJSONFormat: true,
 		ConsoleLevel:      "info",

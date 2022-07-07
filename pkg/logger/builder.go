@@ -3,18 +3,18 @@ package logger
 import (
 	"bytes"
 
-	"github.com/scribd/go-sdk/pkg/tracking"
+	"github.com/scribd/go-sdk/pkg/configuration/apps"
 )
 
 // Builder is a Logger builder.
 type Builder struct {
-	config         *Config
+	config         apps.Logger
 	fields         Fields
-	trackingConfig *tracking.Config
+	trackingConfig apps.Tracking
 }
 
 // NewBuilder initializes a Logger builder with the given configuration.
-func NewBuilder(config *Config) *Builder {
+func NewBuilder(config apps.Logger) *Builder {
 	return &Builder{
 		config: config,
 	}
@@ -27,7 +27,7 @@ func (b *Builder) SetFields(fields Fields) *Builder {
 }
 
 // SetTracking sets the error reporting configuration.
-func (b *Builder) SetTracking(trackingConfig *tracking.Config) *Builder {
+func (b *Builder) SetTracking(trackingConfig apps.Tracking) *Builder {
 	b.trackingConfig = trackingConfig
 	return b
 }
@@ -43,7 +43,7 @@ func (b *Builder) Build() (Logger, error) {
 		entry: lLogrus.WithFields(convertToLogrusFields(b.fields)),
 	}
 
-	if b.trackingConfig != nil {
+	if b.trackingConfig.SentryDSN != "" {
 		if err := logrusEntry.setTracking(b.trackingConfig); err != nil {
 			return nil, err
 		}

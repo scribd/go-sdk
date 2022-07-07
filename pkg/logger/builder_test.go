@@ -4,12 +4,11 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/scribd/go-sdk/pkg/tracking"
-
+	"github.com/scribd/go-sdk/pkg/configuration/apps"
 	"github.com/stretchr/testify/assert"
 )
 
-var testConfig = &Config{
+var testConfig = apps.Logger{
 	ConsoleEnabled:    true,
 	ConsoleJSONFormat: withJSON,
 	ConsoleLevel:      "trace",
@@ -18,7 +17,7 @@ var testConfig = &Config{
 func TestNewBuilder(t *testing.T) {
 	testCases := []struct {
 		name   string
-		config *Config
+		config apps.Logger
 	}{
 		{
 			name:   "NewBuilderWithConfigFileSetValues",
@@ -72,17 +71,17 @@ func TestSetFields(t *testing.T) {
 func TestSetTracking(t *testing.T) {
 	testCases := []struct {
 		name           string
-		trackingConfig *tracking.Config
+		trackingConfig apps.Tracking
 	}{
 		{
 			name: "SetTrackingIsTrueWithATrackingConfig",
-			trackingConfig: &tracking.Config{
+			trackingConfig: apps.Tracking{
 				SentryDSN: "https://key@sentry.io/project",
 			},
 		},
 		{
 			name:           "SetTrackingIsFalseWithoutATrackingConfig",
-			trackingConfig: nil,
+			trackingConfig: apps.Tracking{},
 		},
 	}
 
@@ -98,12 +97,12 @@ func TestSetTracking(t *testing.T) {
 func TestBuild(t *testing.T) {
 	testCases := []struct {
 		name           string
-		trackingConfig *tracking.Config
+		trackingConfig apps.Tracking
 		fields         Fields
 	}{
 		{
 			name: "WithATrackingConfigAndFieldsItBuilds",
-			trackingConfig: &tracking.Config{
+			trackingConfig: apps.Tracking{
 				SentryDSN: "https://thealphanumericsentrydns00000000@a012345.ingest.sentry.io/0000000",
 			},
 			fields: Fields{
@@ -113,7 +112,7 @@ func TestBuild(t *testing.T) {
 		{
 			name:           "WithoutATrackingConfigAndEmptyFieldsItBuilds",
 			fields:         Fields{},
-			trackingConfig: nil,
+			trackingConfig: apps.Tracking{},
 		},
 	}
 
@@ -121,7 +120,7 @@ func TestBuild(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			b := NewBuilder(testConfig).SetFields(tc.fields)
 
-			if tc.trackingConfig != nil {
+			if tc.trackingConfig.SentryDSN != "" {
 				b.SetTracking(tc.trackingConfig)
 			}
 

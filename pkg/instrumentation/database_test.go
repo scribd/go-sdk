@@ -74,7 +74,7 @@ func TestInstrumentDatabase(t *testing.T) {
 	mt := mocktracer.Start()
 	defer mt.Stop()
 
-	dbFile := "/tmp/test_db"
+	dbFile := "/var/tmp/test_db"
 	defer os.Remove(dbFile)
 
 	db, err := gorm.Open("sqlite3", dbFile)

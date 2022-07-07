@@ -18,6 +18,7 @@ import (
 	"google.golang.org/grpc/test/bufconn"
 	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/mocktracer"
 
+	"github.com/scribd/go-sdk/pkg/configuration/apps"
 	sdklogger "github.com/scribd/go-sdk/pkg/logger"
 )
 
@@ -137,7 +138,7 @@ func TestLoggerStreamServerInterceptors(t *testing.T) {
 }
 
 func getLogger(logLevel string, buf *bytes.Buffer) (sdklogger.Logger, error) {
-	config := &sdklogger.Config{
+	config := apps.Logger{
 		ConsoleEnabled:    true,
 		ConsoleJSONFormat: true,
 		ConsoleLevel:      logLevel,

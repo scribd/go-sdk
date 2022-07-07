@@ -3,6 +3,7 @@ package instrumentation
 import (
 	"time"
 
+	"github.com/scribd/go-sdk/pkg/configuration/apps"
 	"gopkg.in/DataDog/dd-trace-go.v1/profiler"
 )
 
@@ -30,10 +31,10 @@ func (p *Profiler) Stop() {
 
 // NewProfiler constructs new profiler with options.
 // You can include common options like: profiler.WithService(appName), profiler.WithVersion(version).
-func NewProfiler(config *Config, options ...profiler.Option) *Profiler {
+func NewProfiler(config apps.Instrumentation, options ...profiler.Option) *Profiler {
 	options = append(
 		options,
-		profiler.WithEnv(config.environment),
+		profiler.WithEnv(config.Environment),
 		profiler.WithVersion(config.ServiceVersion),
 	)
 

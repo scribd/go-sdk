@@ -3,6 +3,7 @@ package instrumentation
 import (
 	"testing"
 
+	"github.com/scribd/go-sdk/pkg/configuration/apps"
 	assert "github.com/stretchr/testify/assert"
 )
 
@@ -26,7 +27,7 @@ func TestNewTracer(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			config := &Config{
+			config := apps.Instrumentation{
 				Enabled: tc.enabled,
 			}
 			trcr := NewTracer(config)

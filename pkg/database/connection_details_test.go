@@ -3,14 +3,12 @@ package database
 import (
 	"testing"
 
+	"github.com/scribd/go-sdk/pkg/configuration/apps"
 	assert "github.com/stretchr/testify/assert"
 )
 
 func TestNewConnectionDetails(t *testing.T) {
-	config, err := NewConfig()
-	if err != nil {
-		t.Logf("Cannot create NewConfig: %s", err.Error())
-	}
+	config := apps.Database{}
 	details := NewConnectionDetails(config)
 
 	assert.Equal(t, details.Dialect, "mysql")
@@ -27,13 +25,13 @@ func TestNewConnectionDetails(t *testing.T) {
 func TestString(t *testing.T) {
 	cases := []struct {
 		name             string
-		config           *Config
+		config           apps.Database
 		connectionString string
 		optionsString    string
 	}{
 		{
 			name: "WithAllAttributesPresent",
-			config: &Config{
+			config: apps.Database{
 				Host:     "192.168.1.1",
 				Port:     8080,
 				Username: "john",
@@ -46,7 +44,7 @@ func TestString(t *testing.T) {
 		},
 		{
 			name: "WithOneAttributeBlank",
-			config: &Config{
+			config: apps.Database{
 				Host:     "192.168.1.1",
 				Port:     8080,
 				Username: "john",
@@ -73,13 +71,13 @@ func TestString(t *testing.T) {
 func TestStringWithoutDB(t *testing.T) {
 	cases := []struct {
 		name             string
-		config           *Config
+		config           apps.Database
 		connectionString string
 		optionsString    string
 	}{
 		{
 			name: "WithAllAttributesPresent",
-			config: &Config{
+			config: apps.Database{
 				Host:     "192.168.1.1",
 				Port:     8080,
 				Username: "john",
@@ -92,7 +90,7 @@ func TestStringWithoutDB(t *testing.T) {
 		},
 		{
 			name: "WithOneAttributeBlank",
-			config: &Config{
+			config: apps.Database{
 				Host:     "192.168.1.1",
 				Port:     8080,
 				Username: "john",
