@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"path"
 	"sync"
 	"testing"
 
@@ -43,7 +44,7 @@ func TestNewDatabaseLoggingMiddleware(t *testing.T) {
 	mt := mocktracer.Start()
 	defer mt.Stop()
 
-	dbFile := "/tmp/test_db"
+	dbFile := path.Join(t.TempDir(), "test_db")
 	defer os.Remove(dbFile)
 
 	db, err := gorm.Open("sqlite3", dbFile)
