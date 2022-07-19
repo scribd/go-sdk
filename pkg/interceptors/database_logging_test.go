@@ -4,14 +4,16 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"github.com/jinzhu/gorm"
-	"github.com/scribd/go-sdk/pkg/testing/testproto"
-	"google.golang.org/grpc/credentials/insecure"
 	"io"
 	golog "log"
 	"net"
 	"os"
+	"path"
 	"testing"
+
+	"github.com/jinzhu/gorm"
+	"github.com/scribd/go-sdk/pkg/testing/testproto"
+	"google.golang.org/grpc/credentials/insecure"
 
 	_ "github.com/mattn/go-sqlite3"
 
@@ -33,7 +35,7 @@ func TestDatabaseLoggingUnaryServerInterceptor(t *testing.T) {
 	mt := mocktracer.Start()
 	defer mt.Stop()
 
-	dbFile := "/tmp/test_db"
+	dbFile := path.Join(t.TempDir(), "test_db")
 	defer os.Remove(dbFile)
 
 	db, err := gorm.Open("sqlite3", dbFile)
@@ -109,7 +111,7 @@ func TestDatabaseLoggingStreamServerInterceptors(t *testing.T) {
 	mt := mocktracer.Start()
 	defer mt.Stop()
 
-	dbFile := "/tmp/test_db"
+	dbFile := path.Join(t.TempDir(), "test_db")
 	defer os.Remove(dbFile)
 
 	db, err := gorm.Open("sqlite3", dbFile)
