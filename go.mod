@@ -11,7 +11,7 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/grpc-ecosystem/go-grpc-middleware v1.0.0
 	github.com/jinzhu/gorm v1.9.11
-	github.com/magefile/mage v1.9.0
+	github.com/magefile/mage v1.13.0
 	github.com/mattn/go-sqlite3 v2.0.3+incompatible
 	github.com/rs/cors v1.7.0
 	github.com/sirupsen/logrus v1.7.0
