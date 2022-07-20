@@ -20,7 +20,7 @@ func (Test) Run() error {
 	env := map[string]string{
 		"APP_ENV": "test",
 	}
-	return sh.RunWithV(env, goCmd, "test", "./...", "-count=1", "-v")
+	return sh.RunWithV(env, goCmd, "test", "./...", "-race", "-count=1", "-v")
 }
 
 // Generates proto test files.
