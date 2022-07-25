@@ -13,6 +13,8 @@ type Config struct {
 	ServiceVersion string `mapstructure:"service_version"`
 	// Enable Profiler Code Hotspots feature
 	CodeHotspotsEnabled bool `mapstructure:"code_hotspots_enabled"`
+	// Enable runtime metrics.
+	RuntimeMetricsEnabled bool `mapstructure:"runtime_metrics_enabled"`
 }
 
 // NewConfig returns a new ServerConfig instance.

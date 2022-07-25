@@ -39,6 +39,10 @@ func NewTracer(config *Config, options ...tracer.StartOption) *Tracer {
 		tracer.WithUniversalVersion(config.ServiceVersion),
 	)
 
+	if config.RuntimeMetricsEnabled {
+		options = append(options, tracer.WithRuntimeMetrics())
+	}
+
 	if config.CodeHotspotsEnabled {
 		options = append(
 			options,
