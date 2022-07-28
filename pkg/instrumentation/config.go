@@ -10,6 +10,7 @@ type Config struct {
 	environment string
 	Enabled     bool `mapstructure:"enabled"`
 
+	ServiceName    string `mapstructure:"service_name"`
 	ServiceVersion string `mapstructure:"service_version"`
 	// Enable Profiler Code Hotspots feature
 	CodeHotspotsEnabled bool `mapstructure:"code_hotspots_enabled"`

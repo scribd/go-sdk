@@ -25,6 +25,8 @@ type Tracer struct {
 	Enabled     bool
 	Environment string
 	Options     []tracer.StartOption
+
+	globalServiceName string
 }
 
 // NewTracer returns a new tracer with the giver configuration and an optional
@@ -33,8 +35,11 @@ type Tracer struct {
 // NewTracer assigns universal the version of the service that is running, and will be applied to all spans,
 // regardless of whether span service name and config service name match.
 func NewTracer(config *Config, options ...tracer.StartOption) *Tracer {
+	serviceName := globalServiceName(config.ServiceName)
+
 	options = append(
 		options,
+		tracer.WithService(serviceName),
 		tracer.WithGlobalTag("env", config.environment),
 		tracer.WithUniversalVersion(config.ServiceVersion),
 	)
@@ -52,9 +57,10 @@ func NewTracer(config *Config, options ...tracer.StartOption) *Tracer {
 	}
 
 	return &Tracer{
-		Enabled:     config.Enabled,
-		Environment: config.environment,
-		Options:     options,
+		Enabled:           config.Enabled,
+		Environment:       config.environment,
+		globalServiceName: serviceName,
+		Options:           options,
 	}
 }
 
@@ -81,7 +87,10 @@ func (t *Tracer) Stop() {
 //
 // Returning a Router is part of the Tracer API to ensure a single entry-point
 // for the instrumentation features.
-func (t *Tracer) Router(appName string) *ddmux.Router {
-	serviceName := fmt.Sprintf("%s-%s", appName, datadogServiceSuffix)
-	return ddmux.NewRouter(ddmux.WithServiceName(serviceName))
+func (t *Tracer) Router() *ddmux.Router {
+	return ddmux.NewRouter(ddmux.WithServiceName(t.globalServiceName))
+}
+
+func globalServiceName(serviceName string) string {
+	return fmt.Sprintf("%s-%s", serviceName, datadogServiceSuffix)
 }
