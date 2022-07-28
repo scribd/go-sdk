@@ -1,3 +1,10 @@
+## [1.15.4](https://github.com/scribd/go-sdk/compare/v1.15.3...v1.15.4) (2022-07-28)
+
+
+### Bug Fixes
+
+* Runtime metrics fix ([5758eb7](https://github.com/scribd/go-sdk/commit/5758eb75dc0ad59ae27ac809412d3885cb9f4fa9))
+
 # [1.15.0](https://github.com/scribd/go-sdk/compare/v1.14.0...v1.15.0) (2022-07-06)
 
 
