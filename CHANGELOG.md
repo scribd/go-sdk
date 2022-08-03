@@ -1,3 +1,10 @@
+## [1.16.1](https://github.com/scribd/go-sdk/compare/v1.16.0...v1.16.1) (2022-08-03)
+
+
+### Bug Fixes
+
+* Fire sentry event fix ([451595c](https://github.com/scribd/go-sdk/commit/451595c5602e24c4be1a8dc01d69ac33dbf76cd3))
+
 ## [1.15.4](https://github.com/scribd/go-sdk/compare/v1.15.3...v1.15.4) (2022-07-28)
 
 
