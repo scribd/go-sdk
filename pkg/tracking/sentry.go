@@ -1,6 +1,8 @@
 package tracking
 
 import (
+	"fmt"
+
 	"github.com/getsentry/sentry-go"
 	"github.com/sirupsen/logrus"
 )
@@ -22,7 +24,6 @@ var (
 // It's used for sending errors and messages to Sentry on specific
 // log levels. It wraps a default Sentry client.
 type Hook struct {
-	client      *sentry.Client
 	levels      []logrus.Level
 	tags        map[string]string
 	release     string
@@ -38,21 +39,23 @@ func (hook *Hook) Levels() []logrus.Level {
 // Fire uses the configured Sentry client to report the given Logrus Entry as
 // Sentry Event.
 func (hook *Hook) Fire(entry *logrus.Entry) error {
-	exceptions := []sentry.Exception{}
-
-	if err, ok := entry.Data[logrus.ErrorKey].(error); ok && err != nil {
-		stacktrace := sentry.ExtractStacktrace(err)
-		if stacktrace == nil {
-			stacktrace = sentry.NewStacktrace()
-		}
-		exceptions = append(exceptions, sentry.Exception{
-			Type:       entry.Message,
-			Value:      err.Error(),
-			Stacktrace: stacktrace,
-		})
+	entryError, ok := entry.Data[logrus.ErrorKey].(error)
+	if !ok || entryError == nil {
+		return nil
 	}
 
-	event := sentry.Event{
+	stacktrace := sentry.ExtractStacktrace(entryError)
+	if stacktrace == nil {
+		stacktrace = sentry.NewStacktrace()
+	}
+
+	exceptions := []sentry.Exception{{
+		Type:       entry.Message,
+		Value:      entryError.Error(),
+		Stacktrace: stacktrace,
+	}}
+
+	event := &sentry.Event{
 		Level:       levelsMap[entry.Level],
 		Message:     entry.Message,
 		Extra:       map[string]interface{}(entry.Data),
@@ -62,8 +65,7 @@ func (hook *Hook) Fire(entry *logrus.Entry) error {
 		Exception:   exceptions,
 	}
 
-	hub := sentry.CurrentHub()
-	hook.client.CaptureEvent(&event, nil, hub.Scope())
+	sentry.CaptureEvent(event)
 
 	return nil
 }
@@ -92,15 +94,10 @@ func (hook *Hook) SetEnvironment(environment string) {
 }
 
 // NewSentryHook creates a hook to be added to an instance of logger
-// and initializes the Sentry client.
+// and initializes Sentry in package level. SentryHook will be triggered
+// on Panic, Fatal and Error levels.
 func NewSentryHook(config *Config) (*Hook, error) {
-	levels := []logrus.Level{
-		logrus.PanicLevel,
-		logrus.FatalLevel,
-		logrus.ErrorLevel,
-	}
-
-	client, err := sentry.NewClient(sentry.ClientOptions{
+	if err := sentry.Init(sentry.ClientOptions{
 		// The DSN to use. If the DSN is not set, the client is effectively disabled.
 		Dsn: config.SentryDSN,
 		// In debug mode, the debug information is printed to stdout to help you understand what
@@ -116,20 +113,18 @@ func NewSentryHook(config *Config) (*Hook, error) {
 		Release: config.release,
 		// The environment to be sent with events.
 		Environment: config.environment,
-	})
-	if err != nil {
-		return nil, err
+	}); err != nil {
+		return nil, fmt.Errorf("initializing sentry. err: %w", err)
 	}
 
-	hook := Hook{
-		client: client,
+	levels := []logrus.Level{
+		logrus.PanicLevel,
+		logrus.FatalLevel,
+		logrus.ErrorLevel,
+	}
+
+	return &Hook{
 		levels: levels,
 		tags:   map[string]string{},
-	}
-
-	if len(hook.levels) == 0 {
-		hook.levels = logrus.AllLevels
-	}
-
-	return &hook, nil
+	}, nil
 }

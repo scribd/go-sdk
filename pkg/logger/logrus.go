@@ -151,6 +151,13 @@ func (l *logrusLogEntry) WithFields(fields Fields) Logger {
 	}
 }
 
+// WithError sets an error field on logrus logger.
+func (l *logrusLogEntry) WithError(err error) Logger {
+	return &logrusLogEntry{
+		entry: l.entry.WithError(err),
+	}
+}
+
 // SetTracking configures and enables the error reporting.
 func (l *logrusLogEntry) setTracking(trackingConfig *tracking.Config) error {
 	hook, err := tracking.NewSentryHook(trackingConfig)
