@@ -53,4 +53,6 @@ type Logger interface {
 	// Note that it doesn't log until you call Debug, Print, Info,
 	// Warn, Fatal or Panic on the Entry it returns.
 	WithFields(keyValues Fields) Logger
+	// WithError sets an error field value with logurs.Errorkey key.
+	WithError(err error) Logger
 }

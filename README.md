@@ -542,14 +542,15 @@ production:
   dsn: "https://<key>@sentry.io/<project>"
 ```
 
-The tracking can be enabled from the `Builder` with the `SetTracking`
-function:
+The tracking can be enabled from the `Logger Builder` with the `SetTracking`
+function. To trigger tracking, use `logger` with `WithError(err)` as follows:
 
 ```go
 package main
 
 import (
 	"log"
+	"errors"
 
 	sdklogger   "github.com/scribd/go-sdk/pkg/logger"
 	sdktracking "github.com/scribd/go-sdk/pkg/tracking"
@@ -573,6 +574,9 @@ func main() {
 	if Logger, err = sdklogger.NewBuilder(loggerConfig).SetTracking(trackingConfig).Build(); err != nil {
 		log.Fatalf("Failed to load SDK logger: %s", err.Error())
 	}
+
+	err = errors.New("new error")
+	logger.WithError(err).Errorf("trying sentry error functionality")
 ```
 
 A logger build with a valid tracking configuration will automatically
