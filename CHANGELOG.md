@@ -1,3 +1,12 @@
+# [1.17.0](https://github.com/scribd/go-sdk/compare/v1.16.1...v1.17.0) (2022-08-08)
+
+
+### Features
+
+* Set module go version to 1.18 ([6625ccd](https://github.com/scribd/go-sdk/commit/6625ccd65325abceb225b67af5c725af744fae9a))
+* Upgrade go version to 1.18.5 in Dockerfile ([1ab8b17](https://github.com/scribd/go-sdk/commit/1ab8b176e98cba1b9a1a0760e17f2bd5280941ba))
+* Upgrade golangci-lint to v1.47.3 ([c6ffdd4](https://github.com/scribd/go-sdk/commit/c6ffdd4a8ac1cce140af854ade04992f4127b675))
+
 ## [1.16.1](https://github.com/scribd/go-sdk/compare/v1.16.0...v1.16.1) (2022-08-03)
 
 
