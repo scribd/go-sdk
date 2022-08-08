@@ -2,7 +2,7 @@
 # build stage
 # =============================================================================
 
-FROM golang:1.17.6 AS builder
+FROM golang:1.18.5 AS builder
 
 ENV GO111MODULE=on
 
@@ -27,7 +27,7 @@ FROM builder AS linter
 
 # binary will be $(go env GOPATH)/bin/golangci-lint
 RUN curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh \
-	| sh -s -- -b $(go env GOPATH)/bin v1.39.0
+	| sh -s -- -b $(go env GOPATH)/bin v1.47.3
 
 # =============================================================================
 # development stage
