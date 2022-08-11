@@ -34,6 +34,7 @@ type Tracer struct {
 //
 // NewTracer assigns universal the version of the service that is running, and will be applied to all spans,
 // regardless of whether span service name and config service name match.
+// TODO serviceName must match with pkg/metrics serviceName. Should be fixed in future.
 func NewTracer(config *Config, options ...tracer.StartOption) *Tracer {
 	serviceName := globalServiceName(config.ServiceName)
 

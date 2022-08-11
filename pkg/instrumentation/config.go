@@ -8,9 +8,11 @@ import (
 
 type Config struct {
 	environment string
-	Enabled     bool `mapstructure:"enabled"`
+	// TODO must be application name to match pkg/metrics service name.
+	// should be fixed in future.
+	ServiceName string
 
-	ServiceName    string `mapstructure:"service_name"`
+	Enabled        bool   `mapstructure:"enabled"`
 	ServiceVersion string `mapstructure:"service_version"`
 	// Enable Profiler Code Hotspots feature
 	CodeHotspotsEnabled bool `mapstructure:"code_hotspots_enabled"`
