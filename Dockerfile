@@ -4,8 +4,6 @@
 
 FROM golang:1.18.5 AS builder
 
-ENV GO111MODULE=on
-
 WORKDIR /sdk
 
 COPY ./go.mod ./go.sum ./
