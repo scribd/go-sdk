@@ -2,11 +2,13 @@ package interceptors
 
 import (
 	"context"
-	"github.com/scribd/go-sdk/pkg/context/requestid"
+	"testing"
+
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
-	"testing"
+
+	"github.com/scribd/go-sdk/pkg/context/requestid"
 )
 
 var (

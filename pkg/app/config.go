@@ -5,9 +5,9 @@ import (
 	"path"
 	"time"
 
-	cbuilder "github.com/scribd/go-sdk/internal/pkg/configuration/builder"
-
 	"github.com/spf13/viper"
+
+	cbuilder "github.com/scribd/go-sdk/internal/pkg/configuration/builder"
 )
 
 // Config is custom application configuration.

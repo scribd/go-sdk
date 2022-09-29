@@ -2,13 +2,13 @@ package interceptors
 
 import (
 	"context"
+
 	grpcmiddleware "github.com/grpc-ecosystem/go-grpc-middleware"
+	"google.golang.org/grpc"
+
 	sdkdatabasecontext "github.com/scribd/go-sdk/pkg/context/database"
 	sdkloggercontext "github.com/scribd/go-sdk/pkg/context/logger"
 	sdklogger "github.com/scribd/go-sdk/pkg/logger"
-	"google.golang.org/grpc"
-
-	sdkcontext "github.com/scribd/go-sdk/pkg/context/database"
 )
 
 // DatabaseLoggingUnaryServerInterceptor returns a unary server interceptor.
@@ -67,7 +67,7 @@ func DatabaseLoggingStreamServerInterceptor() grpc.StreamServerInterceptor {
 		newDb.LogMode(true)
 		newDb.SetLogger(sdklogger.NewGormLogger(l))
 
-		newCtx := sdkcontext.ToContext(stream.Context(), newDb)
+		newCtx := sdkdatabasecontext.ToContext(stream.Context(), newDb)
 		wrapped := grpcmiddleware.WrapServerStream(stream)
 		wrapped.WrappedContext = newCtx
 

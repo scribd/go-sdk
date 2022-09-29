@@ -2,10 +2,12 @@ package interceptors
 
 import (
 	grpcmiddleware "github.com/grpc-ecosystem/go-grpc-middleware"
-	"github.com/scribd/go-sdk/pkg/context/requestid"
 	"google.golang.org/grpc/metadata"
 
+	"github.com/scribd/go-sdk/pkg/context/requestid"
+
 	"context"
+
 	"github.com/google/uuid"
 	"google.golang.org/grpc"
 )

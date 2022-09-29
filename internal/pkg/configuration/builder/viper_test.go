@@ -3,7 +3,7 @@ package builder
 import (
 	"testing"
 
-	assert "github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestViperBuilder(t *testing.T) {

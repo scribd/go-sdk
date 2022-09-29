@@ -99,12 +99,12 @@ func logConfigForTest(withJSONFormat bool) *Config {
 }
 
 // This test is proving the following:
-// - the config enables JSON formatter and the output is a parseable JSON;
-// - the config asks for level "trace" and above and the logger has output;
-// - the formatter in the SDK is customized and the logger correctly use those
-//   key fields;
-// - the formatter disables the logrus standard "msg" key in the field and
-//   the logger correctly doesn't show it;
+//   - the config enables JSON formatter and the output is a parseable JSON;
+//   - the config asks for level "trace" and above and the logger has output;
+//   - the formatter in the SDK is customized and the logger correctly use those
+//     key fields;
+//   - the formatter disables the logrus standard "msg" key in the field and
+//     the logger correctly doesn't show it;
 func TestInfoLevelWithJSONFields(t *testing.T) {
 	messageContent := "test message"
 	logAndAssertJSONFields(

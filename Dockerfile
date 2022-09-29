@@ -27,6 +27,9 @@ FROM builder AS linter
 RUN curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh \
 	| sh -s -- -b $(go env GOPATH)/bin v1.47.3
 
+# install goimports
+RUN go install golang.org/x/tools/cmd/goimports@v0.1.12
+
 # =============================================================================
 # development stage
 # =============================================================================

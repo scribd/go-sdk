@@ -44,18 +44,23 @@ func (Fmt) Run() error {
 
 // Checks the code formatting.
 func (Fmt) Check() error {
-	goCmd := "gofmt"
-	o, e := sh.OutCmd(goCmd)("-l", ".")
-	if e != nil {
-		return e
+	goModule, err := sh.Output(mg.GoCmd(), "list", "-m")
+	if err != nil {
+		return err
 	}
-	if o != "" {
-		fmtRes, e := sh.OutCmd(goCmd)("-d", ".")
-		if e != nil {
-			return e
-		}
-		return fmt.Errorf("Go code is not formatted:\n\n%s", fmtRes)
+
+	// flag -local string: put imports beginning with this string after 3rd-party packages; comma-separated list.
+	// flag -e: report all errors (not just the first 10 on different lines).
+	// flag -d: display diffs instead of rewriting files.
+	output, err := sh.Output("goimports", "-local="+goModule, "-e", "-d", ".")
+	if err != nil {
+		return err
 	}
+
+	if output != "" {
+		return fmt.Errorf("source code is not formatted:\n\n%s", output)
+	}
+
 	return nil
 }
 

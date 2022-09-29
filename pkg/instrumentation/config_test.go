@@ -6,8 +6,8 @@ import (
 	"runtime"
 	"testing"
 
-	assert "github.com/stretchr/testify/assert"
-	require "github.com/stretchr/testify/require"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 // TestNewConfig can only validate that, without a config file the configuration

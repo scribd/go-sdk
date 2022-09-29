@@ -3,7 +3,7 @@ package instrumentation
 import (
 	"testing"
 
-	assert "github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestNewTracer(t *testing.T) {
