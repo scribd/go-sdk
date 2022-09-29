@@ -12,8 +12,9 @@ import (
 	"testing"
 
 	"github.com/jinzhu/gorm"
-	"github.com/scribd/go-sdk/pkg/testing/testproto"
 	"google.golang.org/grpc/credentials/insecure"
+
+	"github.com/scribd/go-sdk/pkg/testing/testproto"
 
 	_ "github.com/mattn/go-sqlite3"
 

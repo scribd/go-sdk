@@ -1,9 +1,10 @@
 package kafka
 
 import (
-	"github.com/stretchr/testify/assert"
 	"math"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestAnalyticsSettings(t *testing.T) {

@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	ddmux "gopkg.in/DataDog/dd-trace-go.v1/contrib/gorilla/mux"
-	tracer "gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer"
+	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer"
 )
 
 const (

@@ -2,6 +2,7 @@ package metrics
 
 import (
 	"fmt"
+
 	datadogstatsd "github.com/DataDog/datadog-go/statsd"
 )
 

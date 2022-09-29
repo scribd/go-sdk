@@ -2,11 +2,12 @@ package kafka
 
 import (
 	"context"
+	"math"
+
 	"github.com/twmb/franz-go/pkg/kgo"
 	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace"
 	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/ext"
 	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer"
-	"math"
 )
 
 type (

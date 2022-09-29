@@ -2,6 +2,7 @@ package interceptors
 
 import (
 	"fmt"
+
 	"google.golang.org/grpc"
 	grpctrace "gopkg.in/DataDog/dd-trace-go.v1/contrib/google.golang.org/grpc"
 )
