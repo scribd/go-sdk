@@ -3,6 +3,8 @@ package middleware
 import (
 	"net/http"
 
+	"gorm.io/gorm"
+
 	sdkdatabasecontext "github.com/scribd/go-sdk/pkg/context/database"
 	sdkloggercontext "github.com/scribd/go-sdk/pkg/context/logger"
 	sdklogger "github.com/scribd/go-sdk/pkg/logger"
@@ -25,7 +27,7 @@ func NewDatabaseLoggingMiddleware() DatabaseLoggingMiddleware {
 // meta-information using the logger.
 func (dlm DatabaseLoggingMiddleware) Handler(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		d, err := sdkdatabasecontext.Extract(r.Context())
+		db, err := sdkdatabasecontext.Extract(r.Context())
 		if err != nil {
 			http.Error(w, "Unable to get DB connection", http.StatusInternalServerError)
 			return
@@ -37,11 +39,12 @@ func (dlm DatabaseLoggingMiddleware) Handler(next http.Handler) http.Handler {
 			return
 		}
 
-		newDb := d.New()
-		newDb.LogMode(true)
-		newDb.SetLogger(sdklogger.NewGormLogger(l))
+		newDB := db.Session(&gorm.Session{
+			Logger: sdklogger.NewGormLogger(l),
+			NewDB:  true,
+		})
 
-		ctx := sdkdatabasecontext.ToContext(r.Context(), newDb)
+		ctx := sdkdatabasecontext.ToContext(r.Context(), newDB)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }

@@ -5,17 +5,16 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"path"
 	"sync"
 	"testing"
 
-	"github.com/jinzhu/gorm"
-	_ "github.com/mattn/go-sqlite3"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	http2 "gopkg.in/DataDog/dd-trace-go.v1/contrib/net/http"
 	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/mocktracer"
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
 
 	sdkdatabasecontext "github.com/scribd/go-sdk/pkg/context/database"
 	sdklogger "github.com/scribd/go-sdk/pkg/logger"
@@ -31,7 +30,8 @@ func testingDbHandler(t *testing.T) http.Handler {
 		db, err := sdkdatabasecontext.Extract(req.Context())
 		require.Nil(t, err)
 
-		_, err = db.First(&TestRecord{}).Rows()
+		db.Exec("insert asd")
+		err = db.First(&TestRecord{}).Error
 		require.Nil(t, err)
 
 		w.WriteHeader(http.StatusOK)
@@ -45,27 +45,23 @@ func TestNewDatabaseLoggingMiddleware(t *testing.T) {
 	defer mt.Stop()
 
 	dbFile := path.Join(t.TempDir(), "test_db")
-	defer os.Remove(dbFile)
-
-	db, err := gorm.Open("sqlite3", dbFile)
+	db, err := gorm.Open(sqlite.Open(dbFile))
 	if err != nil {
 		t.Fatalf("Failed to open DB: %s", err)
 	}
-	defer db.Close()
 
-	var (
-		testRecord    = TestRecord{ID: 1, Name: "test_name"}
-		updatedRecord = TestRecord{ID: 1, Name: "new_test_name"}
-	)
+	testRecord := TestRecord{ID: 1, Name: "test_name"}
+	updatedRecord := TestRecord{ID: 1, Name: "new_test_name"}
 
-	errors := db.Begin().
-		CreateTable(TestRecord{}).
-		Create(testRecord).
-		Save(updatedRecord).
-		Commit().GetErrors()
+	if err = db.AutoMigrate(&TestRecord{}); err != nil {
+		t.Fatalf("Failed to migrate DB: %s", err)
+	}
 
-	for _, err := range errors {
-		t.Fatalf("Errors: %v", err)
+	if err = db.Begin().
+		Create(&testRecord).
+		Save(&updatedRecord).
+		Commit().Error; err != nil {
+		t.Fatalf("Failed to create and update record: %s", err)
 	}
 
 	handler := testingDbHandler(t)
@@ -74,7 +70,7 @@ func TestNewDatabaseLoggingMiddleware(t *testing.T) {
 	config := &sdklogger.Config{
 		ConsoleEnabled:    true,
 		ConsoleJSONFormat: true,
-		ConsoleLevel:      "debug",
+		ConsoleLevel:      "trace",
 		FileEnabled:       false,
 	}
 
@@ -90,6 +86,8 @@ func TestNewDatabaseLoggingMiddleware(t *testing.T) {
 	loggingMiddleware := NewLoggingMiddleware(l)
 	loggingHandler := loggingMiddleware.Handler(databaseHandler)
 
+	testHandler := NewRequestIDMiddleware().Handler(loggingHandler)
+
 	var wg sync.WaitGroup
 
 	// test concurrent calls to the handler
@@ -103,7 +101,7 @@ func TestNewDatabaseLoggingMiddleware(t *testing.T) {
 			req, reqErr := http.NewRequest("GET", "http://example.com", nil)
 			require.Nil(t, reqErr)
 
-			http2.WrapHandler(loggingHandler, "test", "test").ServeHTTP(recorder, req)
+			http2.WrapHandler(testHandler, "test", "test").ServeHTTP(recorder, req)
 
 		}()
 	}
@@ -115,11 +113,11 @@ func TestNewDatabaseLoggingMiddleware(t *testing.T) {
 	err = dec.Decode(&fields)
 	require.Nil(t, err)
 
-	var sql = (fields["sql"]).(map[string]interface{})
-	assert.NotEmpty(t, sql)
+	dbFields, ok := (fields["sql"]).(map[string]interface{})
+	assert.True(t, ok, "%s not found in log fields", "trace")
+	assert.NotEmpty(t, dbFields)
 
-	assert.NotEmpty(t, sql["duration"])
-	assert.NotEmpty(t, sql["affected_rows"])
-	assert.NotEmpty(t, sql["file_location"])
-	assert.NotNil(t, sql["values"])
+	assert.Contains(t, dbFields, "duration")
+	assert.Contains(t, dbFields, "affected_rows")
+	assert.Contains(t, dbFields, "sql")
 }
