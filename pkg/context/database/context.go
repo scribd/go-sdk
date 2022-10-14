@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 )
 
 type ctxDatabaseMarker struct{}
