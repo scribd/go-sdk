@@ -5,6 +5,7 @@ import (
 
 	grpcmiddleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	"google.golang.org/grpc"
+	"gorm.io/gorm"
 
 	sdkdatabasecontext "github.com/scribd/go-sdk/pkg/context/database"
 	sdkloggercontext "github.com/scribd/go-sdk/pkg/context/logger"
@@ -19,10 +20,10 @@ func DatabaseLoggingUnaryServerInterceptor() grpc.UnaryServerInterceptor {
 	return func(
 		ctx context.Context,
 		req interface{},
-		info *grpc.UnaryServerInfo,
+		_ *grpc.UnaryServerInfo,
 		handler grpc.UnaryHandler,
 	) (interface{}, error) {
-		d, err := sdkdatabasecontext.Extract(ctx)
+		db, err := sdkdatabasecontext.Extract(ctx)
 		if err != nil {
 			return nil, err
 		}
@@ -32,11 +33,12 @@ func DatabaseLoggingUnaryServerInterceptor() grpc.UnaryServerInterceptor {
 			return nil, err
 		}
 
-		newDb := d.New()
-		newDb.LogMode(true)
-		newDb.SetLogger(sdklogger.NewGormLogger(l))
+		newDB := db.Session(&gorm.Session{
+			Logger: sdklogger.NewGormLogger(l),
+			NewDB:  true,
+		})
 
-		newCtx := sdkdatabasecontext.ToContext(ctx, newDb)
+		newCtx := sdkdatabasecontext.ToContext(ctx, newDB)
 
 		return handler(newCtx, req)
 	}
@@ -50,10 +52,10 @@ func DatabaseLoggingStreamServerInterceptor() grpc.StreamServerInterceptor {
 	return func(
 		srv interface{},
 		stream grpc.ServerStream,
-		info *grpc.StreamServerInfo,
+		_ *grpc.StreamServerInfo,
 		handler grpc.StreamHandler,
 	) error {
-		d, err := sdkdatabasecontext.Extract(stream.Context())
+		db, err := sdkdatabasecontext.Extract(stream.Context())
 		if err != nil {
 			return err
 		}
@@ -63,11 +65,12 @@ func DatabaseLoggingStreamServerInterceptor() grpc.StreamServerInterceptor {
 			return err
 		}
 
-		newDb := d.New()
-		newDb.LogMode(true)
-		newDb.SetLogger(sdklogger.NewGormLogger(l))
+		newDB := db.Session(&gorm.Session{
+			Logger: sdklogger.NewGormLogger(l),
+			NewDB:  true,
+		})
 
-		newCtx := sdkdatabasecontext.ToContext(stream.Context(), newDb)
+		newCtx := sdkdatabasecontext.ToContext(stream.Context(), newDB)
 		wrapped := grpcmiddleware.WrapServerStream(stream)
 		wrapped.WrappedContext = newCtx
 
