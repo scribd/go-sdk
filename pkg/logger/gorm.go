@@ -1,95 +1,77 @@
 package logger
 
 import (
-	"database/sql/driver"
+	"context"
+	"errors"
 	"fmt"
-	"reflect"
-	"strings"
 	"time"
-	"unicode"
+
+	"github.com/sirupsen/logrus"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
+)
+
+const (
+	gormLoggerTraceFieldKey = "sql"
+	gormLoggerMsg           = "gorm DB Logger"
 )
 
 func NewGormLogger(l Logger) gormLogger {
-	return gormLogger{
-		logger: l,
-	}
+	return gormLogger{l}
 }
 
 type gormLogger struct {
 	logger Logger
 }
 
-// Print formats & prints the log
-func (gl gormLogger) Print(values ...interface{}) {
-	if values[0] == "sql" {
-		location := values[1].(string)
-		duration := values[2].(time.Duration)
-		sql := values[3].(string)
-		formattedValues := formatValues(values[4].([]interface{}))
-		affectedRows := values[5].(int64)
-
-		logger := gl.logger.WithFields(Fields{
-			"sql": Fields{
-				"duration":      duration,
-				"affected_rows": affectedRows,
-				"file_location": location,
-				"values":        formattedValues,
-			},
-		})
-
-		logger.Debugf(sql)
-	} else {
-		gl.logger.Tracef("%v", values[2:]...)
-	}
+func (g gormLogger) LogMode(logger.LogLevel) logger.Interface {
+	// we ignore changes to the log level.
+	// making changes to logger level causes a change to the root logger.
+	return g
 }
 
-// Code blatantly stolen and modified for our needs from Gorm:
-// https://github.com/jinzhu/gorm/blob/2a3ab99/logger.go#L30-L109
-func formatValues(values []interface{}) string {
-	var formattedValues []string
-	for _, value := range values {
-		indirectValue := reflect.Indirect(reflect.ValueOf(value))
-		if indirectValue.IsValid() {
-			value = indirectValue.Interface()
-			if t, ok := value.(time.Time); ok {
-				if t.IsZero() {
-					formattedValues = append(formattedValues, fmt.Sprintf("'%v'", "0000-00-00 00:00:00"))
-				} else {
-					formattedValues = append(formattedValues, fmt.Sprintf("'%v'", t.Format("2006-01-02 15:04:05")))
-				}
-			} else if b, ok := value.([]byte); ok {
-				if str := string(b); isPrintable(str) {
-					formattedValues = append(formattedValues, fmt.Sprintf("'%v'", str))
-				} else {
-					formattedValues = append(formattedValues, "'<binary>'")
-				}
-			} else if r, ok := value.(driver.Valuer); ok {
-				if value, err := r.Value(); err == nil && value != nil {
-					formattedValues = append(formattedValues, fmt.Sprintf("'%v'", value))
-				} else {
-					formattedValues = append(formattedValues, "NULL")
-				}
-			} else {
-				switch value.(type) {
-				case int, int8, int16, int32, int64, uint, uint8, uint16, uint32, uint64, float32, float64, bool:
-					formattedValues = append(formattedValues, fmt.Sprintf("%v", value))
-				default:
-					formattedValues = append(formattedValues, fmt.Sprintf("'%v'", value))
-				}
-			}
-		} else {
-			formattedValues = append(formattedValues, "NULL")
-		}
-	}
-
-	return strings.Join(formattedValues, " ")
+func (g gormLogger) Info(ctx context.Context, msg string, args ...interface{}) {
+	g.logger.Infof(msg, args...)
 }
 
-func isPrintable(s string) bool {
-	for _, r := range s {
-		if !unicode.IsPrint(r) {
-			return false
-		}
+func (g gormLogger) Warn(ctx context.Context, msg string, args ...interface{}) {
+	g.logger.Warnf(msg, args...)
+}
+
+func (g gormLogger) Error(ctx context.Context, msg string, args ...interface{}) {
+	g.logger.WithError(fmt.Errorf(msg, args...)).Errorf(gormLoggerMsg)
+}
+
+func (g gormLogger) Trace(ctx context.Context, begin time.Time, fc func() (string, int64), err error) {
+	sql, rows := fc()
+
+	l := g.logger.WithFields(Fields{
+		gormLoggerTraceFieldKey: Fields{
+			"duration":      time.Since(begin),
+			"affected_rows": rows,
+			"sql":           sql,
+		},
+	})
+
+	if err == nil {
+		l.Tracef("%s", gormLoggerMsg)
+
+		return
 	}
-	return true
+
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		l.Tracef(err.Error())
+
+		return
+	}
+
+	l.WithError(err).Errorf(gormLoggerMsg)
+}
+
+func (g gormLogger) ParamsFilter(ctx context.Context, sql string, params ...interface{}) (string, []interface{}) {
+	if g.logger.Level() == logrus.TraceLevel {
+		return sql, params
+	}
+
+	return sql, nil
 }

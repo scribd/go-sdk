@@ -3,6 +3,8 @@
 
 package logger
 
+import "github.com/sirupsen/logrus"
+
 type Level string
 
 const (
@@ -32,6 +34,8 @@ const (
 // Logger is the interface that defines the API/contract exposed by the
 // SDK Logger.
 type Logger interface {
+	// Level returns the current logging level.
+	Level() logrus.Level
 	// Panicf logs a message at level Panic.
 	Panicf(format string, args ...interface{})
 	// Fatalf logs a message at level Fatal.
