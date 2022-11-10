@@ -55,7 +55,7 @@ func TestInstrumentAWSSession(t *testing.T) {
 		assert.Equal(t, "GetObject", s.Tag(tagAWSOperation))
 		assert.Equal(t, "us-west-2", s.Tag(tagAWSRegion))
 		assert.Equal(t, "s3.GetObject", s.Tag(ext.ResourceName))
-		assert.Equal(t, "testApp-aws", s.Tag(ext.ServiceName))
+		assert.Equal(t, "testApp-app", s.Tag(ext.ServiceName))
 		assert.Equal(t, "GET", s.Tag(ext.HTTPMethod))
 		assert.Equal(t, "http://test-bucket-name.s3.us-west-2.amazonaws.com/test/file/name", s.Tag(ext.HTTPURL))
 	})

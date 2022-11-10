@@ -18,7 +18,7 @@ type Settings struct {
 func InstrumentAWSSession(session *awssession.Session, settings Settings) *awssession.Session {
 	return awstrace.WrapSession(
 		session,
-		awstrace.WithServiceName(fmt.Sprintf("%s-aws", settings.AppName)),
+		awstrace.WithServiceName(fmt.Sprintf("%s-app", settings.AppName)),
 		awstrace.WithAnalytics(settings.Analytics),
 		awstrace.WithAnalyticsRate(settings.AnalyticsRate),
 	)

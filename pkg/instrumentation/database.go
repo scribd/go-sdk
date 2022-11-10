@@ -43,7 +43,7 @@ type callbacks struct {
 
 func newCallbacks(appName string) *callbacks {
 	return &callbacks{
-		serviceName: fmt.Sprintf("%s-%s", appName, "mysql"),
+		serviceName: fmt.Sprintf("%s-%s", appName, "app"),
 	}
 }
 
