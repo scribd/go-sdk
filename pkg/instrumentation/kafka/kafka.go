@@ -163,6 +163,19 @@ func (i *FetchesRecordIter) Next() *kgo.Record {
 	return msg
 }
 
+// Done calls underlying kgo.FetchesRecordIter.Done and finishes any remaining span.
+func (i *FetchesRecordIter) Done() bool {
+	isDone := i.FetchesRecordIter.Done()
+
+	// finish any remaining span
+	if isDone && i.client.prev != nil {
+		i.client.prev.Finish()
+		i.client.prev = nil
+	}
+
+	return isDone
+}
+
 func finishSpan(span ddtrace.Span, partition int32, offset int64, err error) {
 	span.SetTag("partition", partition)
 	span.SetTag("offset", offset)
