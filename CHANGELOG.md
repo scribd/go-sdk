@@ -1,3 +1,10 @@
+## [1.17.1](https://github.com/scribd/go-sdk/compare/v1.17.0...v1.17.1) (2023-01-06)
+
+
+### Bug Fixes
+
+* Finish remaining spans on Fetches iterable Done ([ca0a35b](https://github.com/scribd/go-sdk/commit/ca0a35bc4caf6433225a877946538e7d40ee9e07))
+
 # [1.17.0](https://github.com/scribd/go-sdk/compare/v1.16.1...v1.17.0) (2022-08-08)
 
 
