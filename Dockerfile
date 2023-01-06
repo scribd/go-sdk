@@ -2,7 +2,7 @@
 # build stage
 # =============================================================================
 
-FROM golang:1.18.5 AS builder
+FROM golang:1.20rc2 AS builder
 
 WORKDIR /sdk
 
