@@ -100,7 +100,8 @@ func TestNewClient(t *testing.T) {
 		}, WithAnalyticsRate(0.1))
 
 		tt.fn(c)
-		c.Close()
+		// defer client close so we check record iter wrapper first
+		defer c.Close()
 	}
 
 	spans := mt.FinishedSpans()
