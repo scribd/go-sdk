@@ -1,3 +1,10 @@
+# [1.18.0](https://github.com/scribd/go-sdk/compare/v1.17.1...v1.18.0) (2023-02-06)
+
+
+### Features
+
+* Update Go to v1.19.5 ([f932500](https://github.com/scribd/go-sdk/commit/f932500bac5c86b4aba9b5da4dec3f652ce472ca))
+
 ## [1.17.1](https://github.com/scribd/go-sdk/compare/v1.17.0...v1.17.1) (2023-01-06)
 
 

@@ -1,4 +1,4 @@
 package version
 
 // The SDK version number.
-var Version = "1.17.1"
+var Version = "1.18.0"
