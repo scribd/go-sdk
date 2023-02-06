@@ -23,7 +23,6 @@ run:
 linters:
   enable:
     - bodyclose
-    - deadcode
     - errcheck
     - goconst
     - gofmt
@@ -33,12 +32,10 @@ linters:
     - lll
     - misspell
     - staticcheck
-    - structcheck
     - typecheck
     - unconvert
     - unparam
     - unused
-    - varcheck
 
 linters-settings:
   errcheck:

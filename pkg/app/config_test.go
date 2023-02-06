@@ -48,8 +48,12 @@ func TestGetters(t *testing.T) {
 		expectedInt         = 42
 		expectedString      = "foo"
 		expectedStringSlice = strings.Join([]string{"foo", "bar"}, ",")
-		expectedTime, _     = time.Parse(time.RFC3339, "2009-11-10T23:00:00Z")
 	)
+
+	expectedTime, err := time.Parse(time.RFC3339, "2009-11-10T23:00:00Z")
+	if err != nil {
+		t.Fatalf("Invalid time sample: %s", err)
+	}
 
 	cfg, err := NewConfig("testdata", "getters")
 	if err != nil {
