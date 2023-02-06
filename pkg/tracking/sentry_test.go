@@ -2,7 +2,7 @@ package tracking
 
 import (
 	"errors"
-	"io/ioutil"
+	"io"
 	"testing"
 
 	"github.com/getsentry/sentry-go"
@@ -74,7 +74,7 @@ func TestSentryHookManualTag(t *testing.T) {
 func newMockLogger(hook *Hook) *logrus.Logger {
 	logger := logrus.New()
 
-	logger.SetOutput(ioutil.Discard)
+	logger.SetOutput(io.Discard)
 	logger.Hooks.Add(hook)
 
 	return logger
