@@ -57,6 +57,9 @@ func TestNewConfigWithAppRoot(t *testing.T) {
 				},
 				Subscriber: Subscriber{
 					Topic: "test-topic",
+					AutoCommit: AutoCommit{
+						Enabled: true,
+					},
 				},
 				SSLVerificationEnabled: true,
 			},
@@ -77,11 +80,39 @@ func TestNewConfigWithAppRoot(t *testing.T) {
 				},
 				Subscriber: Subscriber{
 					Topic: "test-topic",
+					AutoCommit: AutoCommit{
+						Enabled: true,
+					},
 				},
 				SSLVerificationEnabled: true,
 			},
 
 			envOverrides: [][]string{{"APP_PUBSUB_KAFKA_BROKER_URLS", "localhost:9092 localhost:9093"}},
+		},
+		{
+			name: "NewWithConfigFileWorks (auto_commimt override)",
+			env:  "test",
+			kafka: Kafka{
+				BrokerUrls:       []string{"localhost:9092"},
+				ClientId:         "test-app",
+				Cert:             "pem string",
+				CertKey:          "pem key",
+				SecurityProtocol: "ssl",
+				Publisher: Publisher{
+					MaxAttempts:  3,
+					WriteTimeout: 10 * time.Second,
+					Topic:        "test-topic",
+				},
+				Subscriber: Subscriber{
+					Topic: "test-topic",
+					AutoCommit: AutoCommit{
+						Enabled: false,
+					},
+				},
+				SSLVerificationEnabled: true,
+			},
+
+			envOverrides: [][]string{{"APP_PUBSUB_KAFKA_SUBSCRIBER_AUTO_COMMIT_ENABLED", "false"}},
 		},
 		{
 			name: "NewWithConfigFileWorks (TLS config override)",
@@ -99,6 +130,9 @@ func TestNewConfigWithAppRoot(t *testing.T) {
 				},
 				Subscriber: Subscriber{
 					Topic: "test-topic",
+					AutoCommit: AutoCommit{
+						Enabled: true,
+					},
 				},
 				SSLVerificationEnabled: true,
 				TLS: TLS{
@@ -129,6 +163,9 @@ func TestNewConfigWithAppRoot(t *testing.T) {
 				},
 				Subscriber: Subscriber{
 					Topic: "test-topic",
+					AutoCommit: AutoCommit{
+						Enabled: true,
+					},
 				},
 				SASL: SASL{
 					Enabled:   true,
@@ -158,6 +195,9 @@ func TestNewConfigWithAppRoot(t *testing.T) {
 				},
 				Subscriber: Subscriber{
 					Topic: "test-topic",
+					AutoCommit: AutoCommit{
+						Enabled: true,
+					},
 				},
 				SASL: SASL{
 					Enabled:   true,
