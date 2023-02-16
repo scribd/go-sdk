@@ -40,6 +40,13 @@ type (
 		Enabled bool `mapstructure:"enabled"`
 		// MetricsEnabled controls if metrics publishing is enabled or not
 		MetricsEnabled bool `mapstructure:"metrics_enabled"`
+		// AutoCommit controls if the subscriber should auto commit messages
+		AutoCommit AutoCommit `mapstructure:"auto_commit"`
+	}
+
+	AutoCommit struct {
+		// Enabled whether the auto commit is enabled or not
+		Enabled bool `mapstructure:"enabled"`
 	}
 
 	TLS struct {
@@ -145,6 +152,8 @@ var (
 func NewConfig() (*Config, error) {
 	config := &Config{}
 	viperBuilder := cbuilder.New("pubsub")
+
+	viperBuilder.SetDefault("kafka.subscriber.auto_commit.enabled", true)
 
 	vConf, err := viperBuilder.Build()
 	if err != nil {

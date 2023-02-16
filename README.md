@@ -867,11 +867,12 @@ To break it down further `Publisher` and `Subscriber` have their own set of conf
 
 **Subscriber**:
 
-| Setting        | Description                                                                            | YAML variable     | Environment variable (ENV)                    | Type   | Possible Values |
-|----------------|----------------------------------------------------------------------------------------|-------------------|-----------------------------------------------|--------|-----------------|
-| Topic          | Topic name                                                                             | `topic`           | `APP_PUBSUB_KAFKA_SUBSCRIBER_TOPIC`           | string | topic           |
-| Group ID       | Client group id string. All clients sharing the same group id belong to the same group | `group_id`        | `APP_PUBSUB_KAFKA_SUBSCRIBER_GROUP_ID`        | string | service-name    |
-| Enable Metrics | Enable publishing metrics for Kafka consumer                                           | `metrics_enabled` | `APP_PUBSUB_KAFKA_SUBSCRIBER_METRICS_ENABLED` | bool   | true, false     |
+| Setting           | Description                                                                             | YAML variable         | Environment variable (ENV)                        | Type   | Possible Values |
+|-------------------|-----------------------------------------------------------------------------------------|-----------------------|---------------------------------------------------|--------|-----------------|
+| Topic             | Topic name                                                                              | `topic`               | `APP_PUBSUB_KAFKA_SUBSCRIBER_TOPIC`               | string | topic           |
+| Group ID          | Client group id string. All clients sharing the same group id belong to the same group  | `group_id`            | `APP_PUBSUB_KAFKA_SUBSCRIBER_GROUP_ID`            | string | service-name    |
+| Enable Metrics    | Enable publishing metrics for Kafka consumer                                            | `metrics_enabled`     | `APP_PUBSUB_KAFKA_SUBSCRIBER_METRICS_ENABLED`     | bool   | true, false     |
+| Enable AutoCommit | Enable AutoCommit option for Kafka consumer (default `true`)                            | `auto_commit.enabled` | `APP_PUBSUB_KAFKA_SUBSCRIBER_AUTO_COMMIT_ENABLED` | bool   | true, false     |
 
 
 To authenticate the requests to Kafka, Go SDK provides a configuration set for TLS and [SASL](https://en.wikipedia.org/wiki/Simple_Authentication_and_Security_Layer)
