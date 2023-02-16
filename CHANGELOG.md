@@ -1,3 +1,10 @@
+# [1.19.0](https://github.com/scribd/go-sdk/compare/v1.18.0...v1.19.0) (2023-02-16)
+
+
+### Features
+
+* Configure auto commit for PubSub ([82c6315](https://github.com/scribd/go-sdk/commit/82c631549bd09efb134ce1d40eb8f55538df5594))
+
 # [1.18.0](https://github.com/scribd/go-sdk/compare/v1.17.1...v1.18.0) (2023-02-06)
 
 
