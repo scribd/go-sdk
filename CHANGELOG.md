@@ -1,3 +1,11 @@
+# [1.20.0](https://github.com/scribd/go-sdk/compare/v1.19.0...v1.20.0) (2023-02-17)
+
+
+### Features
+
+* Gorm logger only logs on trace ([19d6969](https://github.com/scribd/go-sdk/commit/19d6969f16581c58be69e6715804a72c758eef2e))
+* Update gorm to v2 and replace it's drivers ([8352f54](https://github.com/scribd/go-sdk/commit/8352f54e7b13a93bc39c3c72281c919de4b14d8a))
+
 # [1.19.0](https://github.com/scribd/go-sdk/compare/v1.18.0...v1.19.0) (2023-02-16)
 
 
