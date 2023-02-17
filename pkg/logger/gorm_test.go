@@ -60,8 +60,8 @@ func TestNewGormLogger(t *testing.T) {
 			},
 		},
 		{
-			name:        "Print on error log level with error",
-			isLogged:    true,
+			name:        "Empty on error log level with error",
+			isLogged:    false,
 			resultError: true,
 			cfg: Config{
 				ConsoleEnabled:    true,
@@ -80,8 +80,8 @@ func TestNewGormLogger(t *testing.T) {
 			},
 		},
 		{
-			name:        "Print on debug log level with error",
-			isLogged:    true,
+			name:        "Empty on debug log level with error",
+			isLogged:    false,
 			resultError: true,
 			cfg: Config{
 				ConsoleEnabled:    true,
@@ -146,7 +146,7 @@ func TestNewGormLogger(t *testing.T) {
 				assert.Contains(t, fields["sql"], "affected_rows")
 
 				if tt.resultError {
-					assert.Equal(t, fields["level"], "error")
+					assert.Equal(t, fields["level"], "trace")
 					assert.Contains(t, buffer.String(), "error")
 					assert.Equal(t, fields["error"], testDBErrorMsg)
 				} else {

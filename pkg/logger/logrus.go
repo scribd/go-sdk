@@ -117,10 +117,6 @@ type logrusLogEntry struct {
 	entry *logrus.Entry
 }
 
-func (l *logrusLogEntry) Level() logrus.Level {
-	return l.entry.Logger.GetLevel()
-}
-
 func (l *logrusLogEntry) Tracef(format string, args ...interface{}) {
 	l.entry.Tracef(format, args...)
 }

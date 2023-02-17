@@ -2,12 +2,9 @@ package logger
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"time"
 
-	"github.com/sirupsen/logrus"
-	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 )
 
@@ -53,25 +50,15 @@ func (g gormLogger) Trace(ctx context.Context, begin time.Time, fc func() (strin
 		},
 	})
 
-	if err == nil {
-		l.Tracef("%s", gormLoggerMsg)
+	if err != nil {
+		l.WithError(err).Tracef(gormLoggerMsg)
 
 		return
 	}
 
-	if errors.Is(err, gorm.ErrRecordNotFound) {
-		l.Tracef(err.Error())
-
-		return
-	}
-
-	l.WithError(err).Errorf(gormLoggerMsg)
+	l.Tracef(gormLoggerMsg)
 }
 
 func (g gormLogger) ParamsFilter(ctx context.Context, sql string, params ...interface{}) (string, []interface{}) {
-	if g.logger.Level() == logrus.TraceLevel {
-		return sql, params
-	}
-
 	return sql, nil
 }
