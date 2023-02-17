@@ -3,7 +3,7 @@ package testing
 import (
 	"context"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
 	sdkdatabasecontext "github.com/scribd/go-sdk/pkg/context/database"
 	"github.com/scribd/go-sdk/pkg/testing/testproto"

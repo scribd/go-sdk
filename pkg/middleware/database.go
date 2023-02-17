@@ -6,7 +6,7 @@ import (
 	sdkdatabasecontext "github.com/scribd/go-sdk/pkg/context/database"
 	sdkinstrumentation "github.com/scribd/go-sdk/pkg/instrumentation"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 )
 
 // DatabaseMiddleware wraps an instantiated *gorm.DB that will be

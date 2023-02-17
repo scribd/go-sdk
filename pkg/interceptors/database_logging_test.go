@@ -7,24 +7,20 @@ import (
 	"io"
 	golog "log"
 	"net"
-	"os"
 	"path"
 	"testing"
-
-	"github.com/jinzhu/gorm"
-	"google.golang.org/grpc/credentials/insecure"
-
-	"github.com/scribd/go-sdk/pkg/testing/testproto"
-
-	_ "github.com/mattn/go-sqlite3"
-
-	sdktesting "github.com/scribd/go-sdk/pkg/testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/test/bufconn"
 	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/mocktracer"
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
+
+	sdktesting "github.com/scribd/go-sdk/pkg/testing"
+	"github.com/scribd/go-sdk/pkg/testing/testproto"
 )
 
 type TestRecord struct {
@@ -36,38 +32,37 @@ func TestDatabaseLoggingUnaryServerInterceptor(t *testing.T) {
 	mt := mocktracer.Start()
 	defer mt.Stop()
 
-	dbFile := path.Join(t.TempDir(), "test_db")
-	defer os.Remove(dbFile)
+	tempDBPath := path.Join(t.TempDir(), "test_db")
 
-	db, err := gorm.Open("sqlite3", dbFile)
+	db, err := gorm.Open(sqlite.Open(tempDBPath))
 	if err != nil {
 		t.Fatalf("Failed to open DB: %s", err)
 	}
-	defer db.Close()
 
-	var (
-		testRecordOne = TestRecord{ID: 1, Name: "test_name"}
-		testRecordTwo = TestRecord{ID: 2, Name: "new_test_name"}
-	)
+	testRecordOne := TestRecord{ID: 1, Name: "test_name"}
+	testRecordTwo := TestRecord{ID: 2, Name: "new_test_name"}
 
-	errors := db.Begin().
-		CreateTable(TestRecord{}).
-		Create(testRecordOne).
-		Create(testRecordTwo).
-		Commit().GetErrors()
+	if err = db.AutoMigrate(TestRecord{}); err != nil {
+		t.Fatalf("Failed to migrate DB: %s", err)
+	}
 
-	for _, err := range errors {
-		t.Fatalf("Errors: %v", err)
+	err = db.Begin().
+		Create(&testRecordOne).
+		Create(&testRecordTwo).
+		Commit().Error
+	if err != nil {
+		t.Fatalf("Failed to create record: %s", err)
 	}
 
 	var buffer bytes.Buffer
 
-	l, err := getLogger("debug", &buffer)
+	l, err := getLogger("trace", &buffer)
 	require.Nil(t, err)
 
 	lis := bufconn.Listen(bufSize)
 	s := grpc.NewServer([]grpc.ServerOption{
 		grpc.ChainUnaryInterceptor(
+			RequestIDUnaryServerInterceptor(),
 			TracingUnaryServerInterceptor("test"),
 			LoggerUnaryServerInterceptor(l),
 			DatabaseUnaryServerInterceptor(db),
@@ -112,38 +107,36 @@ func TestDatabaseLoggingStreamServerInterceptors(t *testing.T) {
 	mt := mocktracer.Start()
 	defer mt.Stop()
 
-	dbFile := path.Join(t.TempDir(), "test_db")
-	defer os.Remove(dbFile)
-
-	db, err := gorm.Open("sqlite3", dbFile)
+	tempDBPath := path.Join(t.TempDir(), "test_db")
+	db, err := gorm.Open(sqlite.Open(tempDBPath))
 	if err != nil {
 		t.Fatalf("Failed to open DB: %s", err)
 	}
-	defer db.Close()
 
-	var (
-		testRecordOne = TestRecord{ID: 1, Name: "test_name"}
-		testRecordTwo = TestRecord{ID: 2, Name: "new_test_name"}
-	)
+	testRecordOne := TestRecord{ID: 1, Name: "test_name"}
+	testRecordTwo := TestRecord{ID: 2, Name: "new_test_name"}
 
-	errors := db.Begin().
-		CreateTable(TestRecord{}).
-		Create(testRecordOne).
-		Create(testRecordTwo).
-		Commit().GetErrors()
+	if err = db.AutoMigrate(TestRecord{}); err != nil {
+		t.Fatalf("Failed to migrate DB: %s", err)
+	}
 
-	for _, err := range errors {
-		t.Fatalf("Errors: %v", err)
+	err = db.Begin().
+		Create(&testRecordOne).
+		Create(&testRecordTwo).
+		Commit().Error
+	if err != nil {
+		t.Fatalf("Failed to create record: %s", err)
 	}
 
 	var buffer bytes.Buffer
 
-	l, err := getLogger("debug", &buffer)
+	l, err := getLogger("trace", &buffer)
 	require.Nil(t, err)
 
 	lis := bufconn.Listen(bufSize)
 	s := grpc.NewServer([]grpc.ServerOption{
 		grpc.ChainStreamInterceptor(
+			RequestIDStreamServerInterceptor(),
 			TracingStreamServerInterceptor("test"),
 			LoggerStreamServerInterceptor(l),
 			DatabaseStreamServerInterceptor(db),
@@ -199,10 +192,11 @@ func TestDatabaseLoggingStreamServerInterceptors(t *testing.T) {
 func checkGormLoggerFields(t *testing.T, fields map[string]interface{}) {
 	assert.NotEmpty(t, fields["sql"])
 
-	var sql = (fields["sql"]).(map[string]interface{})
+	dbFields, ok := (fields["sql"]).(map[string]interface{})
+	assert.True(t, ok, "%s not found in log fields", "trace")
+	assert.NotEmpty(t, dbFields)
 
-	assert.NotEmpty(t, sql["duration"])
-	assert.NotEmpty(t, sql["affected_rows"])
-	assert.NotEmpty(t, sql["file_location"])
-	assert.NotNil(t, sql["values"])
+	assert.Contains(t, dbFields, "duration")
+	assert.Contains(t, dbFields, "affected_rows")
+	assert.Contains(t, dbFields, "sql")
 }

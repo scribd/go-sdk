@@ -3,25 +3,36 @@ package logger
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"testing"
-	"time"
 
+	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
 )
 
 func TestNewGormLogger(t *testing.T) {
+	sampleQuery := "SELECT id FROM users"
+
+	testDBErrorMsg := "test error"
+	testDBError := errors.New(testDBErrorMsg)
+
+	var expectedEffectedRows int64 = 1
+	var expectedLastInsertID int64 = 1
+	// expectedEffectedRowsString := strconv.Itoa(int(expectedEffectedRows))
+
 	tests := []struct {
-		name     string
-		input    []interface{}
-		cfg      Config
-		isEmpty  bool
-		expected map[string]interface{}
+		name        string
+		isLogged    bool
+		resultError bool
+		cfg         Config
 	}{
 		{
-			name:    "Empty on fatal log level",
-			input:   []interface{}{"sql", "test/test", time.Second, "select * from test;", []interface{}{}, int64(10)},
-			isEmpty: true,
+			name:        "Empty on fatal log level with error",
+			isLogged:    false,
+			resultError: true,
 			cfg: Config{
 				ConsoleEnabled:    true,
 				ConsoleJSONFormat: true,
@@ -29,9 +40,19 @@ func TestNewGormLogger(t *testing.T) {
 			},
 		},
 		{
-			name:    "Empty on error log level",
-			input:   []interface{}{"sql", "test/test", time.Second, "select * from test;", []interface{}{}, int64(10)},
-			isEmpty: true,
+			name:        "Empty on fatal log level with error",
+			isLogged:    false,
+			resultError: true,
+			cfg: Config{
+				ConsoleEnabled:    true,
+				ConsoleJSONFormat: true,
+				ConsoleLevel:      "fatal",
+			},
+		},
+		{
+			name:        "Empty on error log level without error",
+			isLogged:    false,
+			resultError: false,
 			cfg: Config{
 				ConsoleEnabled:    true,
 				ConsoleJSONFormat: true,
@@ -39,53 +60,49 @@ func TestNewGormLogger(t *testing.T) {
 			},
 		},
 		{
-			name:    "Empty on warning log level",
-			input:   []interface{}{"sql", "test/test", time.Second, "select * from test;", []interface{}{}, int64(10)},
-			isEmpty: true,
+			name:        "Empty on error log level with error",
+			isLogged:    false,
+			resultError: true,
 			cfg: Config{
 				ConsoleEnabled:    true,
 				ConsoleJSONFormat: true,
-				ConsoleLevel:      "warning",
+				ConsoleLevel:      "error",
 			},
 		},
 		{
-			name:    "Empty on info log level",
-			input:   []interface{}{"sql", "test/test", time.Second, "select * from test;", []interface{}{}, int64(10)},
-			isEmpty: true,
-			cfg: Config{
-				ConsoleEnabled:    true,
-				ConsoleJSONFormat: true,
-				ConsoleLevel:      "info",
-			},
-		},
-		{
-			name:  "Print database log",
-			input: []interface{}{"sql", "test/test", time.Second, "select * from test;", []interface{}{}, int64(10)},
+			name:        "Empty on debug log level without error",
+			isLogged:    false,
+			resultError: false,
 			cfg: Config{
 				ConsoleEnabled:    true,
 				ConsoleJSONFormat: true,
 				ConsoleLevel:      "debug",
 			},
-			expected: map[string]interface{}{
-				"duration":      float64(time.Second),
-				"affected_rows": float64(10),
-				"file_location": "test/test",
-				"values":        "",
-			},
 		},
 		{
-			name:  "Empty on non sql input in debug mode",
-			input: []interface{}{"test string", "test/test", time.Second, "select * from test;", []interface{}{}, int64(10)},
+			name:        "Empty on debug log level with error",
+			isLogged:    false,
+			resultError: true,
 			cfg: Config{
 				ConsoleEnabled:    true,
 				ConsoleJSONFormat: true,
 				ConsoleLevel:      "debug",
 			},
-			isEmpty: true,
 		},
 		{
-			name:  "Print log in trace mode on non sql input",
-			input: []interface{}{"test string", "test/test", time.Second, "select * from test;", []interface{}{}, int64(10)},
+			name:        "Print on trace log level without error",
+			isLogged:    true,
+			resultError: false,
+			cfg: Config{
+				ConsoleEnabled:    true,
+				ConsoleJSONFormat: true,
+				ConsoleLevel:      "trace",
+			},
+		},
+		{
+			name:        "Print on trace log level with error",
+			isLogged:    true,
+			resultError: true,
 			cfg: Config{
 				ConsoleEnabled:    true,
 				ConsoleJSONFormat: true,
@@ -96,28 +113,73 @@ func TestNewGormLogger(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			var fields Fields
 			var buffer bytes.Buffer
 
 			b := NewBuilder(&tt.cfg)
 			l, err := b.BuildTestLogger(&buffer)
 			require.Nil(t, err)
 
-			gl := NewGormLogger(l)
-			gl.Print(tt.input...)
+			gormDB, mock := mockGormConnectionWithLogger(t, l)
+			ee := mock.ExpectExec(sampleQuery)
 
-			if tt.isEmpty {
-				assert.Empty(t, buffer.Bytes())
+			if tt.resultError {
+				ee.WillReturnError(testDBError)
 			} else {
-				err = json.Unmarshal(buffer.Bytes(), &fields)
+				ee.WillReturnResult(sqlmock.NewResult(expectedLastInsertID, expectedEffectedRows))
+			}
+
+			gormDB.Exec(sampleQuery)
+
+			if tt.isLogged {
+				var fields map[string]interface{}
+				err := json.Unmarshal(buffer.Bytes(), &fields)
 				assert.Nil(t, err)
 
-				if tt.expected != nil {
-					assert.Equal(t, tt.expected, fields["sql"])
+				assert.Contains(t, buffer.String(), "level")
+
+				assert.Contains(t, buffer.String(), "message")
+				assert.Equal(t, fields["message"], gormLoggerMsg)
+
+				assert.Contains(t, buffer.String(), "sql")
+				assert.Contains(t, fields["sql"], "sql")
+				assert.Contains(t, fields["sql"], "duration")
+				assert.Contains(t, fields["sql"], "affected_rows")
+
+				if tt.resultError {
+					assert.Equal(t, fields["level"], "trace")
+					assert.Contains(t, buffer.String(), "error")
+					assert.Equal(t, fields["error"], testDBErrorMsg)
 				} else {
-					assert.NotEmpty(t, fields["message"])
+					assert.Equal(t, fields["level"], "trace")
 				}
+			} else {
+				assert.Empty(t, buffer.Bytes())
+			}
+
+			if err := mock.ExpectationsWereMet(); err != nil {
+				t.Errorf("there were unfulfilled expectations: %s", err)
 			}
 		})
+
 	}
+}
+
+func mockGormConnectionWithLogger(t *testing.T, l Logger) (*gorm.DB, sqlmock.Sqlmock) {
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Error(err)
+	}
+
+	mockedDB, err := gorm.Open(
+		mysql.New(mysql.Config{
+			Conn:                      db,
+			SkipInitializeWithVersion: true,
+		}),
+		&gorm.Config{Logger: NewGormLogger(l)},
+	)
+	if err != nil {
+		t.Error(err)
+	}
+
+	return mockedDB, mock
 }

@@ -4,8 +4,8 @@ import (
 	"context"
 
 	grpcmiddleware "github.com/grpc-ecosystem/go-grpc-middleware"
-	"github.com/jinzhu/gorm"
 	"google.golang.org/grpc"
+	"gorm.io/gorm"
 
 	sdkcontext "github.com/scribd/go-sdk/pkg/context/database"
 	sdkinstrumentation "github.com/scribd/go-sdk/pkg/instrumentation"

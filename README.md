@@ -744,7 +744,7 @@ func main() {
 ### ORM Integration
 
 `go-sdk` comes with an integration with the popular
-[gorm](https://github.com/jinzhu/gorm) as an object-relational mapper (ORM).
+[gorm](https://gorm.io/gorm) as an object-relational mapper (ORM).
 Using the configuration details, namely the [data source
 name](https://en.wikipedia.org/wiki/Data_source_name) (DSN) as their product,
 gorm is able to open a connection and give the `go-sdk` users a preconfigured
@@ -773,7 +773,7 @@ words the `NewConnection` function, so they remain opaque for the user.
 #### Usage of ORM
 
 Invoking the constructor for a database connection, `go-sdk` returns a
-[Gorm-powered](https://github.com/jinzhu/gorm) database connection. It can be
+[Gorm-powered](https://gorm.io/gorm) database connection. It can be
 used right away to query the database:
 
 ```go
@@ -783,7 +783,7 @@ import (
 	"fmt"
 
 	sdkdb "github.com/scribd/go-sdk/pkg/database"
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 )
 
 type User struct {
@@ -1041,7 +1041,7 @@ if err != nil {
 `DatabaseLogging` for both HTTP and gRPC servers.
 
 The `Database` middleware which instruments the
-[Gorm-powered](https://github.com/jinzhu/gorm) database connection. It utilizes
+[Gorm-powered](https://gorm.io/gorm) database connection. It utilizes
 Gorm-specific callbacks that report spans and traces to Datadog. The
 instrumented Gorm database connection is injected in the request `Context` and
 it is always scoped within the request.
@@ -1051,8 +1051,11 @@ The `DatabaseLogging` middleware checks for a logger injected in the request
 which in turn uses the logger to produce database query logs. A nice
 side-effect of this approach is that, if the logger is tagged with a
 `request_id`, there's a logs correlation between the HTTP requests and the
-database queries. Also, if the logger is tagged with `treace_id` we can easily
-correlate logs with traces and see corresponding database queries.
+database queries. Also, if the logger is tagged with `trace_id` we can easily
+correlate logs with traces and see corresponding database queries. Keep in mind 
+that ORM logging happens at the same level as the base logger. The additional
+database fields ('duration', 'affected_rows' and 'sql') are available
+only when using the `trace` levels.
 
 #### HTTP server middleware example
 
