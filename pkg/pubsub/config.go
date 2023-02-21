@@ -42,6 +42,8 @@ type (
 		MetricsEnabled bool `mapstructure:"metrics_enabled"`
 		// AutoCommit controls if the subscriber should auto commit messages
 		AutoCommit AutoCommit `mapstructure:"auto_commit"`
+		// Workers controls the number of workers that will be used to process messages
+		Workers int `mapstructure:"workers"`
 	}
 
 	AutoCommit struct {
