@@ -44,6 +44,8 @@ type (
 		AutoCommit AutoCommit `mapstructure:"auto_commit"`
 		// Workers controls the number of workers that will be used to process messages
 		Workers int `mapstructure:"workers"`
+		// BlockRebalance controls if the rebalance event should be blocked while the polling is in progress
+		BlockRebalance bool `mapstructure:"block_rebalance"`
 	}
 
 	AutoCommit struct {
