@@ -77,7 +77,7 @@ func TestNewClient(t *testing.T) {
 			err: true,
 		},
 		{
-			name: "consume",
+			name: "consume via record iterator",
 			fn: func(c *Client) {
 				ctx := context.Background()
 
@@ -89,6 +89,27 @@ func TestNewClient(t *testing.T) {
 				for !iter.Done() {
 					iter.Next()
 				}
+			},
+		},
+		{
+			name: "consume via FetchPartition wrapper",
+			fn: func(c *Client) {
+				ctx := context.Background()
+
+				c.Produce(ctx, &kgo.Record{Topic: "test"}, nil)
+
+				fetches := c.KafkaClient.PollRecords(context.Background(), 1)
+				fetches.EachTopic(func(ft kgo.FetchTopic) {
+					ft.EachPartition(func(fp kgo.FetchPartition) {
+						wfp := c.WrapFetchPartition(ctx, fp)
+
+						wfp.EachRecord(func(r *kgo.Record) {
+							wfp.ConsumeRecord(r)
+						})
+
+					})
+				})
+
 			},
 		},
 	}
@@ -106,7 +127,7 @@ func TestNewClient(t *testing.T) {
 
 	spans := mt.FinishedSpans()
 
-	assert.Len(t, spans, 5)
+	assert.Len(t, spans, 7)
 
 	// produce
 	for i := 0; i < 4; i++ {
@@ -119,10 +140,12 @@ func TestNewClient(t *testing.T) {
 		assert.Equal(t, int32(0), s.Tag("partition"))
 	}
 
-	s1 := spans[4] // consume
-	assert.Equal(t, "kafka.consume", s1.OperationName())
-	assert.Equal(t, "kafka", s1.Tag(ext.ServiceName))
-	assert.Equal(t, "Consume Topic test", s1.Tag(ext.ResourceName))
-	assert.Equal(t, "queue", s1.Tag(ext.SpanType))
-	assert.Equal(t, int32(0), s1.Tag("partition"))
+	// consume
+	for _, s := range []mocktracer.Span{spans[4], spans[6]} {
+		assert.Equal(t, "kafka.consume", s.OperationName())
+		assert.Equal(t, "kafka", s.Tag(ext.ServiceName))
+		assert.Equal(t, "Consume Topic test", s.Tag(ext.ResourceName))
+		assert.Equal(t, "queue", s.Tag(ext.SpanType))
+		assert.Equal(t, int32(0), s.Tag("partition"))
+	}
 }
