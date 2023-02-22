@@ -46,6 +46,8 @@ type (
 		Workers int `mapstructure:"workers"`
 		// BlockRebalance controls if the rebalance event should be blocked while the polling is in progress
 		BlockRebalance bool `mapstructure:"block_rebalance"`
+		// MaxRecords controls the maximum number of records to be fetched in a single request
+		MaxRecords int `mapstructure:"max_records"`
 	}
 
 	AutoCommit struct {
