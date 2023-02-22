@@ -1,3 +1,10 @@
+## [1.20.1](https://github.com/scribd/go-sdk/compare/v1.20.0...v1.20.1) (2023-02-22)
+
+
+### Bug Fixes
+
+* Fix passing data using context in gorm ([d8fc5bd](https://github.com/scribd/go-sdk/commit/d8fc5bd6e93e2e25309b86c8b2a0a72de02ce63d))
+
 # [1.20.0](https://github.com/scribd/go-sdk/compare/v1.19.0...v1.20.0) (2023-02-17)
 
 
