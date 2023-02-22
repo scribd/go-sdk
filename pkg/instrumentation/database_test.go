@@ -135,3 +135,18 @@ func TestInstrumentDatabase(t *testing.T) {
 		}
 	}
 }
+
+func TestTraceDatabase(t *testing.T) {
+	dbFile := path.Join(t.TempDir(), "test_db")
+	db, err := gorm.Open(sqlite.Open(dbFile))
+	if err != nil {
+		t.Fatalf("Failed to open DB: %s", err)
+	}
+
+	InstrumentDatabase(db, "test_app_name")
+	db = TraceDatabase(context.Background(), db)
+
+	if sp := db.Statement.Context.Value(parentSpanGormKey); sp == nil {
+		t.Error("Parent span not set on statement")
+	}
+}
