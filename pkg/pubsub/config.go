@@ -42,6 +42,12 @@ type (
 		MetricsEnabled bool `mapstructure:"metrics_enabled"`
 		// AutoCommit controls if the subscriber should auto commit messages
 		AutoCommit AutoCommit `mapstructure:"auto_commit"`
+		// Workers controls the number of workers that will be used to process messages
+		Workers int `mapstructure:"workers"`
+		// BlockRebalance controls if the rebalance event should be blocked while the polling is in progress
+		BlockRebalance bool `mapstructure:"block_rebalance"`
+		// MaxRecords controls the maximum number of records to be fetched in a single request
+		MaxRecords int `mapstructure:"max_records"`
 	}
 
 	AutoCommit struct {

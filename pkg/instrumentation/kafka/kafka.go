@@ -30,6 +30,12 @@ type (
 		ctx    context.Context
 		client *Client
 	}
+
+	FetchPartition struct {
+		kgo.FetchPartition
+		ctx    context.Context
+		client *Client
+	}
 )
 
 // NewClient calls kgo.NewClient and wraps the resulting Client.
@@ -140,6 +146,16 @@ func (c *Client) WrapFetchesRecordIter(ctx context.Context, i *kgo.FetchesRecord
 	}
 }
 
+// WrapFetchPartition wraps the kgo.FetchPartition and links it to the Client.
+func (c *Client) WrapFetchPartition(ctx context.Context, fp kgo.FetchPartition) *FetchPartition {
+	return &FetchPartition{
+		FetchPartition: fp,
+
+		ctx:    ctx,
+		client: c,
+	}
+}
+
 // Close calls the underlying *kgo.Close and finishes the remaining span.
 func (c *Client) Close() {
 	c.KafkaClient.Close()
@@ -174,6 +190,29 @@ func (i *FetchesRecordIter) Done() bool {
 	}
 
 	return isDone
+}
+
+// EachRecord calls underlying kgo.FetchPartition.EachRecord and traces the message.
+func (fp *FetchPartition) EachRecord(fn func(rec *kgo.Record)) {
+	fp.FetchPartition.EachRecord(func(rec *kgo.Record) {
+		span := fp.client.startConsumerSpan(fp.ctx, rec)
+
+		ctx := rec.Context
+		if ctx == nil {
+			ctx = context.Background()
+		}
+
+		rec.Context = tracer.ContextWithSpan(ctx, span)
+
+		fn(rec)
+	})
+}
+
+// ConsumeRecord finishes the span for a particular record.
+func (fp *FetchPartition) ConsumeRecord(rec *kgo.Record) {
+	if span, ok := tracer.SpanFromContext(rec.Context); ok {
+		span.Finish()
+	}
 }
 
 func finishSpan(span ddtrace.Span, partition int32, offset int64, err error) {
