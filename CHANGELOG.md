@@ -1,3 +1,14 @@
+# [1.21.0](https://github.com/scribd/go-sdk/compare/v1.20.1...v1.21.0) (2023-03-02)
+
+
+### Features
+
+* Add instrumentation wrapper for kgo.FetchPartition data type ([747dbb0](https://github.com/scribd/go-sdk/commit/747dbb0703899de8c01307cdad455cb6214d52af))
+* Configure Kafka subscriber rebalance strategy ([7a05db0](https://github.com/scribd/go-sdk/commit/7a05db015fff4a2639f314362cfebfbd6814abd7))
+* Configure max_records for Kafka subscriber ([36d6e73](https://github.com/scribd/go-sdk/commit/36d6e73cc1408ec8a4c1b86aabbdc2adc8104a10))
+* Configure number of workers for Kafka consumers ([25af545](https://github.com/scribd/go-sdk/commit/25af54578362bada61c1ca53d83b77e9084511b9))
+* Upgrade franz-go to v1.12.1 ([c5a551e](https://github.com/scribd/go-sdk/commit/c5a551ea1dc5e8c6f693b6811e5772228c55e711))
+
 ## [1.20.1](https://github.com/scribd/go-sdk/compare/v1.20.0...v1.20.1) (2023-02-22)
 
 
