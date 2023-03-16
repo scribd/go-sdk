@@ -9,39 +9,29 @@ env:
   NOTIFICATION_FIELDS: >
     [
       {
-        title: 'Repository',
-        value: `${process.env.AS_REPO}`,
-        short: true
+        "title": "Repository",
+        "value": "<https://github.com/${{ github.repository }}|${{ github.repository }}>",
+        "short": true
       },
       {
-        title: 'Environment',
-        value: `${process.env.GITHUB_REF_SLUG}`,
-        short: true
+        "title": "Environment",
+        "value": "${{ github.ref_name == 'main' && 'production' || github.ref_name }}",
+        "short": true
       },
       {
-        title: 'Author',
-        value: `${process.env.AS_AUTHOR}`,
-        short: true
+        "title": "Author",
+        "value": "<https://github.com/${{ github.event.sender.login }}|${{ github.event.sender.login }}>",
+        "short": true
       },
       {
-        title: 'Commit',
-        value: `${process.env.AS_COMMIT}`,
-        short: true
+        "title": "Job",
+        "value": "${{ github.job }}",
+        "short": true
       },
       {
-        title: 'Job',
-        value: `${process.env.AS_JOB}`,
-        short: true
-      },
-      {
-        title: 'Duration',
-        value: `${process.env.AS_TOOK}`,
-        short: true
-      },
-      {
-        title: 'Commit Message',
-        value: `${process.env.AS_MESSAGE}`,
-        short: false
+        "title": "Tag Message",
+        "value": "%s",
+        "short": false
       }
     ]
 
@@ -102,33 +92,41 @@ jobs:
         if: always()
         run: |
           if [ "${{ job.status }}" = "success" ]; then
-              echo "::set-output name=emoji::large_green_square"
-              echo "::set-output name=color::good"
+            echo "emoji=large_green_square" >> $GITHUB_OUTPUT
+            echo "color=good" >> $GITHUB_OUTPUT
           elif [ "${{ job.status }}" = "failure" ]; then
-              echo "::set-output name=emoji::large_red_square"
-              echo "::set-output name=color::danger"
+            echo "emoji=large_red_square" >> $GITHUB_OUTPUT
+            echo "color=danger" >> $GITHUB_OUTPUT
           else
-              echo "::set-output name=emoji::large_orange_square"
-              echo "::set-output name=color::warning"
+            echo "emoji=large_orange_square" >> $GITHUB_OUTPUT
+            echo "color=warning" >> $GITHUB_OUTPUT
           fi
+
+      - name: Output release version
+        id: output-release-version
+        run: |
+          echo "::set-output name=release-version::$(git rev-list --tags --max-count=1 | xargs git describe --tags | cut -c2-)"
+
+      - name: Set commit message
+        if: always()
+        run: |
+          message="<https://github.com/scribd/go-sdk/releases/tag/${{ steps.output-release-version.outputs.release-version }}|Released version ${{ steps.output-release-version.outputs.release-version }}>"
+          echo NOTIFICATION_FIELDS=$(printf '${{ env.NOTIFICATION_FIELDS }}' "$message") >> $GITHUB_ENV
 
       - name: Send Slack notification
         if: always()
-        uses: 8398a7/action-slack@v3.9.0
+        uses: slackapi/slack-github-action@v1.23.0
         env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_BOT_TOKEN: ${{ secrets.SCRIBD_SLACK_GENERIC_TOKEN }}
         with:
-          author_name: "GitHub on ${{ github.repository }}"
-          fields: repo,message,commit,author,action,eventName,ref,workflow,job,took
-          status: custom
-          job_name: 'Release'
-          custom_payload: |
+          channel-id: service-foundations-release
+          payload: |
             {
-              text: `:${{ steps.release-status.outputs.emoji }}: *Workflow ${ process.env.AS_WORKFLOW } ${{ job.status }}*`,
-              attachments: [
+              "text": ":${{ steps.release-status.outputs.emoji }}: *Workflow <https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/|${{ github.workflow }}> ${{ job.status }}*",
+              "attachments": [
                 {
-                  color: '${{ steps.release-status.outputs.color }}',
-                  fields: ${{ env.NOTIFICATION_FIELDS }}
+                  "color": "${{ steps.release-status.outputs.color }}",
+                  "fields": ${{ env.NOTIFICATION_FIELDS }}
                 }
               ]
             }
