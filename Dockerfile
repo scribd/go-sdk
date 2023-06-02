@@ -2,9 +2,17 @@
 # build stage
 # =============================================================================
 
-FROM golang:1.19.9 AS builder
+FROM golang:1.19.9-alpine AS builder
 
 WORKDIR /sdk
+
+RUN apk add --no-cache \
+	build-base \
+	# curl version should be higher than 7.74 to mitigate SNYK-DEBIAN11-CURL-3320493
+	curl \
+	git \
+	openssh-client \
+	tzdata
 
 COPY ./go.mod ./go.sum ./
 RUN go mod download
