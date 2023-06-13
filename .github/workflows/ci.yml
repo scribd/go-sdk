@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Inject slug/short variables
         # A GitHub Action to expose the slug values of some GitHub ENV variables
@@ -49,7 +49,7 @@ jobs:
     needs: build
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Inject slug/short variables
         # A GitHub Action to expose the slug values of some GitHub ENV variables
@@ -103,7 +103,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Inject slug/short variables
         # A GitHub Action to expose the slug values of some GitHub ENV variables
