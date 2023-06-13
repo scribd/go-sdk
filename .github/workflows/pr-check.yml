@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Check Commit Message Title
-        uses: gsactions/commit-message-checker@v1
+        uses: gsactions/commit-message-checker@v2
         with:
           pattern: '^(?:feat|fix|docs|style|refactor|perf|test|chore)\(?(?:\w+|\s|\-|_)?\)?:\s[A-Z]\w+'
           error: 'The commit title does not follow the requirements. Please check the commit message requirements here: https://github.com/scribd/go-sdk#commit-messages'
