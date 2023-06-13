@@ -16,7 +16,7 @@ jobs:
       - name: Checkout
         # A GitHub Action to checkout a repository.
         # https://github.com/actions/checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
            token: ${{ secrets.GITHUB_TOKEN }}
            persist-credentials: false
@@ -27,7 +27,7 @@ jobs:
         uses: rlespinasse/github-slug-action@v3.x
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-access-key-id: ${{ secrets.DEPLOYER_PRODUCTION_ACCESS_KEY }}
           aws-secret-access-key: ${{ secrets.DEPLOYER_PRODUCTION_SECRET_KEY }}
@@ -61,7 +61,7 @@ jobs:
 
       - name: Send Slack notification
         if: always()
-        uses: scribd/job-notification@v1.0.0
+        uses: scribd/job-notification@v1.1.0
         with:
           token: ${{ secrets.SCRIBD_SLACK_GENERIC_TOKEN_PUBLIC }}
           channel: service-foundations-release
