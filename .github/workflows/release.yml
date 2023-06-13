@@ -61,7 +61,7 @@ jobs:
 
       - name: Send Slack notification
         if: always()
-        uses: scribd/job-notification@v1.0.0
+        uses: scribd/job-notification@v1.1.0
         with:
           token: ${{ secrets.SCRIBD_SLACK_GENERIC_TOKEN_PUBLIC }}
           channel: service-foundations-release
