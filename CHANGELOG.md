@@ -1,3 +1,24 @@
+# [1.22.0](https://github.com/scribd/go-sdk/compare/v1.21.0...v1.22.0) (2023-06-16)
+
+
+### Bug Fixes
+
+* **docker:** Install required dependencies ([53ea80c](https://github.com/scribd/go-sdk/commit/53ea80c8e16649f7232bc40df5d6fbb26a622157))
+* **docker:** Use alpine base image ([1f9a1f4](https://github.com/scribd/go-sdk/commit/1f9a1f47ded3635e32aa684bec500e198085a7aa))
+* Upgrade golang image to 1.19.9 ([75a8289](https://github.com/scribd/go-sdk/commit/75a82894ccdf05a5e81c56c2625be54c6e4f11e7))
+
+
+### Features
+
+* **ci:** Upgrade build-push-action to v3 ([e1beb31](https://github.com/scribd/go-sdk/commit/e1beb31ed23a0b487f9073ea809faa7337be7994))
+* **ci:** Upgrade cache to v3 ([fa3d6e0](https://github.com/scribd/go-sdk/commit/fa3d6e029e4bc968745b6dd7c914467e2b0fe093))
+* **ci:** Upgrade checkout to v3 ([e501d45](https://github.com/scribd/go-sdk/commit/e501d4537e62642e8f56c40f95f6d0ee3571765c))
+* **ci:** Upgrade commit-message-checker to v2 ([ec79084](https://github.com/scribd/go-sdk/commit/ec79084402b53954cf112c4da2c7095a6da2152d))
+* **ci:** Upgrade configure-aws-credentials to v2 ([cd8cdf6](https://github.com/scribd/go-sdk/commit/cd8cdf6c8619807c2cbb21c004cceae81a51324d))
+* **ci:** Upgrade job-notification to v1.1.0 ([7a2f540](https://github.com/scribd/go-sdk/commit/7a2f5406daaca3f632c05aee8d0f7cd22f5bd5e3))
+* **ci:** Upgrade setup-buildx-action to v2 ([121b340](https://github.com/scribd/go-sdk/commit/121b34093dd4d632b2693a64f685ae95e0c1238b))
+* **ci:** Use job-notification action for release notification ([cc8e269](https://github.com/scribd/go-sdk/commit/cc8e269dd0576cc4781db4d2406feeb0c268f62a))
+
 # [1.21.0](https://github.com/scribd/go-sdk/compare/v1.20.1...v1.21.0) (2023-03-02)
 
 
