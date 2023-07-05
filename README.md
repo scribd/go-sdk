@@ -1471,18 +1471,7 @@ In this case, perform the following steps:
 
 ### Commit messages
 
-In order to generate a consistent and readable CHANGELOG, the commit title should being with a capital letter.
-
-Examples:
-```
-// incorrect
-feat(ci): some CI changes
-
-// correct
-feat(ci): Some CI changes
-```
-
-[The GitHub workflow checks the commit title correctness](https://github.com/scribd/go-sdk/blob/main/.github/workflows/pr-check.yml).
+Please follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) and [Angular commit message guidelines](https://github.com/angular/angular/blob/22b96b9/CONTRIBUTING.md#-commit-message-guidelines) for writing commit messages.
 
 ## Release
 
