@@ -45,6 +45,9 @@ func NewConnection(config *Config, environment string) (*gorm.DB, error) {
 	}
 
 	sqlDB.SetMaxIdleConns(config.Pool)
+	sqlDB.SetMaxOpenConns(config.MaxOpenConnections)
+	sqlDB.SetConnMaxIdleTime(config.ConnectionMaxIdleTime)
+	sqlDB.SetConnMaxLifetime(config.ConnectionMaxLifetime)
 
 	return db, nil
 }
