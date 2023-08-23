@@ -1,3 +1,10 @@
+# [1.24.0](https://github.com/scribd/go-sdk/compare/v1.23.0...v1.24.0) (2023-08-23)
+
+
+### Features
+
+* Add new database connection settings ([f7694fa](https://github.com/scribd/go-sdk/commit/f7694fa0e6944e56347c947d7573d86fc0717d81))
+
 # [1.23.0](https://github.com/scribd/go-sdk/compare/v1.22.0...v1.23.0) (2023-07-11)
 
 
