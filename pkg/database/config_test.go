@@ -3,6 +3,7 @@ package database
 import (
 	"os"
 	"testing"
+	"time"
 
 	assert "github.com/stretchr/testify/assert"
 )
@@ -15,26 +16,32 @@ func TestNewConfig(t *testing.T) {
 	})
 
 	testCases := []struct {
-		name      string
-		wantError bool
-		host      string
-		port      int
-		username  string
-		password  string
-		database  string
-		pool      int
-		timeout   string
+		name                  string
+		wantError             bool
+		host                  string
+		port                  int
+		username              string
+		password              string
+		database              string
+		timeout               string
+		pool                  int
+		maxOpenConnections    int
+		connectionMaxIdleTime time.Duration
+		connectionMaxLifetime time.Duration
 	}{
 		{
-			name:      "NewWithoutConfigFileFails",
-			wantError: true,
-			host:      "",
-			port:      0,
-			username:  "",
-			password:  "",
-			database:  "",
-			pool:      0,
-			timeout:   "",
+			name:                  "NewWithoutConfigFileFails",
+			wantError:             true,
+			host:                  "",
+			port:                  0,
+			username:              "",
+			password:              "",
+			database:              "",
+			timeout:               "",
+			pool:                  0,
+			maxOpenConnections:    0,
+			connectionMaxIdleTime: 0,
+			connectionMaxLifetime: 0,
 		},
 	}
 
@@ -50,8 +57,11 @@ func TestNewConfig(t *testing.T) {
 			assert.Equal(t, c.Username, tc.username)
 			assert.Equal(t, c.Password, tc.password)
 			assert.Equal(t, c.Database, tc.database)
-			assert.Equal(t, c.Pool, tc.pool)
 			assert.Equal(t, c.Timeout, tc.timeout)
+			assert.Equal(t, c.Pool, tc.pool)
+			assert.Equal(t, c.MaxOpenConnections, tc.maxOpenConnections)
+			assert.Equal(t, c.ConnectionMaxIdleTime, tc.connectionMaxIdleTime)
+			assert.Equal(t, c.ConnectionMaxLifetime, tc.connectionMaxLifetime)
 		})
 	}
 }

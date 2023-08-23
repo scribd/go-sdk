@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 
 	cbuilder "github.com/scribd/go-sdk/internal/pkg/configuration/builder"
 )
@@ -15,8 +16,13 @@ type Config struct {
 	Username string `mapstructure:"username"`
 	Password string `mapstructure:"password"`
 	Database string `mapstructure:"database"`
-	Pool     int    `mapstructure:"pool"`
 	Timeout  string `mapstructure:"timeout"`
+	// Connection settings
+	// TODO Pool field name must be modified in the next major change.
+	Pool                  int           `mapstructure:"pool"`
+	MaxOpenConnections    int           `mapstructure:"max_open_connections"`
+	ConnectionMaxIdleTime time.Duration `mapstructure:"connection_max_idle_time"`
+	ConnectionMaxLifetime time.Duration `mapstructure:"connection_max_lifetime"`
 }
 
 // NewConfig returns a new Config instance.
