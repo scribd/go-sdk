@@ -5,7 +5,7 @@ import (
 	"path"
 	"testing"
 
-	"github.com/google/go-cmp/cmp"
+	"github.com/stretchr/testify/assert"
 	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/mocktracer"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -130,9 +130,7 @@ func TestInstrumentDatabase(t *testing.T) {
 			t.Errorf("Got span: %s, expected: %s", actualName, expectedName)
 		}
 
-		if diff := cmp.Diff(expectedTags, actualTags); diff != "" {
-			t.Error(diff)
-		}
+		assert.Equal(t, expectedTags, actualTags, "database tags didn't match")
 	}
 }
 
