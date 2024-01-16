@@ -1,3 +1,10 @@
+# [1.26.0](https://github.com/scribd/go-sdk/compare/v1.25.0...v1.26.0) (2024-01-16)
+
+
+### Features
+
+* Upgrade grpc to v1.60.1 ([bdda913](https://github.com/scribd/go-sdk/commit/bdda913b54f4a48385201df715a14b4ebb057782))
+
 # [1.25.0](https://github.com/scribd/go-sdk/compare/v1.24.0...v1.25.0) (2023-09-18)
 
 
