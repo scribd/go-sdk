@@ -2,7 +2,7 @@
 # build stage
 # =============================================================================
 
-FROM golang:1.21.1-alpine AS builder
+FROM golang:1.22rc2-alpine AS builder
 
 WORKDIR /sdk
 
