@@ -8,7 +8,7 @@ require (
 	github.com/DataDog/datadog-go v4.8.2+incompatible
 	github.com/aws/aws-sdk-go v1.34.28
 	github.com/getsentry/sentry-go v0.12.0
-	github.com/google/uuid v1.3.1
+	github.com/google/uuid v1.6.0
 	github.com/grpc-ecosystem/go-grpc-middleware v1.0.0
 	github.com/magefile/mage v1.13.0
 	github.com/rs/cors v1.7.0
