@@ -44,5 +44,4 @@ RUN go install golang.org/x/tools/cmd/goimports@v0.1.12
 
 FROM linter AS development
 
-RUN go get -v \
-	github.com/go-delve/delve/cmd/dlv@v1.4.0
+RUN go install github.com/go-delve/delve/cmd/dlv@v1.22.0
