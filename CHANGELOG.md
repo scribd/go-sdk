@@ -1,3 +1,11 @@
+# [1.27.0](https://github.com/scribd/go-sdk/compare/v1.26.0...v1.27.0) (2024-02-08)
+
+
+### Features
+
+* Upgrade google/uuid to v1.6.0 ([981427e](https://github.com/scribd/go-sdk/commit/981427e21895dbcbfa3c7ae2514c1aaecb81e03c))
+* Upgrafe mage to v1.15.0 ([735df53](https://github.com/scribd/go-sdk/commit/735df5378263af6e3082e147e883c8a3ecf7d1b6))
+
 # [1.26.0](https://github.com/scribd/go-sdk/compare/v1.25.0...v1.26.0) (2024-01-16)
 
 
