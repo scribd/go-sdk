@@ -1,3 +1,10 @@
+# [1.28.0](https://github.com/scribd/go-sdk/compare/v1.27.0...v1.28.0) (2024-04-08)
+
+
+### Features
+
+* Update go directive in go.mod to 1.22 ([4f0bf88](https://github.com/scribd/go-sdk/commit/4f0bf8879859a0a9b70306ea8c3b5369133ee04a))
+
 # [1.27.0](https://github.com/scribd/go-sdk/compare/v1.26.0...v1.27.0) (2024-02-08)
 
 
