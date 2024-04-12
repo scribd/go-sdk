@@ -21,7 +21,7 @@ jobs:
       - name: Checkout
         # A GitHub Action to checkout a repository.
         # https://github.com/actions/checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
            token: ${{ secrets.GITHUB_TOKEN }}
            persist-credentials: false
@@ -32,7 +32,7 @@ jobs:
         uses: rlespinasse/github-slug-action@v3.x
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v3
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.DEPLOYER_PRODUCTION_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}

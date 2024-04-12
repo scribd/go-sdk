@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Inject slug/short variables
         # A GitHub Action to expose the slug values of some GitHub ENV variables
@@ -22,17 +22,17 @@ jobs:
 
       - name: Set up Docker Buildx
         id: buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
 
       - name: Cache Docker layers
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ${{ env.BUILDX_CACHE_PATH }}
           key: ${{ runner.os }}-buildx-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-buildx-
 
-      - uses: docker/build-push-action@v3
+      - uses: docker/build-push-action@v5
         # GitHub Action to build and push Docker images with Buildx
         # https://github.com/docker/build-push-action
         name: Build image
@@ -49,7 +49,7 @@ jobs:
     needs: build
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Inject slug/short variables
         # A GitHub Action to expose the slug values of some GitHub ENV variables
@@ -58,17 +58,17 @@ jobs:
 
       - name: Set up Docker Buildx
         id: buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
 
       - name: Get cached Docker layers
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ${{ env.BUILDX_CACHE_PATH }}
           key: ${{ runner.os }}-buildx-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-buildx-
 
-      - uses: docker/build-push-action@v3
+      - uses: docker/build-push-action@v5
         # GitHub Action to build and push Docker images with Buildx
         # https://github.com/docker/build-push-action
         name: Build image
@@ -103,7 +103,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Inject slug/short variables
         # A GitHub Action to expose the slug values of some GitHub ENV variables
@@ -112,17 +112,17 @@ jobs:
 
       - name: Set up Docker Buildx
         id: buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
 
       - name: Get cached Docker layers
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ${{ env.BUILDX_CACHE_PATH }}
           key: ${{ runner.os }}-buildx-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-buildx-
 
-      - uses: docker/build-push-action@v3
+      - uses: docker/build-push-action@v5
         # GitHub Action to build and push Docker images with Buildx
         # https://github.com/docker/build-push-action
         name: Build image
