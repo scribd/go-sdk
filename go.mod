@@ -8,6 +8,7 @@ require (
 	github.com/DataDog/datadog-go v4.8.2+incompatible
 	github.com/aws/aws-sdk-go v1.34.28
 	github.com/getsentry/sentry-go v0.12.0
+	github.com/go-kit/kit v0.9.0
 	github.com/google/uuid v1.6.0
 	github.com/grpc-ecosystem/go-grpc-middleware v1.0.0
 	github.com/magefile/mage v1.15.0
@@ -16,6 +17,7 @@ require (
 	github.com/spf13/viper v1.10.1
 	github.com/stretchr/testify v1.8.4
 	github.com/twmb/franz-go v1.12.1
+	github.com/twmb/franz-go/pkg/kmsg v1.4.0
 	google.golang.org/grpc v1.60.1
 	google.golang.org/protobuf v1.32.0
 	gopkg.in/DataDog/dd-trace-go.v1 v1.47.0
@@ -38,6 +40,7 @@ require (
 	github.com/dgraph-io/ristretto v0.1.0 // indirect
 	github.com/dustin/go-humanize v1.0.0 // indirect
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
+	github.com/go-logfmt/logfmt v0.6.0 // indirect
 	github.com/go-sql-driver/mysql v1.7.0 // indirect
 	github.com/golang/glog v1.1.2 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
@@ -67,7 +70,6 @@ require (
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/subosito/gotenv v1.2.0 // indirect
 	github.com/tinylib/msgp v1.1.6 // indirect
-	github.com/twmb/franz-go/pkg/kmsg v1.4.0 // indirect
 	go4.org/intern v0.0.0-20211027215823-ae77deb06f29 // indirect
 	go4.org/unsafe/assume-no-moving-gc v0.0.0-20220617031537-928513b29760 // indirect
 	golang.org/x/net v0.20.0 // indirect
