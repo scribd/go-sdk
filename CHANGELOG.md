@@ -1,3 +1,11 @@
+# [1.29.0](https://github.com/scribd/go-sdk/compare/v1.28.0...v1.29.0) (2024-04-17)
+
+
+### Features
+
+* Add go-kit Kafka transport ([5afd272](https://github.com/scribd/go-sdk/commit/5afd27290aec1729581b88342c9b5eba1444769b))
+* Add PubSub Kafka client ([eba9a3f](https://github.com/scribd/go-sdk/commit/eba9a3f53457ae54f6594ae90921a279505dbfd8))
+
 # [1.28.0](https://github.com/scribd/go-sdk/compare/v1.27.0...v1.28.0) (2024-04-08)
 
 
