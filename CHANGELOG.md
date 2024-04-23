@@ -1,3 +1,13 @@
+# [1.30.0](https://github.com/scribd/go-sdk/compare/v1.29.0...v1.30.0) (2024-04-23)
+
+
+### Features
+
+* Configure redis cache ([b2d9376](https://github.com/scribd/go-sdk/commit/b2d93769c9d5df0ef6d56fcb1683d8b569a93727))
+* Create instrumented redis client ([ca9c96e](https://github.com/scribd/go-sdk/commit/ca9c96e4e342745078431966f72a68445d4978b8))
+* Propagate cache configration to the root data type ([07f0a59](https://github.com/scribd/go-sdk/commit/07f0a59f26d2109f49742cbd63f48763d944da23))
+* Upgrade dd-trace-go and dependant libraries ([5130deb](https://github.com/scribd/go-sdk/commit/5130deb85eb0b124526ab4ff27ea421135f32202))
+
 # [1.29.0](https://github.com/scribd/go-sdk/compare/v1.28.0...v1.29.0) (2024-04-17)
 
 
