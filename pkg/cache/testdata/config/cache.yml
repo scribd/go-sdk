@@ -1,0 +1,15 @@
+common: &common
+  redis:
+
+test: &test
+  <<: *common
+  store: redis
+  redis:
+    url: ""
+    addrs:
+      - "localhost:6379"
+    username: "test"
+    password: "test"
+
+development:
+  <<: *test

@@ -30,6 +30,8 @@ SDK, the Go version.
         - [Usage of ORM](#usage-of-orm)
     - [PubSub](#pubsub)
         - [Kafka specific configuration](#kafka-specific-configuration)
+    - [Cache](#cache)
+        - [Redis](#redis-specific-configuration)
 - [APM & Instrumentation](#apm---instrumentation)
     - [Request ID middleware](#request-id-middleware)
         - [HTTP server Request ID middleware](#http-server-request-id-middleware)
@@ -42,6 +44,8 @@ SDK, the Go version.
     - [AWS Session instrumentation](#aws-session-instrumentation)
     - [PubSub instrumentation and logging](#pubsub-instrumentation-and-logging)
       - [Kafka](#kafka)
+    - [Cache instrumentation and logging](#cache-instrumentation-and-logging)
+      - [Redis](#redis)
     - [Profiling](#profiling)
     - [Custom Metrics](#custom-metrics)
 - [Using the `go-sdk` in isolation](#using-the--go-sdk--in-isolation)
@@ -909,6 +913,76 @@ To authenticate the requests to Kafka, Go SDK provides a configuration set for T
 | Assumable role         | This role will be used to establish connection to AWS MSK ignoring the static credentials                                                                                                               | `role`          | `APP_PUBSUB_KAFKA_SASL_AWS_MSK_IAM_ROLE`          | string | AWS ARN string     |
 | Session name           | Will be passed to AWS STS when assuming the role                                                                                                                                                        | `session_name`  | `APP_PUBSUB_KAFKA_SASL_AWS_MSK_IAM_SESSION_NAME`  | string | application        |
 
+### Cache
+
+`go-sdk` provides a convenient way to create an application Cache configuration.
+
+Top-level configuration is split into sections specific for the vendor. Let's look into the sample `cache.yml` file:
+
+```yaml
+common: &common
+  store: redis
+  redis:
+    url: ""
+    # Set by APP_CACHE_REDIS_ADDRS env variable
+    addrs:
+      - "localhost:6379"
+    # Set by APP_CACHE_REDIS_USERNAME env variable
+    username: "username"
+    # Set by APP_CACHE_REDIS_PASSWORD env variable
+    password: "password"
+```
+
+#### Redis specific configuration
+
+Redis top-level configuration is based on the official [go-redis UniversalOptions](https://pkg.go.dev/github.com/redis/go-redis/v9#UniversalOptions) library options. The following table describes the configuration options:
+
+| Setting               | Description                                                                                                                         | YAML variable             | Environment variable (ENV)                | Type          | Possible Values                    |
+|-----------------------|-------------------------------------------------------------------------------------------------------------------------------------|---------------------------|-------------------------------------------|---------------|------------------------------------|
+| URL                   | URL into Redis ClusterOptions that can be used to connect to Redis                                                                  | `url`                     | `APP_CACHE_REDIS_URL`                     | string        | redis://:password@localhost:6379/0 |
+| Addrs                 | Either a single address or a seed list of host:port addresses of cluster/sentinel nodes.                                            | `addrs`                   | `APP_CACHE_REDIS_ADDRS`                   | list(string)  | localhost:6379                     |
+| ClientName            | ClientName will execute the `CLIENT SETNAME ClientName` command for each conn.                                                      | `client_name`             | `APP_CACHE_REDIS_CLIENT_NAME`             | string        | client-name                        |
+| DB                    | Database to be selected after connecting to the server. Only single-node and failover clients.                                      | `db`                      | `APP_CACHE_REDIS_DB`                      | int           | 0                                  |
+| Protocol              | Protocol 2 or 3. Use the version to negotiate RESP version with redis-server.                                                       | `protocol`                | `APP_CACHE_REDIS_PROTOCOL`                | int           | 2, 3                               |
+| Username              | Username for Redis authentication.                                                                                                  | `username`                | `APP_CACHE_REDIS_USERNAME`                | string        | username                           |
+| Password              | Password for Redis authentication.                                                                                                  | `password`                | `APP_CACHE_REDIS_PASSWORD`                | string        | password                           |
+| SentinelUsername      | SentinelUsername is the username for Sentinel authentication.                                                                       | `sentinel_username`       | `APP_CACHE_REDIS_SENTINEL_USERNAME`       | string        | sentinel-username                  |
+| SentinelPassword      | SentinelPassword is the password for Sentinel authentication.                                                                       | `sentinel_password`       | `APP_CACHE_REDIS_SENTINEL_PASSWORD`       | string        | sentinel-password                  |
+| MaxRetries            | Maximum number of retries before giving up.                                                                                         | `max_retries`             | `APP_CACHE_REDIS_MAX_RETRIES`             | int           | 0                                  |
+| MinRetryBackoff       | Minimum backoff between each retry.                                                                                                 | `min_retry_backoff`       | `APP_CACHE_REDIS_MIN_RETRY_BACKOFF`       | time.Duration | 8ms                                |
+| MaxRetryBackoff       | Maximum backoff between each retry.                                                                                                 | `max_retry_backoff`       | `APP_CACHE_REDIS_MAX_RETRY_BACKOFF`       | time.Duration | 512ms                              |
+| DialTimeout           | The timeout for establishing a connection.                                                                                          | `dial_timeout`            | `APP_CACHE_REDIS_DIAL_TIMEOUT`            | time.Duration | 5s                                 |
+| ReadTimeout           | The timeout for socket reads.                                                                                                       | `read_timeout`            | `APP_CACHE_REDIS_READ_TIMEOUT`            | time.Duration | 3s                                 |
+| WriteTimeout          | The timeout for socket writes.                                                                                                      | `write_timeout`           | `APP_CACHE_REDIS_WRITE_TIMEOUT`           | time.Duration | 3s                                 |
+| ContextTimeoutEnabled | Controls whether the client respects context timeouts and deadlines.                                                                | `context_timeout_enabled` | `APP_CACHE_REDIS_CONTEXT_TIMEOUT_ENABLED` | bool          | true, false                        |
+| PoolSize              | Base number of socket connections.                                                                                                  | `pool_size`               | `APP_CACHE_REDIS_POOL_SIZE`               | int           | 10                                 |
+| PoolTimeout           | Amount of time client waits for connection if all connections are busy before returning an error.                                   | `pool_timeout`            | `APP_CACHE_REDIS_POOL_TIMEOUT`            | time.Duration | 4s                                 |
+| MaxIdleConns          | Maximum number of idle connections.                                                                                                 | `max_idle_conns`          | `APP_CACHE_REDIS_MAX_IDLE_CONNS`          | int           | 10                                 |
+| MinIdleConns          | Minimum number of idle connections.                                                                                                 | `min_idle_conns`          | `APP_CACHE_REDIS_MIN_IDLE_CONNS`          | int           | 5                                  |
+| MaxActiveConns        | Maximum number of connections allocated by the pool at a given time.                                                                | `max_active_conns`        | `APP_CACHE_REDIS_MAX_ACTIVE_CONNS`        | int           | 100                                |
+| ConnMaxIdleTime       | Maximum amount of time a connection may be idle. Should be less than server's timeout.                                              | `conn_max_idle_time`      | `APP_CACHE_REDIS_CONN_MAX_IDLE_TIME`      | time.Duration | 5m                                 |
+| ConnMaxLifetime       | Maximum amount of time a connection may be reused.                                                                                  | `conn_max_lifetime`       | `APP_CACHE_REDIS_CONN_MAX_LIFETIME`       | time.Duration | 5m                                 |
+| MaxRedirects          | The maximum number of retries before giving up. Command is retried on network errors and MOVED/ASK redirects. Only cluster clients. | `max_redirects`           | `APP_CACHE_REDIS_MAX_REDIRECTS`           | int           | 8                                  |
+| ReadOnly              | Enable read-only commands on slave nodes. Only cluster clients.                                                                     | `read_only`               | `APP_CACHE_REDIS_READ_ONLY`               | bool          | true, false                        |
+| RouteByLatency        | Route read-only commands to the closest master or slave node. Only cluster clients.                                                 | `route_by_latency`        | `APP_CACHE_REDIS_ROUTE_BY_LATENCY`        | bool          | true, false                        |
+| RouteRandomly         | Route read-only commands to a random master or slave node. Only cluster clients.                                                    | `route_randomly`          | `APP_CACHE_REDIS_ROUTE_RANDOMLY`          | bool          | true, false                        |
+| MasterName            | Name of the master to use for Sentinel failover.                                                                                    | `master_name`             | `APP_CACHE_REDIS_MASTER_NAME`             | string        | master-name                        |
+| DisableIndentity      | Disable set-lib on connect.                                                                                                         | `disable_indentity`       | `APP_CACHE_REDIS_DISABLE_INDENTITY`       | bool          | true, false                        |
+| IdentitySuffix        | Add suffix to client name.                                                                                                          | `identity_suffix`         | `APP_CACHE_REDIS_IDENTITY_SUFFIX`         | string        | suffix                             |
+
+To secure the requests to Redis, Go SDK provides a configuration set for TLS:
+
+**TLS**:
+
+| Setting               | Description                                                      | YAML variable          | Environment variable (ENV)                 | Type   | Possible Values     |
+|-----------------------|------------------------------------------------------------------|------------------------|--------------------------------------------|--------|---------------------|
+| Enabled               | Whether TLS is enabled or not                                    | `enabled`              | `APP_CACHE_REDIS_TLS_ENABLED`              | bool   | true, false         |
+| Root certificate      | Ca Root CA certificate                                           | `ca`                   | `APP_CACHE_REDIS_TLS_CA`                   | string | Root CA             |
+| Cert PEM              | Client's public key string (PEM format) used for authentication  | `cert_pem`             | `APP_CACHE_REDIS_TLS_CERT_PEM`             | string | long PEM string     |
+| Cert PEM Key          | Client's private key string (PEM format) used for authentication | `cert_pem_key`         | `APP_CACHE_REDIS_TLS_CERT_PEM_KEY`         | string | long PEM key string |
+| Passphrase            | Passphrase is used in case the private key needs to be decrypted | `passphrase`           | `APP_CACHE_REDIS_TLS_PASSPHRASE`           | string | pass phrase         |
+| Skip TLS verification | Turn on / off TLS verification                                   | `insecure_skip_verify` | `APP_CACHE_REDIS_TLS_INSECURE_SKIP_VERIFY` | bool   | true, false         |
+
 ## APM & Instrumentation
 
 The `go-sdk` provides an easy way to add application performance monitoring
@@ -1247,6 +1321,49 @@ func main() {
             }),
         )),
     }
+}
+```
+
+### Cache instrumentation and logging
+
+#### Redis
+
+`go-sdk` provides a flexible way to instrument the Redis client with logging and tracing capabilities.
+
+The [go-redis](https://github.com/redis/go-redis) Redis client library is wrapped by the `go-sdk` using [dd-trace-go](https://github.com/DataDog/dd-trace-go/tree/fda4cc5e15b744b10d378a62e026dc61d35f364a/contrib/redis/go-redis.v9) library and traces calls to Redis.
+
+For logging, `go-sdk` sets the [go-redis](https://pkg.go.dev/github.com/redis/go-redis/v9#SetLogger) logger to the SDK logger. This logger will print `go-redis` log stubs as error log entries.
+
+```go
+import (
+    sdklogger "github.com/scribd/go-sdk/pkg/logger"
+
+    instrumentation "github.com/scribd/go-sdk/pkg/instrumentation"
+
+    sdkredis "github.com/scribd/go-sdk/pkg/cache/redis"
+)
+
+func main() {
+    config, err := sdkconfig.NewConfig()
+    if err != nil {
+        log.Fatalf("Failed to load SDK config: %s", err)
+    }
+
+    logger, err := sdklogger.NewBuilder(config.Logger).SetTracking(config.Tracking).Build()
+    if err != nil {
+        log.Fatalf("Failed to load SDK logger: %s", err)
+    }
+
+    redisClient, err := sdkredis.New(&config.Cache.Redis)
+    if err != nil {
+        logger.WithError(err).Fatalf("Failed to create Redis client: %s", err)
+    }
+
+    // instrument redis client
+    instrumentation.InstrumentRedis(redisClient, applicationName)
+
+    // set logger for redis client
+    sdklogger.SetRedisLogger(logger)
 }
 ```
 
