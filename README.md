@@ -41,7 +41,7 @@ SDK, the Go version.
     - [Database instrumentation & ORM logging](#database-instrumentation---orm-logging)
         - [HTTP server middleware example](#http-server-middleware-example)
         - [gRPC server interceptors example](#grpc-server-interceptors-example)
-    - [AWS Session instrumentation](#aws-session-instrumentation)
+    - [AWS Clients instrumentation](#aws-clients-instrumentation)
     - [PubSub instrumentation and logging](#pubsub-instrumentation-and-logging)
       - [Kafka](#kafka)
     - [Cache instrumentation and logging](#cache-instrumentation-and-logging)
@@ -989,7 +989,7 @@ The `go-sdk` provides an easy way to add application performance monitoring
 (APM) & instrumentation to a service. It provides DataDog APM using the
 [`dd-trace-go`](https://github.com/DataDog/dd-trace-go) library. `dd-trace-go`
 provides gRPC server & client interceptors, HTTP router instrumentation, database connection & ORM instrumentation
-and AWS session instrumentation. All of the traces and data are opaquely sent
+and AWS clients instrumentation. All of the traces and data are opaquely sent
 to DataDog.
 
 ### Request ID middleware
@@ -1179,29 +1179,38 @@ func main() {
 }
 ```
 
-### AWS Session instrumentation
+### AWS clients instrumentation
 
-`go-sdk` instruments the AWS session by wrapping it with a DataDog trace and
+`go-sdk` instruments the AWS clients by wrapping it with a DataDog trace and
 tagging it with the service name. In addition, this registers AWS as a separate
 service in DataDog.
 
 Example usage of the instrumentation:
 
 ```go
+import (
+    "context"
+    "log"
+
+    "github.com/aws/aws-sdk-go-v2/aws"
+    awscfg "github.com/aws/aws-sdk-go-v2/config"
+    "github.com/aws/aws-sdk-go-v2/service/s3"
+
+    instrumentation "github.com/scribd/go-sdk/pkg/instrumentation"
+)
+
 func main() {
-    s := session.NewSession(&aws.Config{
-		Endpoint: aws.String(config.GetString("s3_endpoint")),
-		Region:   aws.String(config.GetString("default_region")),
-		Credentials: credentials.NewStaticCredentials(
-			config.GetString("access_key_id"),
-			config.GetString("secret_access_key"),
-			"",
-		),
-	})
+    cfg, err := awscfg.LoadDefaultConfig(context.Background, awscfg.WithRegion("us-west-2"))
+    if err != nil {
+        log.Fatalf("error: %v", err)
+    }
 
-    session = instrumentation.InstrumentAWSSession(s, instrumentation.Settings{AppName: "MyServiceName"})
+    instrumentation.InstrumentAWSClient(cfg, instrumentation.Settings{
+        AppName: applicationName,
+    })
 
-    // Use the session...
+    // Use the AWS configuration to create clients, such as AWS S3...
+    s3client := s3.NewFromConfig(cfg)
 }
 ```
 
