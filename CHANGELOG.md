@@ -1,3 +1,11 @@
+# [1.31.0](https://github.com/scribd/go-sdk/compare/v1.30.0...v1.31.0) (2024-04-24)
+
+
+### Features
+
+* Create instrumented AWS v2 client ([d74b563](https://github.com/scribd/go-sdk/commit/d74b5633932eba62fbf1930d2bea50ea98ae56c1))
+* Use AWS version 2 to get the AWS credentials for AWS MSK ([a8aebc8](https://github.com/scribd/go-sdk/commit/a8aebc86491ad5ba768e7141b452a7ba6eff2f6c))
+
 # [1.30.0](https://github.com/scribd/go-sdk/compare/v1.29.0...v1.30.0) (2024-04-23)
 
 
