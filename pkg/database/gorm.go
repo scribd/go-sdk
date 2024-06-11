@@ -1,18 +1,36 @@
 package database
 
 import (
+	"fmt"
 	"strconv"
 	"time"
 
 	"github.com/DATA-DOG/go-txdb"
+	gormtrace "gopkg.in/DataDog/dd-trace-go.v1/contrib/gorm.io/gorm.v1"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
 const testEnv = "test"
 
-// NewConnection returns a new Gorm database connection.
-func NewConnection(config *Config, environment string) (*gorm.DB, error) {
+// NewConnection returns a new instrumented Gorm database connection.
+func NewConnection(config *Config, environment, appName string) (*gorm.DB, error) {
+	serviceName := fmt.Sprintf("%s-mysql", appName)
+	dialector := getDialectorFromConfig(config, environment)
+
+	db, err := gormtrace.Open(dialector, nil, gormtrace.WithServiceName(serviceName))
+	if err != nil {
+		return nil, err
+	}
+
+	if err := databasePoolSettings(db, config); err != nil {
+		return nil, err
+	}
+
+	return db, nil
+}
+
+func getDialectorFromConfig(config *Config, environment string) gorm.Dialector {
 	connectionDetails := NewConnectionDetails(config)
 
 	connectionString := connectionDetails.String()
@@ -29,25 +47,22 @@ func NewConnection(config *Config, environment string) (*gorm.DB, error) {
 		connectionString = testDriverName
 	}
 
-	dialector := mysql.New(mysql.Config{
+	return mysql.New(mysql.Config{
 		DSN:        connectionString,
 		DriverName: driverName,
 	})
+}
 
-	db, err := gorm.Open(dialector)
+func databasePoolSettings(gormDB *gorm.DB, config *Config) error {
+	db, err := gormDB.DB()
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	sqlDB, err := db.DB()
-	if err != nil {
-		return nil, err
-	}
+	db.SetMaxIdleConns(config.Pool)
+	db.SetMaxOpenConns(config.MaxOpenConnections)
+	db.SetConnMaxIdleTime(config.ConnectionMaxIdleTime)
+	db.SetConnMaxLifetime(config.ConnectionMaxLifetime)
 
-	sqlDB.SetMaxIdleConns(config.Pool)
-	sqlDB.SetMaxOpenConns(config.MaxOpenConnections)
-	sqlDB.SetConnMaxIdleTime(config.ConnectionMaxIdleTime)
-	sqlDB.SetConnMaxLifetime(config.ConnectionMaxLifetime)
-
-	return db, nil
+	return nil
 }
