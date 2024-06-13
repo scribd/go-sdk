@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	app "github.com/scribd/go-sdk/pkg/app"
+	"github.com/scribd/go-sdk/pkg/aws"
 	"github.com/scribd/go-sdk/pkg/cache"
 	database "github.com/scribd/go-sdk/pkg/database"
 	instrumentation "github.com/scribd/go-sdk/pkg/instrumentation"
@@ -23,6 +24,7 @@ type Config struct {
 	Tracking        *tracking.Config
 	PubSub          *pubsub.Config
 	Cache           *cache.Config
+	AWS             *aws.Config
 }
 
 // NewConfig returns a new Config instance
@@ -70,6 +72,11 @@ func NewConfig() (*Config, error) {
 		errGroup = wrapErrors(errGroup, fmt.Errorf("cache config err: %w", err))
 	}
 
+	awsConfig, err := aws.NewConfig()
+	if err != nil {
+		errGroup = wrapErrors(errGroup, fmt.Errorf("aws config err: %w", err))
+	}
+
 	config.App = appConfig
 	config.Database = dbConfig
 	config.Instrumentation = instrumentationConfig
@@ -78,6 +85,7 @@ func NewConfig() (*Config, error) {
 	config.Tracking = trackingConfig
 	config.PubSub = pubsubConfig
 	config.Cache = cacheConfig
+	config.AWS = awsConfig
 
 	return config, errGroup
 }

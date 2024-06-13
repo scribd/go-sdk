@@ -1,0 +1,19 @@
+common: &common
+  config:
+    region: "us-east-2"
+
+test: &test
+  <<: *common
+  config:
+    region: "us-east-2"
+  s3:
+    default:
+      region: "us-east-1"
+      credentials:
+        assume_role:
+          arn: ""
+    test:
+      region: "us-west-2"
+
+development:
+  <<: *test

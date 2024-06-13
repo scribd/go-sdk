@@ -77,6 +77,8 @@ github.com/aws/aws-sdk-go-v2/service/kinesis v1.18.4 h1:UohaQds+Puk9BEbvncXkZduI
 github.com/aws/aws-sdk-go-v2/service/kinesis v1.18.4/go.mod h1:HnjgmL8TNmYtGcrA3N6EeCnDvlX6CteCdUbZ1wV8QWQ=
 github.com/aws/aws-sdk-go-v2/service/s3 v1.53.1 h1:6cnno47Me9bRykw9AEv9zkXE+5or7jz8TsskTTccbgc=
 github.com/aws/aws-sdk-go-v2/service/s3 v1.53.1/go.mod h1:qmdkIIAC+GCLASF7R2whgNrJADz0QZPX+Seiw/i4S3o=
+github.com/aws/aws-sdk-go-v2/service/sagemakerruntime v1.27.4 h1:hNp4PzD2N9qTqJAlrP0GAwDTKc2FTNLh6DVFzurLMrE=
+github.com/aws/aws-sdk-go-v2/service/sagemakerruntime v1.27.4/go.mod h1:oPtVhWs6TuHOxUPQpNDtaQoVGjO5DbEfUWfzOxqZDOE=
 github.com/aws/aws-sdk-go-v2/service/sfn v1.19.4 h1:yIyFY2kbCOoHvuivf9minqnP2RLYJgmvQRYxakIb2oI=
 github.com/aws/aws-sdk-go-v2/service/sfn v1.19.4/go.mod h1:uWCH4ATwNrkRO40j8Dmy7u/Y1/BVWgCM+YjBNYZeOro=
 github.com/aws/aws-sdk-go-v2/service/sns v1.21.4 h1:Asj098jPfIZYzAbk4xVFwVBGij5hgMcli0d+5Pe4aZA=

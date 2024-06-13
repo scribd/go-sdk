@@ -32,6 +32,9 @@ SDK, the Go version.
         - [Kafka specific configuration](#kafka-specific-configuration)
     - [Cache](#cache)
         - [Redis](#redis-specific-configuration)
+    - [AWS configuration](#aws-configuration)
+        - [AWS Common configuration](#aws-common-configuration)
+        - [AWS Service configuration](#aws-service-configuration)
 - [APM & Instrumentation](#apm---instrumentation)
     - [Request ID middleware](#request-id-middleware)
         - [HTTP server Request ID middleware](#http-server-request-id-middleware)
@@ -97,11 +100,12 @@ The list of predefined top-level configurations:
   `config/logger.yml` configuration file.
 * `Database`, containing the application database configuration, expects a
   `config/database.yml` configuration file.
-* `Redis`, containing the application Redis configuration, expects a
-  `config/redis.yml` configuration file. (TBD)
+* `Cache`, containing the application Cache configuration, expects a
+  `config/cache.yml` configuration file.
 * `PubSub`, containing the application pubsub configuration, expects a
   `config/pubsub.yml` configuration file.
-* <insert new configuration here>
+* `AWS`, containing the application AWS configuration, expects a
+  `config/aws.yml` configuration file.
 
 For example, to get the host and the port at which the HTTP server listens on
 in an application:
@@ -983,6 +987,80 @@ To secure the requests to Redis, Go SDK provides a configuration set for TLS:
 | Passphrase            | Passphrase is used in case the private key needs to be decrypted | `passphrase`           | `APP_CACHE_REDIS_TLS_PASSPHRASE`           | string | pass phrase         |
 | Skip TLS verification | Turn on / off TLS verification                                   | `insecure_skip_verify` | `APP_CACHE_REDIS_TLS_INSECURE_SKIP_VERIFY` | bool   | true, false         |
 
+
+### AWS configuration
+
+`go-sdk` provides a convenient way to create an AWS configuration.
+
+Configuration contains the common configuration for AWS configuration and specific configuration for services.
+
+Service configuration is split by the service name to facilitate the configuration of multiple services per service type.
+
+```yaml
+common: &common
+  config:
+    region: "us-east-2"
+  s3:
+    default:
+      # APP_AWS_S3_DEFAULT_REGION
+      region: "us-east-1"
+      credentials:
+        assume_role:
+          # APP_AWS_S3_DEFAULT_CREDENTIALS_ASSUME_ROLE_ARN
+          arn: ""
+    example:
+      # APP_AWS_S3_EXAMPLE_REGION
+      region: "us-west-2"
+      credentials:
+        static:
+          # APP_AWS_S3_EXAMPLE_CREDENTIALS_STATIC_ACCESS_KEY_ID
+          access_key_id: ""
+          # APP_AWS_S3_EXAMPLE_CREDENTIALS_STATIC_SECRET_ACCESS_KEY
+          secret_access_key: ""
+          # APP_AWS_S3_EXAMPLE_CREDENTIALS_STATIC_SESSION_TOKEN
+          session_token: ""
+```
+
+#### AWS common configuration
+
+Common configuration contains the following options:
+
+| Setting                    | Description                                            | YAML variable    | Environment variable (ENV)           | Type   | Possible Values |
+|----------------------------|--------------------------------------------------------|------------------|--------------------------------------|--------|-----------------|
+| Region                     | AWS region to use                                      | `region`         | `APP_AWS_REGION`                     | string | us-west-2       |
+| HTTP client max idle conns | Maximum number of idle connections in the HTTP client. | `max_idle_conns` | `APP_AWS_HTTP_CLIENT_MAX_IDLE_CONNS` | int    | 100             |
+
+#### AWS Service configuration
+
+Currently, `go-sdk` supports the following AWS service types: `s3`, `sagemakerruntime`, `sfn` and `sqs`.
+
+To facilitate the configuration of multiple services per service type, the configuration is split by the service name.
+To override the settings specified in the YAML via the environment variables, the following naming convention is used:
+
+    ```
+    APP_AWS_<SERVICE_TYPE>_<SERVICE_NAME>_*
+    ```
+
+Where `SERVICE_TYPE` is the service type (s3, sqs etc.) and `SERVICE_NAME` is the service name (default, example etc.).
+
+It is possible to specify region and HTTP client settings for each service, which will override the common configuration.
+
+For each service, it is possible to specify credentials. Currently, `go-sdk` supports two types of credentials: `assume_role` and `static`.
+
+`assume_role` credentials are used to assume a role to get credentials using AWS STS service. The following options are available:
+
+| Setting | Description                                          | YAML variable | Environment variable (ENV)                       | Type   | Possible Values                          |
+|---------|------------------------------------------------------|---------------|--------------------------------------------------|--------|------------------------------------------|
+| ARN     | The Amazon Resource Name (ARN) of the role to assume | `arn`         | `APP_AWS_S3_DEFAULT_CREDENTIALS_ASSUME_ROLE_ARN` | string | arn:aws:iam::123456789012:role/role-name |
+
+`static` credentials are used to specify the access key ID, secret access key and session token. The following options are available:
+
+| Setting           | Description           | YAML variable       | Environment variable (ENV)                                | Type   | Possible Values   |
+|-------------------|-----------------------|---------------------|-----------------------------------------------------------|--------|-------------------|
+| Access Key ID     | The access key ID     | `access_key_id`     | `APP_AWS_S3_EXAMPLE_CREDENTIALS_STATIC_ACCESS_KEY_ID`     | string | access-key-id     |
+| Secret Access Key | The secret access key | `secret_access_key` | `APP_AWS_S3_EXAMPLE_CREDENTIALS_STATIC_SECRET_ACCESS_KEY` | string | secret-access-key |
+| Session Token     | The session token     | `session_token`     | `APP_AWS_S3_EXAMPLE_CREDENTIALS_STATIC_SESSION_TOKEN`     | string | session-token     |
+
 ## APM & Instrumentation
 
 The `go-sdk` provides an easy way to add application performance monitoring
@@ -1192,25 +1270,29 @@ import (
     "context"
     "log"
 
-    "github.com/aws/aws-sdk-go-v2/aws"
-    awscfg "github.com/aws/aws-sdk-go-v2/config"
-    "github.com/aws/aws-sdk-go-v2/service/s3"
-
+    sdkaws "github.com/scribd/go-sdk/pkg/aws"
+    sdkconfig "github.com/scribd/go-sdk/pkg/configuration"
     instrumentation "github.com/scribd/go-sdk/pkg/instrumentation"
 )
 
 func main() {
-    cfg, err := awscfg.LoadDefaultConfig(context.Background, awscfg.WithRegion("us-west-2"))
+    config, err := sdkconfig.NewConfig()
+    if err != nil {
+        log.Fatalf("Failed to load SDK config: %s", err)
+    }
+
+    awsBuilder := sdkaws.NewBuilder(config.AWS)
+
+    cfg, err := awsBuilder.LoadConfig(context.Background())
     if err != nil {
         log.Fatalf("error: %v", err)
     }
-
     instrumentation.InstrumentAWSClient(cfg, instrumentation.Settings{
         AppName: applicationName,
     })
 
-    // Use the AWS configuration to create clients, such as AWS S3...
-    s3client := s3.NewFromConfig(cfg)
+    // Create an S3 service client with the service name "default"
+    s3client := awsBuilder.NewS3Service(cfg, "default")
 }
 ```
 
