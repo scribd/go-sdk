@@ -1,3 +1,12 @@
+# [1.32.0](https://github.com/scribd/go-sdk/compare/v1.31.0...v1.32.0) (2024-06-13)
+
+
+### Features
+
+* Add API to create AWS services based on the Go SDK configuration ([f237347](https://github.com/scribd/go-sdk/commit/f23734734405eaba5af4aa0257ab507dabcac24f))
+* Add configuration for AWS services ([326ebb5](https://github.com/scribd/go-sdk/commit/326ebb5a3e8baa7e35f9e1f751407af3c85be7cb))
+* Expose AWS configuration via the main configuration entry point ([de0e023](https://github.com/scribd/go-sdk/commit/de0e02372d62082b3f61156d944711b015488e61))
+
 # [1.31.0](https://github.com/scribd/go-sdk/compare/v1.30.0...v1.31.0) (2024-04-24)
 
 

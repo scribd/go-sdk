@@ -7,5 +7,5 @@ import (
 )
 
 func TestVersion(t *testing.T) {
-	assert.Equal(t, Version, "1.31.0")
+	assert.Equal(t, Version, "1.32.0")
 }
