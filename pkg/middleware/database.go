@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	sdkdatabasecontext "github.com/scribd/go-sdk/pkg/context/database"
-	sdkinstrumentation "github.com/scribd/go-sdk/pkg/instrumentation"
 
 	"gorm.io/gorm"
 )
@@ -27,7 +26,8 @@ func NewDatabaseMiddleware(d *gorm.DB) DatabaseMiddleware {
 // connection pool to the request context.
 func (dm DatabaseMiddleware) Handler(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		db := sdkinstrumentation.TraceDatabase(r.Context(), dm.Database)
+		db := dm.Database.WithContext(r.Context())
+
 		ctx := sdkdatabasecontext.ToContext(r.Context(), db)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
