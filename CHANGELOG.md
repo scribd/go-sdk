@@ -1,3 +1,10 @@
+# [1.33.0](https://github.com/scribd/go-sdk/compare/v1.32.0...v1.33.0) (2024-06-14)
+
+
+### Features
+
+* Replacing custom database ddtrace with dd-trace-go library ([47a2e39](https://github.com/scribd/go-sdk/commit/47a2e39e62a5ddf1c4da5b5c1873137e73865885))
+
 # [1.32.0](https://github.com/scribd/go-sdk/compare/v1.31.0...v1.32.0) (2024-06-13)
 
 
