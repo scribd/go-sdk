@@ -9,6 +9,7 @@ import (
 	gormtrace "gopkg.in/DataDog/dd-trace-go.v1/contrib/gorm.io/gorm.v1"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"gorm.io/plugin/dbresolver"
 )
 
 const testEnv = "test"
@@ -22,12 +23,32 @@ func NewConnection(config *Config, environment, appName string) (*gorm.DB, error
 	if err != nil {
 		return nil, err
 	}
+	if len(config.DBs) > 0 {
+		if err := db.Use(dbresolver.Register(
+			getDbResolverConfig(config, environment),
+		)); err != nil {
+			return nil, err
+		}
+	}
 
 	if err := databasePoolSettings(db, config); err != nil {
 		return nil, err
 	}
 
 	return db, nil
+}
+
+func getDbResolverConfig(config *Config, env string) dbresolver.Config {
+	resolverCfg := dbresolver.Config{}
+	for _, dbConfig := range config.DBs {
+		if dbConfig.Replica {
+			resolverCfg.Replicas = []gorm.Dialector{getDialectorFromConfig(&dbConfig, env)}
+		} else {
+			resolverCfg.Sources = []gorm.Dialector{getDialectorFromConfig(&dbConfig, env)}
+		}
+	}
+
+	return resolverCfg
 }
 
 func getDialectorFromConfig(config *Config, environment string) gorm.Dialector {

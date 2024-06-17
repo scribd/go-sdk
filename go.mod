@@ -29,9 +29,10 @@ require (
 	google.golang.org/protobuf v1.32.0
 	gopkg.in/DataDog/dd-trace-go.v1 v1.62.0
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
-	gorm.io/driver/mysql v1.4.6
+	gorm.io/driver/mysql v1.5.6
 	gorm.io/driver/sqlite v1.4.4
-	gorm.io/gorm v1.25.3
+	gorm.io/gorm v1.25.7
+	gorm.io/plugin/dbresolver v1.5.2
 )
 
 require (
