@@ -9,21 +9,28 @@ import (
 	cbuilder "github.com/scribd/go-sdk/internal/pkg/configuration/builder"
 )
 
-// Config is the database connection configuration.
-type Config struct {
-	Host     string `mapstructure:"host"`
-	Port     int    `mapstructure:"port"`
-	Username string `mapstructure:"username"`
-	Password string `mapstructure:"password"`
-	Database string `mapstructure:"database"`
-	Timeout  string `mapstructure:"timeout"`
-	// Connection settings
-	// TODO Pool field name must be modified in the next major change.
-	Pool                  int           `mapstructure:"pool"`
-	MaxOpenConnections    int           `mapstructure:"max_open_connections"`
-	ConnectionMaxIdleTime time.Duration `mapstructure:"connection_max_idle_time"`
-	ConnectionMaxLifetime time.Duration `mapstructure:"connection_max_lifetime"`
-}
+type (
+	// Config is the database connection configuration.
+	Config struct {
+		Host     string `mapstructure:"host"`
+		Port     int    `mapstructure:"port"`
+		Username string `mapstructure:"username"`
+		Password string `mapstructure:"password"`
+		Database string `mapstructure:"database"`
+		Timeout  string `mapstructure:"timeout"`
+		// Connection settings
+		// TODO Pool field name must be modified in the next major change.
+		Pool                  int           `mapstructure:"pool"`
+		MaxOpenConnections    int           `mapstructure:"max_open_connections"`
+		ConnectionMaxIdleTime time.Duration `mapstructure:"connection_max_idle_time"`
+		ConnectionMaxLifetime time.Duration `mapstructure:"connection_max_lifetime"`
+
+		// Replica is a flag to determine if the connection is a replica.
+		Replica bool `mapstructure:"replica"`
+
+		DBs map[string]Config `mapstructure:"dbs"`
+	}
+)
 
 // NewConfig returns a new Config instance.
 func NewConfig() (*Config, error) {

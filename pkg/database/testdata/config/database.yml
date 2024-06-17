@@ -1,0 +1,30 @@
+common: &common
+  host: mysql
+  port: 3306
+  username: root
+  password:
+  timeout: 1s
+  pool: 5
+  max_open_connections: 0
+  connection_max_idle_time: 0s
+  connection_max_lifetime: 0s
+
+test: &test
+  <<: *common
+  database: test
+  dbs:
+    primary_replica:
+      database: test
+      replica: true
+      host: mysql-replica
+      port: 3306
+      username: root
+      password:
+      timeout: 1s
+      pool: 5
+      max_open_connections: 0
+      connection_max_idle_time: 0s
+      connection_max_lifetime: 0s
+
+development:
+  <<: *test
