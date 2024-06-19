@@ -1,3 +1,10 @@
+# [1.34.0](https://github.com/scribd/go-sdk/compare/v1.33.0...v1.34.0) (2024-06-19)
+
+
+### Features
+
+* Add recovery middleware for GRPC server ([42c0254](https://github.com/scribd/go-sdk/commit/42c02541d18e97b0eac54e57e37825807d6ff3d9))
+
 # [1.33.0](https://github.com/scribd/go-sdk/compare/v1.32.0...v1.33.0) (2024-06-14)
 
 
