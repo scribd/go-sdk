@@ -1,3 +1,10 @@
+# [1.35.0](https://github.com/scribd/go-sdk/compare/v1.34.0...v1.35.0) (2024-06-20)
+
+
+### Features
+
+* Add sentry recovery to kafka consumer ([208a634](https://github.com/scribd/go-sdk/commit/208a634a91a62ea196e1ab13c850e5c7ad216f40))
+
 # [1.34.0](https://github.com/scribd/go-sdk/compare/v1.33.0...v1.34.0) (2024-06-19)
 
 
