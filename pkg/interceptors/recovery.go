@@ -2,11 +2,10 @@ package interceptors
 
 import (
 	"context"
+	"fmt"
 	stdlog "log"
 	"runtime/debug"
-	"time"
 
-	"github.com/getsentry/sentry-go"
 	grpcrecovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -31,9 +30,6 @@ func RecoveryStreamServerInterceptor() grpc.StreamServerInterceptor {
 
 var recoveryOption = []grpcrecovery.Option{
 	grpcrecovery.WithRecoveryHandlerContext(func(ctx context.Context, rec interface{}) (err error) {
-		sentry.CurrentHub().Recover(rec)
-		sentry.Flush(time.Second * 5)
-
 		l, err := sdkloggercontext.Extract(ctx)
 		if err != nil {
 			debug.PrintStack()
@@ -41,7 +37,7 @@ var recoveryOption = []grpcrecovery.Option{
 			stdlog.Fatalf("grpc: panic error: %v", rec)
 		}
 
-		l.Fatalf("panic error: %v", rec)
+		l.WithError(fmt.Errorf("%v", rec)).Fatalf("panic error: %v", rec)
 		return status.Errorf(codes.Internal, "")
 	}),
 }

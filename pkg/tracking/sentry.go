@@ -2,6 +2,7 @@ package tracking
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/getsentry/sentry-go"
 	"github.com/sirupsen/logrus"
@@ -66,6 +67,10 @@ func (hook *Hook) Fire(entry *logrus.Entry) error {
 	}
 
 	sentry.CaptureEvent(event)
+
+	if entry.Level <= logrus.FatalLevel {
+		sentry.Flush(time.Second * 5)
+	}
 
 	return nil
 }
