@@ -2,9 +2,7 @@ package kafka
 
 import (
 	"context"
-	"time"
 
-	"github.com/getsentry/sentry-go"
 	"github.com/twmb/franz-go/pkg/kgo"
 
 	sdkkafka "github.com/scribd/go-sdk/pkg/instrumentation/kafka"
@@ -20,14 +18,6 @@ type pconsumer struct {
 }
 
 func (pc *pconsumer) consume(cl *kgo.Client, logger sdklogger.Logger, shouldCommit bool, handler func(*kgo.Record)) {
-	defer func() {
-		if rec := recover(); rec != nil {
-			sentry.CurrentHub().Recover(rec)
-			sentry.Flush(time.Second * 5)
-			logger.Fatalf("kafka consumer: panic error: %v", rec)
-		}
-	}()
-
 	defer close(pc.done)
 
 	for {
