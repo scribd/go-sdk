@@ -1,3 +1,11 @@
+# [1.36.0](https://github.com/scribd/go-sdk/compare/v1.35.0...v1.36.0) (2024-07-02)
+
+
+### Features
+
+* Add MySQL driver tracing ([fc38460](https://github.com/scribd/go-sdk/commit/fc38460bc5346162cffd3533d2e64a6d3cc2b4b8))
+* Upgrade franz-go to v1.17.0 ([02cc344](https://github.com/scribd/go-sdk/commit/02cc344bd9468e1bf39e90e560f58ee6266ca153))
+
 # [1.35.0](https://github.com/scribd/go-sdk/compare/v1.34.0...v1.35.0) (2024-06-20)
 
 
