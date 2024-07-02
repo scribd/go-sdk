@@ -1,12 +1,10 @@
 package middleware
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"runtime/debug"
-	"time"
-
-	"github.com/getsentry/sentry-go"
 
 	sdkloggercontext "github.com/scribd/go-sdk/pkg/context/logger"
 )
@@ -27,9 +25,6 @@ func (rm RecoveryMiddleware) Handler(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		defer func() {
 			if rec := recover(); rec != nil {
-				sentry.CurrentHub().Recover(rec)
-				sentry.Flush(time.Second * 5)
-
 				l, err := sdkloggercontext.Extract(r.Context())
 				if err != nil {
 					debug.PrintStack()
@@ -37,7 +32,8 @@ func (rm RecoveryMiddleware) Handler(next http.Handler) http.Handler {
 					log.Fatalf("http: panic serving URI %s: %v", r.URL.RequestURI(), rec)
 				}
 
-				l.Fatalf("http: panic serving URI %s: %v", r.URL.RequestURI(), rec)
+				l.WithError(fmt.Errorf("%v", rec)).
+					Fatalf("http: panic serving URI %s: %v", r.URL.RequestURI(), rec)
 			}
 		}()
 
