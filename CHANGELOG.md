@@ -1,3 +1,10 @@
+## [1.36.1](https://github.com/scribd/go-sdk/compare/v1.36.0...v1.36.1) (2024-07-03)
+
+
+### Bug Fixes
+
+* **aws:** Fix AWS services initialization ([6242d3b](https://github.com/scribd/go-sdk/commit/6242d3b67f73fa4fe50521e3967c0598e75a3d52))
+
 # [1.36.0](https://github.com/scribd/go-sdk/compare/v1.35.0...v1.36.0) (2024-07-02)
 
 
