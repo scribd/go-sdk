@@ -11,6 +11,8 @@ import (
 	"github.com/aws/aws-sdk-go-v2/credentials/stscreds"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/aws/aws-sdk-go-v2/service/sagemakerruntime"
+	"github.com/aws/aws-sdk-go-v2/service/sfn"
+	"github.com/aws/aws-sdk-go-v2/service/sqs"
 	"github.com/aws/aws-sdk-go-v2/service/sts"
 )
 
@@ -89,13 +91,13 @@ func (b *Builder) NewSagemakerRuntimeService(
 
 func (b *Builder) NewSFNService(
 	cfg aws.Config,
-	serviceName string, opts ...func(options *sagemakerruntime.Options)) (*sagemakerruntime.Client, error) {
+	serviceName string, opts ...func(options *sfn.Options)) (*sfn.Client, error) {
 	sfnCfg, ok := b.config.SFN[serviceName]
 	if !ok {
 		return nil, fmt.Errorf("sfn config for service %s not found", serviceName)
 	}
-	defaultOpts := []func(*sagemakerruntime.Options){
-		func(options *sagemakerruntime.Options) {
+	defaultOpts := []func(*sfn.Options){
+		func(options *sfn.Options) {
 			if sfnCfg.Region != "" {
 				options.Region = sfnCfg.Region
 			}
@@ -110,17 +112,17 @@ func (b *Builder) NewSFNService(
 
 	opts = append(defaultOpts, opts...)
 
-	return sagemakerruntime.NewFromConfig(cfg, opts...), nil
+	return sfn.NewFromConfig(cfg, opts...), nil
 }
 
 func (b *Builder) NewSQSService(
-	cfg aws.Config, serviceName string, opts ...func(options *s3.Options)) (*s3.Client, error) {
+	cfg aws.Config, serviceName string, opts ...func(options *sqs.Options)) (*sqs.Client, error) {
 	sqsCfg, ok := b.config.SQS[serviceName]
 	if !ok {
 		return nil, fmt.Errorf("sqs config for service %s not found", serviceName)
 	}
-	defaultOpts := []func(*s3.Options){
-		func(options *s3.Options) {
+	defaultOpts := []func(*sqs.Options){
+		func(options *sqs.Options) {
 			if sqsCfg.Region != "" {
 				options.Region = sqsCfg.Region
 			}
@@ -135,7 +137,7 @@ func (b *Builder) NewSQSService(
 
 	opts = append(defaultOpts, opts...)
 
-	return s3.NewFromConfig(cfg, opts...), nil
+	return sqs.NewFromConfig(cfg, opts...), nil
 }
 
 func createHttpClient(cfg *HTTPClient) *http.Client {
