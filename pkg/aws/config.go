@@ -82,8 +82,6 @@ type (
 	Config struct {
 		// AWSConfig is the configuration for the AWS SDK.
 		AWSConfig AWSConfig `mapstructure:"config"`
-		// CredentialsConfig is the configuration for the AWS credentials.
-		CredentialsConfig CredentialsConfig `mapstructure:"credentials"`
 		// S3 is the configuration for the S3 clients.
 		S3 map[string]S3Config `mapstructure:"s3"`
 		// SagemakerRuntime is the configuration for the SagemakerRuntime clients.
