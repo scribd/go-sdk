@@ -2,9 +2,8 @@ package database
 
 import (
 	"database/sql"
+	"database/sql/driver"
 	"fmt"
-	"strconv"
-	"time"
 
 	"github.com/DATA-DOG/go-txdb"
 	mysqldriver "github.com/go-sql-driver/mysql"
@@ -22,20 +21,18 @@ func NewConnection(config *Config, environment, appName string) (*gorm.DB, error
 	connectionString := connectionDetails.String()
 	driverName := connectionDetails.Dialect
 
-	// Register the test driver and mock driver name and connection string in test environment.
-	if environment == testEnv {
-		// Using time.Now() as a unique identifier for the test database so that we can call NewConnection()
-		// multiple times without getting an error.
-		testDriverName := strconv.Itoa(int(time.Now().UnixNano()))
+	var d driver.Driver
+	d = &mysqldriver.MySQLDriver{}
 
-		txdb.Register(testDriverName, connectionDetails.Dialect, connectionString)
-		driverName = testDriverName
-		connectionString = testDriverName
+	// Register the test driver.
+	if environment == testEnv {
+		connector := txdb.New(driverName, connectionString)
+		d = connector.Driver()
 	}
 
 	serviceName := fmt.Sprintf("%s-mysql", appName)
 
-	sqltrace.Register(driverName, &mysqldriver.MySQLDriver{}, sqltrace.WithServiceName(serviceName))
+	sqltrace.Register(driverName, d, sqltrace.WithServiceName(serviceName))
 	sqlDB, err := sqltrace.Open(driverName, connectionString)
 	if err != nil {
 		return nil, err
