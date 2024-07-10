@@ -1,3 +1,11 @@
+## [1.36.2](https://github.com/scribd/go-sdk/compare/v1.36.1...v1.36.2) (2024-07-10)
+
+
+### Bug Fixes
+
+* Register txdb driver using the sqltrace library ([ef19bc3](https://github.com/scribd/go-sdk/commit/ef19bc3db89ca887c560c650e5aea1f9c24a49a0))
+* Remove ambiguous credentials configuration from the AWS root configuration ([a8155ab](https://github.com/scribd/go-sdk/commit/a8155abf996ea30f5e52dadf5680672f66939464))
+
 ## [1.36.1](https://github.com/scribd/go-sdk/compare/v1.36.0...v1.36.1) (2024-07-03)
 
 
