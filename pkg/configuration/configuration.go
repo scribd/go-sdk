@@ -11,6 +11,7 @@ import (
 	logger "github.com/scribd/go-sdk/pkg/logger"
 	"github.com/scribd/go-sdk/pkg/pubsub"
 	server "github.com/scribd/go-sdk/pkg/server"
+	"github.com/scribd/go-sdk/pkg/statsig"
 	tracking "github.com/scribd/go-sdk/pkg/tracking"
 )
 
@@ -25,6 +26,7 @@ type Config struct {
 	PubSub          *pubsub.Config
 	Cache           *cache.Config
 	AWS             *aws.Config
+	Statsig         *statsig.Config
 }
 
 // NewConfig returns a new Config instance
@@ -77,6 +79,11 @@ func NewConfig() (*Config, error) {
 		errGroup = wrapErrors(errGroup, fmt.Errorf("aws config err: %w", err))
 	}
 
+	statsigConfig, err := statsig.NewConfig()
+	if err != nil {
+		errGroup = wrapErrors(errGroup, fmt.Errorf("statsig config err: %w", err))
+	}
+
 	config.App = appConfig
 	config.Database = dbConfig
 	config.Instrumentation = instrumentationConfig
@@ -86,6 +93,7 @@ func NewConfig() (*Config, error) {
 	config.PubSub = pubsubConfig
 	config.Cache = cacheConfig
 	config.AWS = awsConfig
+	config.Statsig = statsigConfig
 
 	return config, errGroup
 }
