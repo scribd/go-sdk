@@ -32,6 +32,9 @@ SDK, the Go version.
         - [Kafka specific configuration](#kafka-specific-configuration)
     - [Cache](#cache)
         - [Redis](#redis-specific-configuration)
+    - [Experimentation](#experimentation)
+        - [Initialization of Statsig](#initialization-of-statsig)
+        - [Usage of Statsig](#usage-of-statsig)
     - [AWS configuration](#aws-configuration)
         - [AWS Common configuration](#aws-common-configuration)
         - [AWS Service configuration](#aws-service-configuration)
@@ -987,6 +990,77 @@ To secure the requests to Redis, Go SDK provides a configuration set for TLS:
 | Passphrase            | Passphrase is used in case the private key needs to be decrypted | `passphrase`           | `APP_CACHE_REDIS_TLS_PASSPHRASE`           | string | pass phrase         |
 | Skip TLS verification | Turn on / off TLS verification                                   | `insecure_skip_verify` | `APP_CACHE_REDIS_TLS_INSECURE_SKIP_VERIFY` | bool   | true, false         |
 
+### Experimentation
+
+`go-sdk` comes with an integration with [Statsig](https://statsig.com) to
+leverage its experimentation and feature flag functionality.
+
+#### Initialization of Statsig
+
+The respective configuration file is `statsig.yml` and it should include
+the following content:
+
+```yaml
+# config/statsig.yml
+common: &common
+  secret_key: ""
+  local_mode: false
+  config_sync_interval: 10s
+  id_list_sync_interval: 60s
+
+development:
+  <<: *common
+
+test:
+  <<: *common
+
+staging:
+  <<: *common
+
+production:
+  <<: *common
+```
+
+For more details on the configuration check the
+[Statsig Go Server SDK](https://docs.statsig.com/server/golangSDK).
+
+Using the configuration details, the statsig client can be initialized as
+follows:
+
+```go
+package main
+
+import (
+	sdkstatsig "github.com/scribd/go-sdk/pkg/statsig"
+)
+
+func main() {
+	// Loads the statsig configuration.
+	statsigConfig, err := sdkstatsig.NewConfig()
+
+	// Initialize statsig connection using the configuration.
+	sdkstatsig.Initialize(statsigConfig)
+}
+```
+
+#### Usage of Statsig
+
+After initializing the statsig client, one can start using experiments or
+feature flags using the following code:
+
+```go
+import (
+  sdkstatsig "github.com/scribd/go-sdk/pkg/statsig"
+  statsig "github.com/statsig-io/go-sdk"
+)
+
+func main() {
+  u := statsig.User{}
+
+  experiment := sdkstatsig.GetExperiment(u, "experiment_name")
+  featureFlag := sdkstatsig.GetFeatureFlag(u, "feature_flag_name")
+}
+```
 
 ### AWS configuration
 
