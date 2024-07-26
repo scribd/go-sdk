@@ -1,3 +1,10 @@
+# [1.37.0](https://github.com/scribd/go-sdk/compare/v1.36.2...v1.37.0) (2024-07-26)
+
+
+### Features
+
+* Introduce statsig package from SDK along with config ([a4fe3ae](https://github.com/scribd/go-sdk/commit/a4fe3ae0d38d579eab60bc3d81a9c6f1b1cb8aad))
+
 ## [1.36.2](https://github.com/scribd/go-sdk/compare/v1.36.1...v1.36.2) (2024-07-10)
 
 
