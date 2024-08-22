@@ -36,7 +36,7 @@ RUN curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/i
 	| sh -s -- -b $(go env GOPATH)/bin v1.60.1
 
 # install goimports
-RUN go install golang.org/x/tools/cmd/goimports@v0.17.0
+RUN go install golang.org/x/tools/cmd/goimports@v0.24.0
 
 # =============================================================================
 # development stage
@@ -44,4 +44,4 @@ RUN go install golang.org/x/tools/cmd/goimports@v0.17.0
 
 FROM linter AS development
 
-RUN go install github.com/go-delve/delve/cmd/dlv@v1.22.0
+RUN go install github.com/go-delve/delve/cmd/dlv@v1.23.0
