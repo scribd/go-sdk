@@ -1,3 +1,16 @@
+# [1.38.0](https://github.com/scribd/go-sdk/compare/v1.37.0...v1.38.0) (2024-08-22)
+
+
+### Bug Fixes
+
+* Fix typo ([54c1943](https://github.com/scribd/go-sdk/commit/54c1943f6e6c9645b1e5a5ca177714a8b39c144b))
+
+
+### Features
+
+* Upgrade goimports and delve to the latest ([251ae41](https://github.com/scribd/go-sdk/commit/251ae414beef5b8115117fe7681686340f4b9c49))
+* Upgrade to golang version 1.23.0 ([8a1c724](https://github.com/scribd/go-sdk/commit/8a1c72409c2f7d6d35b8031aac68a4c3dde40a05))
+
 # [1.37.0](https://github.com/scribd/go-sdk/compare/v1.36.2...v1.37.0) (2024-07-26)
 
 
