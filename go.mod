@@ -1,6 +1,6 @@
 module github.com/scribd/go-sdk
 
-go 1.22
+go 1.23
 
 require (
 	github.com/DATA-DOG/go-sqlmock v1.5.0
