@@ -23,7 +23,7 @@ func NewRequestIDMiddleware() RequestIDMiddleware {
 }
 
 // Handler implements the middlewares.Handlerer interface. Returns an
-// http.Hanlder to inject the RequestID.
+// http.Handler to inject the RequestID.
 func (rm RequestIDMiddleware) Handler(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		requestID := r.Header.Get(RequestIDHeader)
