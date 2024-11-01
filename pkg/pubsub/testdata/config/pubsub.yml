@@ -41,5 +41,15 @@ test: &test
         session_token: ""
         user_agent: ""
 
+  sqs:
+    publisher:
+      enabled: false
+      queue_url: ""
+    subscriber:
+      enabled: false
+      queue_url: ""
+      workers: 1
+      max_messages: 1
+
 development:
   <<: *test
