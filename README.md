@@ -30,6 +30,7 @@ SDK, the Go version.
         - [Usage of ORM](#usage-of-orm)
     - [PubSub](#pubsub)
         - [Kafka specific configuration](#kafka-specific-configuration)
+        - [SQS specific configuration](#sqs-specific-configuration)
     - [Cache](#cache)
         - [Redis](#redis-specific-configuration)
     - [Experimentation](#experimentation)
@@ -849,6 +850,23 @@ common: &common
     subscriber:
       topic: "test-topic"
       group_id: ""
+  sqs:
+    subscriber:
+      # Set by APP_PUBSUB_SQS_SUBSCRIBER_ENABLED env variable
+      enabled: true
+      # Set by APP_PUBSUB_SQS_SUBSCRIBER_QUEUE_URL env variable
+      queue_url: "https://sqs.us-east-2.amazonaws.com/123456789012/test-queue"
+      # Set by APP_PUBSUB_SQS_SUBSCRIBER_MAX_MESSAGES env variable
+      max_messages: 10
+      # Set by APP_PUBSUB_SQS_SUBSCRIBER_WORKERS env variable
+      workers: 1
+      # Set by APP_PUBSUB_SQS_SUBSCRIBER_WAIT_TIME env variable
+      wait_time: "10s"
+    publisher:
+      # Set by APP_PUBSUB_SQS_PUBLISHER_ENABLED env variable
+      enabled: true
+      # Set by APP_PUBSUB_SQS_PUBLISHER_QUEUE_URL env variable
+      queue_url: "https://sqs.us-east-2.amazonaws.com/123456789012/test-queue"
 ```
 
 #### Kafka specific configuration
@@ -919,6 +937,25 @@ To authenticate the requests to Kafka, Go SDK provides a configuration set for T
 | User agent             | The client's user agent string                                                                                                                                                                          | `user_agent`    | `APP_PUBSUB_KAFKA_SASL_AWS_MSK_IAM_USER_AGENT`    | string | user agent         |
 | Assumable role         | This role will be used to establish connection to AWS MSK ignoring the static credentials                                                                                                               | `role`          | `APP_PUBSUB_KAFKA_SASL_AWS_MSK_IAM_ROLE`          | string | AWS ARN string     |
 | Session name           | Will be passed to AWS STS when assuming the role                                                                                                                                                        | `session_name`  | `APP_PUBSUB_KAFKA_SASL_AWS_MSK_IAM_SESSION_NAME`  | string | application        |
+
+#### SQS specific configuration
+
+Under the hood, the SQS integration relies on the provided SQS client. To learn more about the AWS services initialization, check the [AWS service configuration](#aws-service-configuration).
+
+**Subscriber**:
+
+| Setting           | Description                                                                                     | YAML variable         | Environment variable (ENV)                        | Type    | Possible Values |
+|-------------------|-------------------------------------------------------------------------------------------------|-----------------------|---------------------------------------------------|---------|-----------------|
+| Queue URL         | URL of the SQS queue                                                                            | `queue_url`           | `APP_PUBSUB_SQS_SUBSCRIBER_QUEUE_URL`             | string  | queue URL       |
+| Max messages      | Maximum number of messages to retrieve from the queue per polling iteration                     | `max_messages`        | `APP_PUBSUB_SQS_SUBSCRIBER_MAX_MESSAGES`          | number  | 1,2...          |
+| Number of workers | Number of workers processing incoming messages                                                  | `workers`             | `APP_PUBSUB_SQS_SUBSCRIBER_WORKERS`               | number  | 1,2...          |
+| Wait time         | The maximum amount of time in time.Duration to wait for messages to be available for retrieval. | `wait_time`           | `APP_PUBSUB_SQS_SUBSCRIBER_WAIT_TIME`             | string  | 10s             |
+
+**Publisher**:
+
+| Setting   | Description           | YAML variable         | Environment variable (ENV)                        | Type    | Possible Values |
+|-----------|-----------------------|-----------------------|---------------------------------------------------|---------|-----------------|
+| Queue URL | URL of the SQS queue  | `queue_url`           | `APP_PUBSUB_SQS_PUBLISHER_QUEUE_URL`              | string  | queue URL       |
 
 ### Cache
 
