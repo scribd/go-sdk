@@ -12,6 +12,7 @@ import (
 
 	sdkkafka "github.com/scribd/go-sdk/pkg/instrumentation/kafka"
 	sdklogger "github.com/scribd/go-sdk/pkg/logger"
+	"github.com/scribd/go-sdk/pkg/pubsub/pool"
 )
 
 type (
@@ -152,7 +153,7 @@ func (s *Subscriber) assigned(_ context.Context, cl *kgo.Client, assigned map[st
 			pc := pconsumer{
 				quit: make(chan struct{}),
 				recs: make(chan *sdkkafka.FetchPartition),
-				pool: newPool(s.numWorkers),
+				pool: pool.New(s.numWorkers),
 				done: make(chan struct{}),
 			}
 			s.consumers[topic][partition] = pc

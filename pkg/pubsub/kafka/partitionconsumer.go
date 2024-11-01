@@ -7,10 +7,11 @@ import (
 
 	sdkkafka "github.com/scribd/go-sdk/pkg/instrumentation/kafka"
 	sdklogger "github.com/scribd/go-sdk/pkg/logger"
+	"github.com/scribd/go-sdk/pkg/pubsub/pool"
 )
 
 type pconsumer struct {
-	pool *pool
+	pool *pool.Pool
 
 	quit chan struct{}
 	done chan struct{}
