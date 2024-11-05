@@ -2,6 +2,7 @@ package instrumentation
 
 import (
 	"context"
+	"net/url"
 	"testing"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -12,6 +13,7 @@ import (
 	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
 	awscfg "github.com/aws/aws-sdk-go-v2/config"
 	awss3v2 "github.com/aws/aws-sdk-go-v2/service/s3"
+	smithyendpoints "github.com/aws/smithy-go/endpoints"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -20,6 +22,23 @@ import (
 	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/mocktracer"
 	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer"
 )
+
+type (
+	testCustomResolver struct{}
+)
+
+func (t testCustomResolver) ResolveEndpoint(
+	ctx context.Context, params awss3v2.EndpointParameters) (smithyendpoints.Endpoint, error) {
+	uri, err := url.Parse("http://localhost:4566")
+	if err != nil {
+		return smithyendpoints.Endpoint{}, err
+	}
+
+	return smithyendpoints.Endpoint{
+		URI: *uri,
+	}, nil
+
+}
 
 func TestInstrumentAWSSession(t *testing.T) {
 	cfg := aws.NewConfig().
@@ -68,19 +87,9 @@ func TestInstrumentAWSSession(t *testing.T) {
 }
 
 func TestInstrumentAWSClient(t *testing.T) {
-	customResolver := awsv2.EndpointResolverWithOptionsFunc(
-		func(service, region string, opts ...interface{}) (awsv2.Endpoint, error) {
-			return awsv2.Endpoint{
-				PartitionID:   "aws",
-				URL:           "http://localhost:4566",
-				SigningRegion: "us-east-2",
-			}, nil
-		})
-
 	cfg, err := awscfg.LoadDefaultConfig(
 		context.Background(),
 		awscfg.WithRegion("us-west-2"),
-		awscfg.WithEndpointResolverWithOptions(customResolver),
 		awscfg.WithCredentialsProvider(awsv2.AnonymousCredentials{}),
 	)
 	require.NoError(t, err)
@@ -97,7 +106,7 @@ func TestInstrumentAWSClient(t *testing.T) {
 		mt := mocktracer.Start()
 		defer mt.Stop()
 
-		client := awss3v2.NewFromConfig(cfg)
+		client := awss3v2.NewFromConfig(cfg, awss3v2.WithEndpointResolverV2(&testCustomResolver{}))
 		root, ctx := tracer.StartSpanFromContext(context.Background(), "test")
 
 		_, err := client.GetObject(ctx, &awss3v2.GetObjectInput{
@@ -122,7 +131,7 @@ func TestInstrumentAWSClient(t *testing.T) {
 		assert.Equal(t, "GET", s.Tag(ext.HTTPMethod))
 		assert.Equal(
 			t,
-			"http://test-bucket-name.localhost:4566///test//file//name?x-id=GetObject",
+			"http://localhost:4566///test//file//name?x-id=GetObject",
 			s.Tag(ext.HTTPURL),
 		)
 	})
