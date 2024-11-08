@@ -1,12 +1,12 @@
-package kafka
+package pool
 
-type pool struct {
+type Pool struct {
 	sem  chan struct{}
 	work chan func()
 }
 
-func newPool(size int) *pool {
-	p := &pool{
+func New(size int) *Pool {
+	p := &Pool{
 		sem:  make(chan struct{}, size),
 		work: make(chan func()),
 	}
@@ -14,7 +14,7 @@ func newPool(size int) *pool {
 	return p
 }
 
-func (p *pool) Schedule(task func()) {
+func (p *Pool) Schedule(task func()) {
 	select {
 	case p.work <- task:
 		return
@@ -23,7 +23,7 @@ func (p *pool) Schedule(task func()) {
 	}
 }
 
-func (p *pool) worker(task func()) {
+func (p *Pool) worker(task func()) {
 	defer func() { <-p.sem }()
 
 	for {

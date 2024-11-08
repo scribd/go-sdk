@@ -36,7 +36,7 @@ func TestNewConfigWithAppRoot(t *testing.T) {
 	testCases := []struct {
 		name    string
 		env     string
-		kafka   Kafka
+		cfg     Config
 		wantErr bool
 
 		envOverrides [][]string
@@ -44,47 +44,65 @@ func TestNewConfigWithAppRoot(t *testing.T) {
 		{
 			name: "NewWithConfigFileWorks",
 			env:  "test",
-			kafka: Kafka{
-				BrokerUrls:       []string{"localhost:9092"},
-				ClientId:         "test-app",
-				Cert:             "pem string",
-				CertKey:          "pem key",
-				SecurityProtocol: "ssl",
-				Publisher: Publisher{
-					MaxAttempts:  3,
-					WriteTimeout: 10 * time.Second,
-					Topic:        "test-topic",
+			cfg: Config{
+				Kafka: Kafka{
+					BrokerUrls:       []string{"localhost:9092"},
+					ClientId:         "test-app",
+					Cert:             "pem string",
+					CertKey:          "pem key",
+					SecurityProtocol: "ssl",
+					Publisher: Publisher{
+						MaxAttempts:  3,
+						WriteTimeout: 10 * time.Second,
+						Topic:        "test-topic",
+					},
+					Subscriber: Subscriber{
+						Topic: "test-topic",
+						AutoCommit: AutoCommit{
+							Enabled: true,
+						},
+					},
+					SSLVerificationEnabled: true,
 				},
-				Subscriber: Subscriber{
-					Topic: "test-topic",
-					AutoCommit: AutoCommit{
-						Enabled: true,
+				SQS: SQS{
+					Publisher: SQSPublisher{},
+					Subscriber: SQSSubscriber{
+						MaxMessages: 1,
+						Workers:     1,
 					},
 				},
-				SSLVerificationEnabled: true,
 			},
 		},
 		{
 			name: "NewWithConfigFileWorks (broker URLs override)",
 			env:  "test",
-			kafka: Kafka{
-				BrokerUrls:       []string{"localhost:9092", "localhost:9093"},
-				ClientId:         "test-app",
-				Cert:             "pem string",
-				CertKey:          "pem key",
-				SecurityProtocol: "ssl",
-				Publisher: Publisher{
-					MaxAttempts:  3,
-					WriteTimeout: 10 * time.Second,
-					Topic:        "test-topic",
+			cfg: Config{
+				Kafka: Kafka{
+					BrokerUrls:       []string{"localhost:9092", "localhost:9093"},
+					ClientId:         "test-app",
+					Cert:             "pem string",
+					CertKey:          "pem key",
+					SecurityProtocol: "ssl",
+					Publisher: Publisher{
+						MaxAttempts:  3,
+						WriteTimeout: 10 * time.Second,
+						Topic:        "test-topic",
+					},
+					Subscriber: Subscriber{
+						Topic: "test-topic",
+						AutoCommit: AutoCommit{
+							Enabled: true,
+						},
+					},
+					SSLVerificationEnabled: true,
 				},
-				Subscriber: Subscriber{
-					Topic: "test-topic",
-					AutoCommit: AutoCommit{
-						Enabled: true,
+				SQS: SQS{
+					Publisher: SQSPublisher{},
+					Subscriber: SQSSubscriber{
+						MaxMessages: 1,
+						Workers:     1,
 					},
 				},
-				SSLVerificationEnabled: true,
 			},
 
 			envOverrides: [][]string{{"APP_PUBSUB_KAFKA_BROKER_URLS", "localhost:9092 localhost:9093"}},
@@ -92,24 +110,33 @@ func TestNewConfigWithAppRoot(t *testing.T) {
 		{
 			name: "NewWithConfigFileWorks (auto_commimt override)",
 			env:  "test",
-			kafka: Kafka{
-				BrokerUrls:       []string{"localhost:9092"},
-				ClientId:         "test-app",
-				Cert:             "pem string",
-				CertKey:          "pem key",
-				SecurityProtocol: "ssl",
-				Publisher: Publisher{
-					MaxAttempts:  3,
-					WriteTimeout: 10 * time.Second,
-					Topic:        "test-topic",
+			cfg: Config{
+				Kafka: Kafka{
+					BrokerUrls:       []string{"localhost:9092"},
+					ClientId:         "test-app",
+					Cert:             "pem string",
+					CertKey:          "pem key",
+					SecurityProtocol: "ssl",
+					Publisher: Publisher{
+						MaxAttempts:  3,
+						WriteTimeout: 10 * time.Second,
+						Topic:        "test-topic",
+					},
+					Subscriber: Subscriber{
+						Topic: "test-topic",
+						AutoCommit: AutoCommit{
+							Enabled: false,
+						},
+					},
+					SSLVerificationEnabled: true,
 				},
-				Subscriber: Subscriber{
-					Topic: "test-topic",
-					AutoCommit: AutoCommit{
-						Enabled: false,
+				SQS: SQS{
+					Publisher: SQSPublisher{},
+					Subscriber: SQSSubscriber{
+						MaxMessages: 1,
+						Workers:     1,
 					},
 				},
-				SSLVerificationEnabled: true,
 			},
 
 			envOverrides: [][]string{{"APP_PUBSUB_KAFKA_SUBSCRIBER_AUTO_COMMIT_ENABLED", "false"}},
@@ -117,28 +144,37 @@ func TestNewConfigWithAppRoot(t *testing.T) {
 		{
 			name: "NewWithConfigFileWorks (TLS config override)",
 			env:  "test",
-			kafka: Kafka{
-				BrokerUrls:       []string{"localhost:9092"},
-				ClientId:         "test-app",
-				Cert:             "pem string",
-				CertKey:          "pem key",
-				SecurityProtocol: "ssl",
-				Publisher: Publisher{
-					MaxAttempts:  3,
-					WriteTimeout: 10 * time.Second,
-					Topic:        "test-topic",
-				},
-				Subscriber: Subscriber{
-					Topic: "test-topic",
-					AutoCommit: AutoCommit{
+			cfg: Config{
+				Kafka: Kafka{
+					BrokerUrls:       []string{"localhost:9092"},
+					ClientId:         "test-app",
+					Cert:             "pem string",
+					CertKey:          "pem key",
+					SecurityProtocol: "ssl",
+					Publisher: Publisher{
+						MaxAttempts:  3,
+						WriteTimeout: 10 * time.Second,
+						Topic:        "test-topic",
+					},
+					Subscriber: Subscriber{
+						Topic: "test-topic",
+						AutoCommit: AutoCommit{
+							Enabled: true,
+						},
+					},
+					SSLVerificationEnabled: true,
+					TLS: TLS{
 						Enabled: true,
+						Cert:    "pem string",
+						CertKey: "pem key",
 					},
 				},
-				SSLVerificationEnabled: true,
-				TLS: TLS{
-					Enabled: true,
-					Cert:    "pem string",
-					CertKey: "pem key",
+				SQS: SQS{
+					Publisher: SQSPublisher{},
+					Subscriber: SQSSubscriber{
+						MaxMessages: 1,
+						Workers:     1,
+					},
 				},
 			},
 			envOverrides: [][]string{
@@ -150,28 +186,37 @@ func TestNewConfigWithAppRoot(t *testing.T) {
 		{
 			name: "NewWithConfigFileWorks (SASL config override, error)",
 			env:  "test",
-			kafka: Kafka{
-				BrokerUrls:       []string{"localhost:9092"},
-				ClientId:         "test-app",
-				Cert:             "pem string",
-				CertKey:          "pem key",
-				SecurityProtocol: "ssl",
-				Publisher: Publisher{
-					MaxAttempts:  3,
-					WriteTimeout: 10 * time.Second,
-					Topic:        "test-topic",
+			cfg: Config{
+				Kafka: Kafka{
+					BrokerUrls:       []string{"localhost:9092"},
+					ClientId:         "test-app",
+					Cert:             "pem string",
+					CertKey:          "pem key",
+					SecurityProtocol: "ssl",
+					Publisher: Publisher{
+						MaxAttempts:  3,
+						WriteTimeout: 10 * time.Second,
+						Topic:        "test-topic",
+					},
+					Subscriber: Subscriber{
+						Topic: "test-topic",
+						AutoCommit: AutoCommit{
+							Enabled: true,
+						},
+					},
+					SASL: SASL{
+						Enabled:   true,
+						Mechanism: "test",
+					},
+					SSLVerificationEnabled: true,
 				},
-				Subscriber: Subscriber{
-					Topic: "test-topic",
-					AutoCommit: AutoCommit{
-						Enabled: true,
+				SQS: SQS{
+					Publisher: SQSPublisher{},
+					Subscriber: SQSSubscriber{
+						MaxMessages: 1,
+						Workers:     1,
 					},
 				},
-				SASL: SASL{
-					Enabled:   true,
-					Mechanism: "test",
-				},
-				SSLVerificationEnabled: true,
 			},
 			envOverrides: [][]string{
 				{"APP_PUBSUB_KAFKA_SASL_ENABLED", "true"},
@@ -182,38 +227,163 @@ func TestNewConfigWithAppRoot(t *testing.T) {
 		{
 			name: "NewWithConfigFileWorks (SASL config override, error)",
 			env:  "test",
-			kafka: Kafka{
-				BrokerUrls:       []string{"localhost:9092"},
-				ClientId:         "test-app",
-				Cert:             "pem string",
-				CertKey:          "pem key",
-				SecurityProtocol: "ssl",
-				Publisher: Publisher{
-					MaxAttempts:  3,
-					WriteTimeout: 10 * time.Second,
-					Topic:        "test-topic",
+			cfg: Config{
+				Kafka: Kafka{
+					BrokerUrls:       []string{"localhost:9092"},
+					ClientId:         "test-app",
+					Cert:             "pem string",
+					CertKey:          "pem key",
+					SecurityProtocol: "ssl",
+					Publisher: Publisher{
+						MaxAttempts:  3,
+						WriteTimeout: 10 * time.Second,
+						Topic:        "test-topic",
+					},
+					Subscriber: Subscriber{
+						Topic: "test-topic",
+						AutoCommit: AutoCommit{
+							Enabled: true,
+						},
+					},
+					SASL: SASL{
+						Enabled:   true,
+						Mechanism: "aws_msk_iam",
+						AWSMskIam: SASLAwsMskIam{
+							AccessKey: "access key",
+							SecretKey: "secret key",
+						},
+					},
+					SSLVerificationEnabled: true,
 				},
-				Subscriber: Subscriber{
-					Topic: "test-topic",
-					AutoCommit: AutoCommit{
-						Enabled: true,
+				SQS: SQS{
+					Publisher: SQSPublisher{},
+					Subscriber: SQSSubscriber{
+						MaxMessages: 1,
+						Workers:     1,
 					},
 				},
-				SASL: SASL{
-					Enabled:   true,
-					Mechanism: "aws_msk_iam",
-					AWSMskIam: SASLAwsMskIam{
-						AccessKey: "access key",
-						SecretKey: "secret key",
-					},
-				},
-				SSLVerificationEnabled: true,
 			},
 			envOverrides: [][]string{
 				{"APP_PUBSUB_KAFKA_SASL_ENABLED", "true"},
 				{"APP_PUBSUB_KAFKA_SASL_MECHANISM", "aws_msk_iam"},
 				{"APP_PUBSUB_KAFKA_SASL_AWS_MSK_IAM_ACCESS_KEY", "access key"},
 				{"APP_PUBSUB_KAFKA_SASL_AWS_MSK_IAM_SECRET_KEY", "secret key"},
+			},
+		},
+		{
+			name: "NewWithConfigFileWorks (SQS overrides)",
+			env:  "test",
+			cfg: Config{
+				Kafka: Kafka{
+					BrokerUrls:       []string{"localhost:9092"},
+					ClientId:         "test-app",
+					Cert:             "pem string",
+					CertKey:          "pem key",
+					SecurityProtocol: "ssl",
+					Publisher: Publisher{
+						MaxAttempts:  3,
+						WriteTimeout: 10 * time.Second,
+						Topic:        "test-topic",
+					},
+					Subscriber: Subscriber{
+						Topic: "test-topic",
+						AutoCommit: AutoCommit{
+							Enabled: true,
+						},
+					},
+					SSLVerificationEnabled: true,
+				},
+				SQS: SQS{
+					Publisher: SQSPublisher{
+						QueueURL: "https://test2.com",
+					},
+					Subscriber: SQSSubscriber{
+						QueueURL:    "https://test3.com",
+						MaxMessages: 10,
+						Workers:     5,
+					},
+				},
+			},
+			envOverrides: [][]string{
+				{"APP_PUBSUB_SQS_PUBLISHER_QUEUE_URL", "https://test2.com"},
+				{"APP_PUBSUB_SQS_SUBSCRIBER_QUEUE_URL", "https://test3.com"},
+				{"APP_PUBSUB_SQS_SUBSCRIBER_MAX_MESSAGES", "10"},
+				{"APP_PUBSUB_SQS_SUBSCRIBER_WORKERS", "5"},
+			},
+		},
+		{
+			name:    "NewWithConfigFileWorks (SQS override, empty publisher QueueURL)",
+			env:     "test",
+			wantErr: true,
+			cfg: Config{
+				Kafka: Kafka{
+					BrokerUrls:       []string{"localhost:9092"},
+					ClientId:         "test-app",
+					Cert:             "pem string",
+					CertKey:          "pem key",
+					SecurityProtocol: "ssl",
+					Publisher: Publisher{
+						MaxAttempts:  3,
+						WriteTimeout: 10 * time.Second,
+						Topic:        "test-topic",
+					},
+					Subscriber: Subscriber{
+						Topic: "test-topic",
+						AutoCommit: AutoCommit{
+							Enabled: true,
+						},
+					},
+					SSLVerificationEnabled: true,
+				},
+				SQS: SQS{
+					Publisher: SQSPublisher{
+						Enabled: true,
+					},
+					Subscriber: SQSSubscriber{
+						MaxMessages: 1,
+						Workers:     1,
+					},
+				},
+			},
+			envOverrides: [][]string{
+				{"APP_PUBSUB_SQS_PUBLISHER_ENABLED", "true"},
+			},
+		},
+		{
+			name:    "NewWithConfigFileWorks (SQS override, empty subscriber QueueURL)",
+			env:     "test",
+			wantErr: true,
+			cfg: Config{
+				Kafka: Kafka{
+					BrokerUrls:       []string{"localhost:9092"},
+					ClientId:         "test-app",
+					Cert:             "pem string",
+					CertKey:          "pem key",
+					SecurityProtocol: "ssl",
+					Publisher: Publisher{
+						MaxAttempts:  3,
+						WriteTimeout: 10 * time.Second,
+						Topic:        "test-topic",
+					},
+					Subscriber: Subscriber{
+						Topic: "test-topic",
+						AutoCommit: AutoCommit{
+							Enabled: true,
+						},
+					},
+					SSLVerificationEnabled: true,
+				},
+				SQS: SQS{
+					Publisher: SQSPublisher{},
+					Subscriber: SQSSubscriber{
+						MaxMessages: 1,
+						Workers:     1,
+						Enabled:     true,
+					},
+				},
+			},
+			envOverrides: [][]string{
+				{"APP_PUBSUB_SQS_SUBSCRIBER_ENABLED", "true"},
 			},
 		},
 	}
@@ -245,7 +415,7 @@ func TestNewConfigWithAppRoot(t *testing.T) {
 				require.Nil(t, err)
 			}
 
-			assert.Equal(t, tc.kafka, c.Kafka)
+			assert.Equal(t, tc.cfg, *c)
 
 			// teardown
 			if len(envVariables) > 0 {

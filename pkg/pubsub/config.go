@@ -1,6 +1,7 @@
 package pubsub
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -14,6 +15,8 @@ type (
 	Config struct {
 		// Kafka contains the configuration for Kafka client
 		Kafka Kafka `mapstructure:"kafka"`
+		// SQS contains the configuration for AWS SQS client
+		SQS SQS `mapstructure:"sqs"`
 	}
 
 	// Publisher contains the publisher specific configuration
@@ -135,6 +138,27 @@ type (
 		// MetricsEnabled controls if metrics publishing is enabled or not
 		MetricsEnabled bool `mapstructure:"metrics_enabled"`
 	}
+
+	SQSSubscriber struct {
+		Enabled     bool   `mapstructure:"enabled"`
+		QueueURL    string `mapstructure:"queue_url"`
+		MaxMessages int    `mapstructure:"max_messages"`
+		Workers     int    `mapstructure:"workers"`
+
+		WaitTime time.Duration `mapstructure:"wait_time"`
+	}
+
+	SQSPublisher struct {
+		Enabled  bool   `mapstructure:"enabled"`
+		QueueURL string `mapstructure:"queue_url"`
+	}
+
+	SQS struct {
+		// SQS Publisher specific configuration
+		Publisher SQSPublisher
+		// SQS Subscriber specific configuration
+		Subscriber SQSSubscriber
+	}
 )
 
 const (
@@ -152,6 +176,8 @@ var (
 		saslMechanismPlainString:     Plain,
 		saslMechanismAWsMskIamString: AWSMskIam,
 	}
+
+	ErrEmptySQSQueueURL = errors.New("sqs queue url is empty")
 )
 
 // NewConfig returns a new Config instance.
@@ -191,6 +217,12 @@ func (c *Config) validate() error {
 			c.Kafka.SASL.Mechanism,
 			strings.Join(allowedMechanisms, ","),
 		)
+	}
+	if c.SQS.Publisher.Enabled && c.SQS.Publisher.QueueURL == "" {
+		return ErrEmptySQSQueueURL
+	}
+	if c.SQS.Subscriber.Enabled && c.SQS.Subscriber.QueueURL == "" {
+		return ErrEmptySQSQueueURL
 	}
 
 	return nil
