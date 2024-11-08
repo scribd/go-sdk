@@ -22,6 +22,9 @@ type (
 func (m *mockSQSClient) ReceiveMessage(
 	ctx context.Context,
 	params *sqs.ReceiveMessageInput, optFns ...func(*sqs.Options)) (*sqs.ReceiveMessageOutput, error) {
+	// simulate a long poll
+	time.Sleep(time.Millisecond * 10)
+
 	return &sqs.ReceiveMessageOutput{
 		Messages: m.msgs,
 	}, nil
