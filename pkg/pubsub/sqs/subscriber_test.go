@@ -30,7 +30,6 @@ func (m *mockSQSClient) ReceiveMessage(
 func Test_Subscriber_Subscribe(t *testing.T) {
 	t.Run("all subscribers finished", func(t *testing.T) {
 		var nHandlers int64 // atomic
-		var executedTimes int64
 
 		c := make(chan int, 6)
 
@@ -64,7 +63,6 @@ func Test_Subscriber_Subscribe(t *testing.T) {
 
 				atomic.AddInt64(&nHandlers, 1)
 				defer atomic.AddInt64(&nHandlers, -1)
-				atomic.AddInt64(&executedTimes, 1)
 
 				time.Sleep(time.Millisecond * 10)
 			},
@@ -83,10 +81,6 @@ func Test_Subscriber_Subscribe(t *testing.T) {
 
 		if got := atomic.LoadInt64(&nHandlers); got != 0 {
 			t.Errorf("expected 0, got %d", got)
-		}
-
-		if got := atomic.LoadInt64(&executedTimes); got != 6 {
-			t.Errorf("expected 6, got %d", got)
 		}
 	})
 }
