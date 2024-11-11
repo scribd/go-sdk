@@ -1,3 +1,13 @@
+# [1.39.0](https://github.com/scribd/go-sdk/compare/v1.38.0...v1.39.0) (2024-11-11)
+
+
+### Features
+
+* **PubSub:** Add go-kit SQS transport functions ([a9f9f67](https://github.com/scribd/go-sdk/commit/a9f9f67a99f6fe9bb927a221ed0f677b6db0c00b))
+* **PubSub:** Add SQS configuration ([0afe635](https://github.com/scribd/go-sdk/commit/0afe635b2ff67d5d2bbfc61683112a2e3d4c6f13))
+* **PubSub:** Add SQS PubSub wrappers ([fda81ed](https://github.com/scribd/go-sdk/commit/fda81ed81e87968bb03c98f9f650d2b60a43bfd5))
+* Upgrade aws-sdk-go-v2 to latest version ([367889a](https://github.com/scribd/go-sdk/commit/367889aee6e14d45730bd4b7ed5c59981097cd51))
+
 # [1.38.0](https://github.com/scribd/go-sdk/compare/v1.37.0...v1.38.0) (2024-08-22)
 
 
