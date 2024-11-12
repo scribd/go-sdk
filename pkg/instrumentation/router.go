@@ -40,7 +40,7 @@ func NewTracer(config *Config, options ...tracer.StartOption) *Tracer {
 	options = append(
 		options,
 		tracer.WithService(serviceName),
-		tracer.WithGlobalTag("env", config.environment),
+		tracer.WithEnv(config.environment),
 		tracer.WithUniversalVersion(config.ServiceVersion),
 	)
 
