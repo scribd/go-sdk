@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"github.com/go-kit/kit/endpoint"
-	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/transport"
+	"github.com/go-kit/log"
 	"github.com/twmb/franz-go/pkg/kgo"
 
 	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer"
