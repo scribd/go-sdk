@@ -1,3 +1,10 @@
+# [1.40.0](https://github.com/scribd/go-sdk/compare/v1.39.0...v1.40.0) (2024-11-22)
+
+
+### Features
+
+* Add ability to set DB to SQS subscriber context ([a12605e](https://github.com/scribd/go-sdk/commit/a12605ec070077a65badca887da7206c667f7eae))
+
 # [1.39.0](https://github.com/scribd/go-sdk/compare/v1.38.0...v1.39.0) (2024-11-11)
 
 
