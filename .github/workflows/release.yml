@@ -15,53 +15,26 @@ permissions:
 jobs:
   release:
     name: Release
-    runs-on: ubuntu-20.04
-    needs: []
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        # A GitHub Action to checkout a repository.
-        # https://github.com/actions/checkout
         uses: actions/checkout@v4
         with:
-           token: ${{ secrets.GITHUB_TOKEN }}
            persist-credentials: false
 
-      - name: Inject slug/short variables
-        # A GitHub Action to expose the slug values of some GitHub ENV variables
-        # https://github.com/rlespinasse/github-slug-action
-        uses: rlespinasse/github-slug-action@v3.x
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
+      - name: Semantic Release
+        uses: cycjimmy/semantic-release-action@v4
         with:
-          role-to-assume: ${{ secrets.DEPLOYER_PRODUCTION_ROLE_ARN }}
-          aws-region: ${{ env.AWS_REGION }}
-
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2
-
-      - name: Create release
+          semantic_version: 24.0.0
+          extra_plugins: |
+            @semantic-release/commit-analyzer@13.0.0
+            @semantic-release/release-notes-generator@14.0.1
+            @semantic-release/changelog@6.0.3
+            @semantic-release/exec@6.0.3
+            @semantic-release/git@10.0.1
+            @semantic-release/github@10.0.6
         env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: scribd/semantic-release
-        run: |
-          docker pull $ECR_REGISTRY/$ECR_REPOSITORY:latest
-          docker run --rm \
-            -v ${{ github.workspace }}:/src \
-            -w /src \
-            -e CI=true \
-            -e GITHUB_ACTIONS=true \
-            -e GITHUB_TOKEN=${{ secrets.SCRIBD_GITHUB_RELEASE_TOKEN }} \
-            -e GITHUB_REPOSITORY=${{ github.repository }} \
-            -e GITHUB_WORKSPACE=${{ github.workspace }} \
-            -e GITHUB_SHA=${{ github.sha }} \
-            -e GITHUB_REF=${{ github.ref }} \
-            $ECR_REGISTRY/$ECR_REPOSITORY:latest --publish
-
-      - name: Logout of Amazon ECR
-        if: always()
-        run: docker logout ${{ steps.login-ecr.outputs.registry }}
+          GITHUB_TOKEN: ${{ secrets.SCRIBD_GITHUB_RELEASE_TOKEN }}
 
       - name: Send Slack notification
         if: always()
