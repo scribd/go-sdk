@@ -78,9 +78,7 @@ func TestDatabaseLoggingUnaryServerInterceptor(t *testing.T) {
 		}
 	}()
 
-	ctx := context.Background()
-	conn, err := grpc.DialContext(ctx,
-		"bufnet",
+	conn, err := grpc.NewClient("passthrough://bufnet",
 		grpc.WithContextDialer(func(ctx context.Context, s string) (net.Conn, error) {
 			return lis.Dial()
 		}),
@@ -152,9 +150,7 @@ func TestDatabaseLoggingStreamServerInterceptors(t *testing.T) {
 		}
 	}()
 
-	ctx := context.Background()
-	conn, err := grpc.DialContext(ctx,
-		"bufnet",
+	conn, err := grpc.NewClient("passthrough://bufnet",
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithContextDialer(func(ctx context.Context, s string) (net.Conn, error) {
 			return lis.Dial()

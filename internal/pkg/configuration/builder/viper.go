@@ -73,13 +73,8 @@ func (vb *ViperBuilder) Build() (*viper.Viper, error) {
 	vb.vConf.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	vb.vConf.AutomaticEnv()
 
-	// Bind the ENV values manually.
-	//
-	// Workaround for `Unmarshal` which doesn't respect the environment
-	// variables when loading the values.
-	//
-	// See: https://github.com/spf13/viper/issues/761
-	for _, k := range vb.vConf.AllKeys() {
+	allKeys := vb.vConf.AllKeys()
+	for _, k := range allKeys {
 		if err := vb.vConf.BindEnv(strings.ToUpper(k)); err != nil {
 			return nil, fmt.Errorf("Could not configure %s for ENV %s", k, env)
 		}
