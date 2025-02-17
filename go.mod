@@ -3,7 +3,7 @@ module github.com/scribd/go-sdk
 go 1.24
 
 require (
-	github.com/DATA-DOG/go-sqlmock v1.5.0
+	github.com/DATA-DOG/go-sqlmock v1.5.2
 	github.com/DATA-DOG/go-txdb v0.1.9
 	github.com/DataDog/datadog-go v4.8.2+incompatible
 	github.com/aws/aws-sdk-go v1.44.327
