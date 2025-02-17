@@ -1,3 +1,34 @@
+# [1.41.0](https://github.com/scribd/go-sdk/compare/v1.40.0...v1.41.0) (2025-02-17)
+
+
+### Bug Fixes
+
+* Add missing Kafka config setting after the viper upgrade ([b308e95](https://github.com/scribd/go-sdk/commit/b308e952ce823dbcf71ede49086aa099624ca6a0))
+* Use 200 OK HTTP status code for CORS Options ([049347e](https://github.com/scribd/go-sdk/commit/049347ed5b81d4a01b6c5da369191264d324b415))
+* Use grpc.NewClient instead of grpc.Dial ([fdf4282](https://github.com/scribd/go-sdk/commit/fdf4282e45ca42326c06ee0a877652678e56d54e))
+
+
+### Features
+
+* Upgrade aws-sdk-go ([fac5a92](https://github.com/scribd/go-sdk/commit/fac5a92f03eb741594dd9875e36d4377d6f16658))
+* Upgrade aws-sdk-go-v2 ([45a567d](https://github.com/scribd/go-sdk/commit/45a567d6ba5dc4d179a8440f64a7e9b7e09f4390))
+* Upgrade cors ([fd93b1a](https://github.com/scribd/go-sdk/commit/fd93b1a4927c7814012b2ff499aea90f53f4db92))
+* Upgrade datadog-go ([7a5ff58](https://github.com/scribd/go-sdk/commit/7a5ff5828a7f9ea6444f4e6297061f8cc94c4f65))
+* Upgrade dd-trace-go ([36d27c8](https://github.com/scribd/go-sdk/commit/36d27c8cc64846ec80c062e6c0726a6e87ac2e25))
+* Upgrade driver/mysql ([982f2ec](https://github.com/scribd/go-sdk/commit/982f2ec7f84525b9f653aa88f174bcff69d2a6ba))
+* Upgrade franz-go ([db2b558](https://github.com/scribd/go-sdk/commit/db2b55884eddbc91c346289da0c5ab4d0f64b929))
+* Upgrade go to v1.24.0 ([764bd86](https://github.com/scribd/go-sdk/commit/764bd86fd0eefefd4c1661308f92671b84369c41))
+* Upgrade go-grpc-middleware ([a8cae80](https://github.com/scribd/go-sdk/commit/a8cae80ea9b2075c1be12ad281d6254685975782))
+* Upgrade go-redis ([8f365af](https://github.com/scribd/go-sdk/commit/8f365af23edacce91d0a557e6dd25fccfb6c043b))
+* Upgrade go-txdb ([685ac17](https://github.com/scribd/go-sdk/commit/685ac1750e5986ef79bb1fc764d329cabe9fc0e8))
+* Upgrade goimports to v0.30.0 ([b745eb0](https://github.com/scribd/go-sdk/commit/b745eb003c1604dada9a08d3e17fc6a2e2a2358f))
+* Upgrade grpc ([d55d123](https://github.com/scribd/go-sdk/commit/d55d123f56d481c957d9d831e043f231e203bfa9))
+* Upgrade protobuf ([ad622e4](https://github.com/scribd/go-sdk/commit/ad622e43fa85a5a160812114d80a211a4d768a46))
+* Upgrade sentry-go ([d2d307a](https://github.com/scribd/go-sdk/commit/d2d307a3a3bd5f1fc04e3e974c7a625ec6d82450))
+* Upgrade statsig-io/go-sdk ([e8c602f](https://github.com/scribd/go-sdk/commit/e8c602fffad5cf71311895b9a932f231131bd747))
+* Upgrade testify ([0f33aba](https://github.com/scribd/go-sdk/commit/0f33aba1fe1681c6027fcc2ad0186060b8ce9e6b))
+* Upgrade viper ([e6f9e8f](https://github.com/scribd/go-sdk/commit/e6f9e8fed7f726ad4467624ab5226122f9924deb))
+
 # [1.40.0](https://github.com/scribd/go-sdk/compare/v1.39.0...v1.40.0) (2024-11-22)
 
 
