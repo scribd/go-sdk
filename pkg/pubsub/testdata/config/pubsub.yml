@@ -23,6 +23,8 @@ test: &test
     subscriber:
       topic: "test-topic"
       group_id: ""
+      auto_commit:
+        enabled: true
     tls:
       enabled: false
       ca: ""
