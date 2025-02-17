@@ -36,8 +36,8 @@ require (
 	gopkg.in/DataDog/dd-trace-go.v1 v1.71.1
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 	gorm.io/driver/mysql v1.5.7
-	gorm.io/driver/sqlite v1.4.4
-	gorm.io/gorm v1.25.7
+	gorm.io/driver/sqlite v1.5.7
+	gorm.io/gorm v1.25.12
 )
 
 require (
