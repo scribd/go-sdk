@@ -27,7 +27,7 @@ require (
 	github.com/rs/cors v1.11.1
 	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/viper v1.19.0
-	github.com/statsig-io/go-sdk v1.26.0
+	github.com/statsig-io/go-sdk v1.34.0
 	github.com/stretchr/testify v1.9.0
 	github.com/twmb/franz-go v1.17.0
 	github.com/twmb/franz-go/pkg/kmsg v1.8.0
