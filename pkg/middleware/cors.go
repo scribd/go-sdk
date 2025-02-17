@@ -30,6 +30,8 @@ func NewCorsMiddleware(setting server.CorsSetting) *CorsMiddleware {
 		MaxAge: setting.MaxAge,
 
 		OptionsPassthrough: setting.OptionsPassthrough,
+
+		OptionsSuccessStatus: http.StatusOK,
 	})
 
 	return &CorsMiddleware{
