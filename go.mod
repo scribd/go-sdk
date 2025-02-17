@@ -18,7 +18,7 @@ require (
 	github.com/aws/smithy-go v1.22.2
 	github.com/getsentry/sentry-go v0.31.1
 	github.com/go-kit/kit v0.13.0
-	github.com/go-kit/log v0.2.0
+	github.com/go-kit/log v0.2.1
 	github.com/go-sql-driver/mysql v1.8.1
 	github.com/google/uuid v1.6.0
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
