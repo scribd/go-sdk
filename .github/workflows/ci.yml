@@ -10,7 +10,7 @@ env:
 jobs:
   build:
     name: build
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -45,7 +45,7 @@ jobs:
 
   check:
     name: check
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     needs: build
     steps:
       - name: Checkout
@@ -97,10 +97,19 @@ jobs:
           image: ${{ github.repository }}:${{ env.GITHUB_SHA_SHORT }}
           run: mage fmt:lint
 
+      - uses: addnab/docker-run-action@v2
+        # Run an image built by a previous step.
+        # https://github.com/addnab/docker-run-action
+        # https://github.com/marketplace/actions/docker-run-action
+        name: Run dependencies check
+        with:
+          image: ${{ github.repository }}:${{ env.GITHUB_SHA_SHORT }}
+          run: mage deps:check
+
   test:
     name: test
     needs: [build, check]
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
