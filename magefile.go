@@ -69,3 +69,10 @@ func (Fmt) Lint() error {
 	lintCmd := "golangci-lint"
 	return sh.RunV(lintCmd, "run")
 }
+
+type Deps mg.Namespace
+
+// Checks the dependencies.
+func (Deps) Check() error {
+	return sh.RunV(mg.GoCmd(), "mod", "tidy", "-diff")
+}
