@@ -97,6 +97,15 @@ jobs:
           image: ${{ github.repository }}:${{ env.GITHUB_SHA_SHORT }}
           run: mage fmt:lint
 
+      - uses: addnab/docker-run-action@v2
+        # Run an image built by a previous step.
+        # https://github.com/addnab/docker-run-action
+        # https://github.com/marketplace/actions/docker-run-action
+        name: Run dependencies check
+        with:
+          image: ${{ github.repository }}:${{ env.GITHUB_SHA_SHORT }}
+          run: mage deps:check
+
   test:
     name: test
     needs: [build, check]
