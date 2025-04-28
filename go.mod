@@ -30,7 +30,7 @@ require (
 	github.com/statsig-io/go-sdk v1.35.2
 	github.com/stretchr/testify v1.10.0
 	github.com/twmb/franz-go v1.18.1
-	github.com/twmb/franz-go/pkg/kmsg v1.9.0
+	github.com/twmb/franz-go/pkg/kmsg v1.11.2
 	google.golang.org/grpc v1.70.0
 	google.golang.org/protobuf v1.36.5
 	gopkg.in/DataDog/dd-trace-go.v1 v1.71.1
