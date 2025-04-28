@@ -33,7 +33,7 @@ FROM builder AS linter
 
 # binary will be $(go env GOPATH)/bin/golangci-lint
 RUN curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh \
-	| sh -s -- -b $(go env GOPATH)/bin v1.64.5
+	| sh -s -- -b $(go env GOPATH)/bin v1.64.8
 
 # install goimports
 RUN go install golang.org/x/tools/cmd/goimports@v0.30.0
