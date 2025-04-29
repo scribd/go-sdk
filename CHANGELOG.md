@@ -1,3 +1,14 @@
+# [1.42.0](https://github.com/scribd/go-sdk/compare/v1.41.0...v1.42.0) (2025-04-29)
+
+
+### Features
+
+* Update dd-trace-go ([09a12ef](https://github.com/scribd/go-sdk/commit/09a12ef23776e231bd94ac4d54112b3d644fde63))
+* Update grpc ([c9cba28](https://github.com/scribd/go-sdk/commit/c9cba287cd07af7f66248cf4fec05ed2d2d0754c))
+* Update spf13/viper ([74712ff](https://github.com/scribd/go-sdk/commit/74712ff07bd9ff58bf40786168552ea69a5b0971))
+* Update statsig-io/go-sdk ([326ec0e](https://github.com/scribd/go-sdk/commit/326ec0e84bd942266f2aeaad530422d0f85945a1))
+* Update twmb/franz-go/pkg/kmsg ([6a390ca](https://github.com/scribd/go-sdk/commit/6a390cad0634c40d4033b26a1eac3f9e89c2e744))
+
 # [1.41.0](https://github.com/scribd/go-sdk/compare/v1.40.0...v1.41.0) (2025-02-17)
 
 
