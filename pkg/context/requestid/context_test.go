@@ -20,7 +20,7 @@ func TestExtract(t *testing.T) {
 			ctxSet: func(ctx context.Context) context.Context {
 				return ctx
 			},
-			expectedError: fmt.Errorf("Unable to get the requestID"),
+			expectedError: fmt.Errorf("unable to get the requestID"),
 		},
 		{
 			name: "Context contains request id",

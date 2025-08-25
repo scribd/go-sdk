@@ -22,7 +22,7 @@ var (
 func Extract(ctx context.Context) (*gorm.DB, error) {
 	d, ok := ctx.Value(ctxDatabaseKey).(*ctxDatabase)
 	if !ok || d == nil {
-		return nil, fmt.Errorf("Unable to get the database")
+		return nil, fmt.Errorf("unable to get the database")
 	}
 
 	return d.database, nil

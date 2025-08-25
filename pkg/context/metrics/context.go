@@ -22,7 +22,7 @@ var (
 func Extract(ctx context.Context) (sdkmetrics.Metrics, error) {
 	m, ok := ctx.Value(ctxMetricsKey).(*ctxMetrics)
 	if !ok || m == nil {
-		return nil, fmt.Errorf("Unable to get the metrics")
+		return nil, fmt.Errorf("unable to get the metrics")
 	}
 
 	return m.metrics, nil

@@ -20,7 +20,7 @@ var (
 func Extract(ctx context.Context) (string, error) {
 	r, ok := ctx.Value(ctxRequestIDKey).(*ctxRequestID)
 	if !ok || r == nil {
-		return "", fmt.Errorf("Unable to get the requestID")
+		return "", fmt.Errorf("unable to get the requestID")
 	}
 
 	return r.requestID, nil

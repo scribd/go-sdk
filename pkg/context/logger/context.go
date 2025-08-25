@@ -36,7 +36,7 @@ func AddFields(ctx context.Context, fields sdklogger.Fields) {
 func Extract(ctx context.Context) (sdklogger.Logger, error) {
 	l, ok := ctx.Value(ctxLoggerKey).(*ctxLogger)
 	if !ok || l == nil {
-		return nil, fmt.Errorf("Unable to get the logger")
+		return nil, fmt.Errorf("unable to get the logger")
 	}
 
 	fields := sdklogger.Fields{}
