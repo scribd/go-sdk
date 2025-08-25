@@ -65,7 +65,7 @@ func (vb *ViperBuilder) Build() (*viper.Viper, error) {
 	env := vb.vConf.GetString("ENV")
 	vb.vConf = vb.vConf.Sub(env)
 	if vb.vConf == nil {
-		return nil, fmt.Errorf("No %s configuration for ENV %s", vb.name, env)
+		return nil, fmt.Errorf("no %s configuration for ENV %s", vb.name, env)
 	}
 
 	vb.vConf.Set("ENV", env)
@@ -76,7 +76,7 @@ func (vb *ViperBuilder) Build() (*viper.Viper, error) {
 	allKeys := vb.vConf.AllKeys()
 	for _, k := range allKeys {
 		if err := vb.vConf.BindEnv(strings.ToUpper(k)); err != nil {
-			return nil, fmt.Errorf("Could not configure %s for ENV %s", k, env)
+			return nil, fmt.Errorf("could not configure %s for ENV %s", k, env)
 		}
 
 	}

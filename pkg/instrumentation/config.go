@@ -29,7 +29,7 @@ func NewConfig() (*Config, error) {
 	}
 
 	if err = vConf.Unmarshal(config); err != nil {
-		return config, fmt.Errorf("Unable to decode into struct: %s", err.Error())
+		return config, fmt.Errorf("unable to decode into struct: %s", err.Error())
 	}
 
 	config.environment = vConf.GetString("ENV")

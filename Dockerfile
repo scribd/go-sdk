@@ -2,7 +2,7 @@
 # build stage
 # =============================================================================
 
-FROM golang:1.24.2-alpine AS builder
+FROM golang:1.25.0-alpine AS builder
 
 WORKDIR /sdk
 
@@ -33,10 +33,10 @@ FROM builder AS linter
 
 # binary will be $(go env GOPATH)/bin/golangci-lint
 RUN curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh \
-	| sh -s -- -b $(go env GOPATH)/bin v1.64.8
+	| sh -s -- -b $(go env GOPATH)/bin v2.4.0
 
 # install goimports
-RUN go install golang.org/x/tools/cmd/goimports@v0.32.0
+RUN go install golang.org/x/tools/cmd/goimports@v0.36.0
 
 # =============================================================================
 # development stage
@@ -44,4 +44,4 @@ RUN go install golang.org/x/tools/cmd/goimports@v0.32.0
 
 FROM linter AS development
 
-RUN go install github.com/go-delve/delve/cmd/dlv@v1.24.2
+RUN go install github.com/go-delve/delve/cmd/dlv@v1.25.1

@@ -83,7 +83,7 @@ func TestNewClient(t *testing.T) {
 
 				c.Produce(ctx, &kgo.Record{Topic: "test"}, nil)
 
-				fetches := c.KafkaClient.PollRecords(context.Background(), 1)
+				fetches := c.PollRecords(context.Background(), 1)
 
 				iter := c.WrapFetchesRecordIter(ctx, fetches.RecordIter())
 				for !iter.Done() {
@@ -98,7 +98,7 @@ func TestNewClient(t *testing.T) {
 
 				c.Produce(ctx, &kgo.Record{Topic: "test"}, nil)
 
-				fetches := c.KafkaClient.PollRecords(context.Background(), 1)
+				fetches := c.PollRecords(context.Background(), 1)
 				fetches.EachTopic(func(ft kgo.FetchTopic) {
 					ft.EachPartition(func(fp kgo.FetchPartition) {
 						wfp := c.WrapFetchPartition(ctx, fp)

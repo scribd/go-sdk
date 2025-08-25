@@ -73,7 +73,7 @@ func TestOutputStructuredContentFromMiddleware(t *testing.T) {
 		assert.NotEmpty(t, fields["timestamp"])
 		assert.NotEmpty(t, fields["http"])
 
-		var http map[string]interface{} = (fields["http"]).(map[string]interface{})
+		var http = (fields["http"]).(map[string]interface{})
 
 		assert.NotNil(t, http["remote_addr"])
 		assert.NotNil(t, http["request_id"])
@@ -86,7 +86,7 @@ func TestOutputStructuredContentFromMiddleware(t *testing.T) {
 		assert.NotEmpty(t, http["response_status"])
 		assert.NotNil(t, http["response_time_total_ms"])
 
-		var dd map[string]interface{} = (fields["dd"]).(map[string]interface{})
+		var dd = (fields["dd"]).(map[string]interface{})
 
 		assert.NotNil(t, dd["trace_id"])
 		assert.NotNil(t, dd["span_id"])
@@ -132,7 +132,7 @@ func TestResponseStatusFromMiddleware(t *testing.T) {
 	require.Nil(t, err)
 
 	assertions := func(fields map[string]interface{}) {
-		var http map[string]interface{} = (fields["http"]).(map[string]interface{})
+		var http = (fields["http"]).(map[string]interface{})
 
 		assert.EqualValues(t, 400, http["response_status"])
 	}
