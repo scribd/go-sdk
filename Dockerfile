@@ -36,7 +36,7 @@ RUN curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/i
 	| sh -s -- -b $(go env GOPATH)/bin v2.4.0
 
 # install goimports
-RUN go install golang.org/x/tools/cmd/goimports@v0.32.0
+RUN go install golang.org/x/tools/cmd/goimports@v0.36.0
 
 # =============================================================================
 # development stage
