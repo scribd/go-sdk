@@ -21,6 +21,12 @@ linters:
       locale: US
     unparam:
       check-exported: false
+    staticcheck:
+      checks:
+        - all
+        - '-SA1029'
+        - '-SA1019'
+        - '-ST1003'
   exclusions:
     generated: lax
     presets:
@@ -28,10 +34,6 @@ linters:
       - common-false-positives
       - legacy
       - std-error-handling
-    rules:
-      - linters:
-          - staticcheck
-        text: 'SA1029:'
     paths:
       - configs
       - third_party$
