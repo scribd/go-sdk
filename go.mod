@@ -32,7 +32,7 @@ require (
 	github.com/twmb/franz-go v1.19.5
 	github.com/twmb/franz-go/pkg/kmsg v1.11.2
 	google.golang.org/grpc v1.75.0
-	google.golang.org/protobuf v1.36.6
+	google.golang.org/protobuf v1.36.8
 	gopkg.in/DataDog/dd-trace-go.v1 v1.72.2
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 	gorm.io/driver/mysql v1.5.7
