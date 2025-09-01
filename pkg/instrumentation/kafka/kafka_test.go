@@ -137,7 +137,7 @@ func TestNewClient(t *testing.T) {
 		assert.Equal(t, "Produce Topic test", s.Tag(ext.ResourceName))
 		assert.Equal(t, 0.1, s.Tag(ext.EventSampleRate))
 		assert.Equal(t, "queue", s.Tag(ext.SpanType))
-		assert.Equal(t, int32(0), s.Tag("partition"))
+		assert.Equal(t, float64(0), s.Tag("partition"))
 	}
 
 	// consume
@@ -146,6 +146,6 @@ func TestNewClient(t *testing.T) {
 		assert.Equal(t, "kafka", s.Tag(ext.ServiceName))
 		assert.Equal(t, "Consume Topic test", s.Tag(ext.ResourceName))
 		assert.Equal(t, "queue", s.Tag(ext.SpanType))
-		assert.Equal(t, int32(0), s.Tag("partition"))
+		assert.Equal(t, float64(0), s.Tag("partition"))
 	}
 }
