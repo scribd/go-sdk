@@ -29,7 +29,7 @@ require (
 	github.com/spf13/viper v1.20.1
 	github.com/statsig-io/go-sdk v1.39.1
 	github.com/stretchr/testify v1.11.1
-	github.com/twmb/franz-go v1.18.1
+	github.com/twmb/franz-go v1.19.5
 	github.com/twmb/franz-go/pkg/kmsg v1.11.2
 	google.golang.org/grpc v1.72.0
 	google.golang.org/protobuf v1.36.6
