@@ -1,3 +1,29 @@
+# [1.44.0](https://github.com/scribd/go-sdk/compare/v1.43.0...v1.44.0) (2025-09-02)
+
+
+### Bug Fixes
+
+* **golangci:** Move staticcheck settings to the linters section ([ee9d484](https://github.com/scribd/go-sdk/commit/ee9d4848f843697ce804a1724c6b3e3dd10db4fd))
+
+
+### Features
+
+* Bump aws/aws-sdk-go-v2 to v1.38.3 ([1fefcd4](https://github.com/scribd/go-sdk/commit/1fefcd49fc25745a7cb54b2a72fb1d6c1cfbd319))
+* Bump aws/aws-sdk-go-v2/config to v1.31.6 ([84499f4](https://github.com/scribd/go-sdk/commit/84499f4764a5a0fff1a70300ce71935f523f26e9))
+* Bump aws/aws-sdk-go-v2/service/s3 to v1.87.3 ([67b66e9](https://github.com/scribd/go-sdk/commit/67b66e98e996ec85b42957dbbe20f601634b4200))
+* Bump aws/aws-sdk-go-v2/service/sagemakerruntime to v1.37.2 ([255af88](https://github.com/scribd/go-sdk/commit/255af8886bc72fe12db98e7297d147be2f64de71))
+* Bump aws/aws-sdk-go-v2/service/sfn to v1.39.2 ([d18464d](https://github.com/scribd/go-sdk/commit/d18464d2d6760a57293cd2999fd6c084b114c346))
+* Bump aws/aws-sdk-go-v2/service/sqs to v1.42.3 ([c3760d3](https://github.com/scribd/go-sdk/commit/c3760d306f5b768ee6f25742804e1968a64a5ecb))
+* Bump getsentry/sentry-go to v0.35.1 ([f753534](https://github.com/scribd/go-sdk/commit/f753534d57aad801b0610023c503760d087f2f67))
+* Bump go-sql-driver/mysql to v1.9.3 ([9270f4a](https://github.com/scribd/go-sdk/commit/9270f4a3a630c53a16d236fe467f2039bbbc0358))
+* Bump google.golang.org/grpc to v1.75.0 ([e4e400a](https://github.com/scribd/go-sdk/commit/e4e400af0df7f096d2b2f001c539a9e6f1eba864))
+* Bump gopkg.in/DataDog/dd-trace-go.v1 to v1.74.5 ([ee94473](https://github.com/scribd/go-sdk/commit/ee94473a692a9a0fa47f3e090c77f94424c72116))
+* Bump gorm.io/driver/mysql to v1.6.0 ([05ea6fe](https://github.com/scribd/go-sdk/commit/05ea6feaaf9aa3dd187cd7e5a4bc2c51edc9d6ea))
+* Bump redis/go-redis/v9 to v9.12.1 ([bde5173](https://github.com/scribd/go-sdk/commit/bde51738c900d9e7b739d084ec3a148e5ba43d63))
+* Bump statsig-io/go-sdk to v1.39.1 ([fd2b67f](https://github.com/scribd/go-sdk/commit/fd2b67fb95229677f9d4f3b63ee8cb3bc762dab6))
+* Bump stretchr/testify to v1.11.1 ([9a31084](https://github.com/scribd/go-sdk/commit/9a310841331a935a8cd8d8218831c7fa56714358))
+* Bump twmb/franz-go to v1.19.5 ([9e9d692](https://github.com/scribd/go-sdk/commit/9e9d6925793f6f70f3fc511cee5b29c57555d766))
+
 # [1.43.0](https://github.com/scribd/go-sdk/compare/v1.42.0...v1.43.0) (2025-08-25)
 
 
