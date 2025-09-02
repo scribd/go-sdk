@@ -81,7 +81,7 @@ func (ss *testServerStream) SendMsg(m interface{}) error {
 	return nil
 }
 
-func (f *testServerStream) RecvMsg(m interface{}) error {
+func (ss *testServerStream) RecvMsg(m interface{}) error {
 	return nil
 }
 
