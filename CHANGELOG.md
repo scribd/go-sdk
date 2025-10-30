@@ -1,3 +1,10 @@
+# [1.45.0](https://github.com/scribd/go-sdk/compare/v1.44.0...v1.45.0) (2025-10-30)
+
+
+### Features
+
+* **middleware:** Make logging http writer SSE compatible ([06b9214](https://github.com/scribd/go-sdk/commit/06b9214dc5f4023b3cf4b08cb63f0fa5bc8f73d6))
+
 # [1.44.0](https://github.com/scribd/go-sdk/compare/v1.43.0...v1.44.0) (2025-09-02)
 
 
