@@ -41,7 +41,16 @@ func NewConnection(config *Config, environment, appName string) (*gorm.DB, error
 	databasePoolSettings(sqlDB, config)
 
 	dialector := mysql.New(mysql.Config{Conn: sqlDB})
-	db, err := gormtrace.Open(dialector, nil, gormtrace.WithServiceName(serviceName))
+
+	gormConfig := &gorm.Config{}
+	if config.DisableDefaultGormTransaction {
+		gormConfig.SkipDefaultTransaction = true
+	}
+	if config.CachePreparedStatements {
+		gormConfig.PrepareStmt = true
+	}
+
+	db, err := gormtrace.Open(dialector, gormConfig, gormtrace.WithServiceName(serviceName))
 	if err != nil {
 		return nil, err
 	}

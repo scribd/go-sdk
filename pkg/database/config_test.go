@@ -16,32 +16,38 @@ func TestNewConfig(t *testing.T) {
 	})
 
 	testCases := []struct {
-		name                  string
-		wantError             bool
-		host                  string
-		port                  int
-		username              string
-		password              string
-		database              string
-		timeout               string
-		pool                  int
-		maxOpenConnections    int
-		connectionMaxIdleTime time.Duration
-		connectionMaxLifetime time.Duration
+		name                          string
+		wantError                     bool
+		host                          string
+		port                          int
+		username                      string
+		password                      string
+		database                      string
+		timeout                       string
+		pool                          int
+		maxOpenConnections            int
+		connectionMaxIdleTime         time.Duration
+		connectionMaxLifetime         time.Duration
+		disableDefaultGormTransaction bool
+		cachePreparedStatements       bool
+		mysqlInterpolateParams        bool
 	}{
 		{
-			name:                  "NewWithoutConfigFileFails",
-			wantError:             true,
-			host:                  "",
-			port:                  0,
-			username:              "",
-			password:              "",
-			database:              "",
-			timeout:               "",
-			pool:                  0,
-			maxOpenConnections:    0,
-			connectionMaxIdleTime: 0,
-			connectionMaxLifetime: 0,
+			name:                          "NewWithoutConfigFileFails",
+			wantError:                     true,
+			host:                          "",
+			port:                          0,
+			username:                      "",
+			password:                      "",
+			database:                      "",
+			timeout:                       "",
+			pool:                          0,
+			maxOpenConnections:            0,
+			connectionMaxIdleTime:         0,
+			connectionMaxLifetime:         0,
+			disableDefaultGormTransaction: false,
+			cachePreparedStatements:       false,
+			mysqlInterpolateParams:        false,
 		},
 	}
 
@@ -62,6 +68,9 @@ func TestNewConfig(t *testing.T) {
 			assert.Equal(t, c.MaxOpenConnections, tc.maxOpenConnections)
 			assert.Equal(t, c.ConnectionMaxIdleTime, tc.connectionMaxIdleTime)
 			assert.Equal(t, c.ConnectionMaxLifetime, tc.connectionMaxLifetime)
+			assert.Equal(t, c.DisableDefaultGormTransaction, tc.disableDefaultGormTransaction)
+			assert.Equal(t, c.CachePreparedStatements, tc.cachePreparedStatements)
+			assert.Equal(t, c.MysqlInterpolateParams, tc.mysqlInterpolateParams)
 		})
 	}
 }

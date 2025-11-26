@@ -638,15 +638,22 @@ root of the project.
 
 Each of these connection details can be overriden by an `ENV` variable.
 
-| Setting  | Description                      | YAML variable | Environment variable (ENV) | Default     |
-| -------- | -------------------------------- | ------------- | -------------------------- | ----------- |
-| Host     | The database host                | `host`        | `APP_DATABASE_HOST`        | `localhost` |
-| Port     | The database port                | `port`        | `APP_DATABASE_PORT`        | `3306`      |
-| Database | The database name                | `database`    | `APP_DATABASE_DATABASE`    |             |
-| Username | App user name                    | `username`    | `APP_DATABASE_USERNAME`    |             |
-| Password | App user password                | `password`    | `APP_DATABASE_PASSWORD`    |             |
-| Pool     | Connection pool size             | `pool`        | `APP_DATABASE_POOL`        | `5`         |
-| Timeout  | Connection timeout (in seconds)  | `timeout`     | `APP_DATABASE_TIMEOUT`     | `1s`        |
+| Setting                       | Description                                                                                                                                | YAML variable                      | Environment variable (ENV)                      | Default     |
+|-------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------|-------------------------------------------------|-------------|
+| Host                          | The database host                                                                                                                          | `host`                             | `APP_DATABASE_HOST`                             | `localhost` |
+| Port                          | The database port                                                                                                                          | `port`                             | `APP_DATABASE_PORT`                             | `3306`      |
+| Database                      | The database name                                                                                                                          | `database`                         | `APP_DATABASE_DATABASE`                         |             |
+| Username                      | App user name                                                                                                                              | `username`                         | `APP_DATABASE_USERNAME`                         |             |
+| Password                      | App user password                                                                                                                          | `password`                         | `APP_DATABASE_PASSWORD`                         |             |
+| Pool                          | Connection pool size                                                                                                                       | `pool`                             | `APP_DATABASE_POOL`                             | `5`         |
+| Timeout                       | Connection timeout (in seconds)                                                                                                            | `timeout`                          | `APP_DATABASE_TIMEOUT`                          | `1s`        |
+| MaxOpenConnections            | Sets the maximum number of open connections to the database.                                                                               | `max_open_connections`             | `APP_DATABASE_MAX_OPEN_CONNECTIONS`             | `0`         |
+| ConnectionMaxIdleTime         | Sets the maximum amount of time a connection may be idle.                                                                                  | `connection_max_idle_time`         | `APP_DATABASE_CONNECTION_MAX_IDLE_TIME`         | `0`         |
+| ConnectionMaxLifetime         | Sets the maximum amount of time a connection may be reused                                                                                 | `connection_max_lifetime`          | `APP_DATABASE_CONNECTION_MAX_LIFETIME`          | `0s`        |
+| DisableDefaultGormTransaction | Disables default GORM transaction wrapper for write operations                                                                             | `disable_default_gorm_transaction` | `APP_DATABASE_DISABLE_DEFAULT_GORM_TRANSACTION` | `false`     |
+| CachePreparedStatements       | Enabled creating a prepared statement when executing any SQL and caches them to speed up future calls                                      | `cache_prepared_statements`        | `APP_DATABASE_CACHE_PREPARED_STATEMENTS`        | `false`     |
+| MysqlInterpolateParams        | If set to `true`, placeholders (?) in calls to db.Query() and db.Exec() are interpolated into a single query string with given parameters. | `mysql_interpolate_params`         | `APP_DATABASE_MYSQL_INTERPOLATE_PARAMS`         | `false`     |
+
 
 An example `database.yml`:
 
