@@ -5,14 +5,9 @@ import (
 	"net/url"
 	"testing"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/credentials"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/s3"
-
-	awsv2 "github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/aws"
 	awscfg "github.com/aws/aws-sdk-go-v2/config"
-	awss3v2 "github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 	smithyendpoints "github.com/aws/smithy-go/endpoints"
 
 	"github.com/stretchr/testify/assert"
@@ -28,7 +23,7 @@ type (
 )
 
 func (t testCustomResolver) ResolveEndpoint(
-	ctx context.Context, params awss3v2.EndpointParameters) (smithyendpoints.Endpoint, error) {
+	ctx context.Context, params s3.EndpointParameters) (smithyendpoints.Endpoint, error) {
 	uri, err := url.Parse("http://localhost:4566")
 	if err != nil {
 		return smithyendpoints.Endpoint{}, err
@@ -40,57 +35,11 @@ func (t testCustomResolver) ResolveEndpoint(
 
 }
 
-func TestInstrumentAWSSession(t *testing.T) {
-	cfg := aws.NewConfig().
-		WithRegion("us-west-2").
-		WithDisableSSL(true).
-		WithCredentials(credentials.AnonymousCredentials)
-
-	sess := session.Must(session.NewSession(cfg))
-	sess = InstrumentAWSSession(sess, Settings{AppName: "testApp"})
-
-	var (
-		tagAWSAgent     = "aws.agent"
-		tagAWSOperation = "aws.operation"
-		tagAWSRegion    = "aws.region"
-	)
-
-	t.Run("s3", func(t *testing.T) {
-		mt := mocktracer.Start()
-		defer mt.Stop()
-
-		root, ctx := tracer.StartSpanFromContext(context.Background(), "test")
-
-		s3api := s3.New(sess)
-		_, err := s3api.GetObjectWithContext(ctx, &s3.GetObjectInput{
-			Bucket: aws.String("test-bucket-name"),
-			Key:    aws.String("//test//file//name"),
-		})
-
-		require.NotNil(t, err)
-		root.Finish()
-
-		spans := mt.FinishedSpans()
-		assert.Len(t, spans, 2)
-		assert.Equal(t, spans[1].TraceID(), spans[0].TraceID())
-
-		s := spans[0]
-		assert.Equal(t, "s3.command", s.OperationName())
-		assert.Contains(t, s.Tag(tagAWSAgent), "aws-sdk-go")
-		assert.Equal(t, "GetObject", s.Tag(tagAWSOperation))
-		assert.Equal(t, "us-west-2", s.Tag(tagAWSRegion))
-		assert.Equal(t, "s3.GetObject", s.Tag(ext.ResourceName))
-		assert.Equal(t, "testApp-aws", s.Tag(ext.ServiceName))
-		assert.Equal(t, "GET", s.Tag(ext.HTTPMethod))
-		assert.Equal(t, "http://test-bucket-name.s3.us-west-2.amazonaws.com/test/file/name", s.Tag(ext.HTTPURL))
-	})
-}
-
 func TestInstrumentAWSClient(t *testing.T) {
 	cfg, err := awscfg.LoadDefaultConfig(
 		context.Background(),
 		awscfg.WithRegion("us-west-2"),
-		awscfg.WithCredentialsProvider(awsv2.AnonymousCredentials{}),
+		awscfg.WithCredentialsProvider(aws.AnonymousCredentials{}),
 	)
 	require.NoError(t, err)
 
@@ -106,10 +55,10 @@ func TestInstrumentAWSClient(t *testing.T) {
 		mt := mocktracer.Start()
 		defer mt.Stop()
 
-		client := awss3v2.NewFromConfig(cfg, awss3v2.WithEndpointResolverV2(&testCustomResolver{}))
+		client := s3.NewFromConfig(cfg, s3.WithEndpointResolverV2(&testCustomResolver{}))
 		root, ctx := tracer.StartSpanFromContext(context.Background(), "test")
 
-		_, err := client.GetObject(ctx, &awss3v2.GetObjectInput{
+		_, err := client.GetObject(ctx, &s3.GetObjectInput{
 			Bucket: aws.String("test-bucket-name"),
 			Key:    aws.String("//test//file//name"),
 		})
