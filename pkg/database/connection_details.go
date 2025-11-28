@@ -7,29 +7,31 @@ import (
 
 // ConnectionDetails represents database connection details.
 type ConnectionDetails struct {
-	Dialect  string
-	Username string
-	Password string
-	Host     string
-	Port     int
-	Database string
-	Encoding string
-	Timeout  string
-	Pool     int
+	Dialect                string
+	Username               string
+	Password               string
+	Host                   string
+	Port                   int
+	Database               string
+	Encoding               string
+	Timeout                string
+	Pool                   int
+	MysqlInterpolateParams bool
 }
 
 // NewConnectionDetails creates a new ConnectionDetails struct from a DB configuration.
 func NewConnectionDetails(config *Config) ConnectionDetails {
 	return ConnectionDetails{
-		Dialect:  "mysql",
-		Username: config.Username,
-		Password: config.Password,
-		Host:     config.Host,
-		Port:     config.Port,
-		Database: config.Database,
-		Encoding: "utf8mb4_unicode_ci",
-		Timeout:  config.Timeout,
-		Pool:     config.Pool,
+		Dialect:                "mysql",
+		Username:               config.Username,
+		Password:               config.Password,
+		Host:                   config.Host,
+		Port:                   config.Port,
+		Database:               config.Database,
+		Encoding:               "utf8mb4_unicode_ci",
+		Timeout:                config.Timeout,
+		Pool:                   config.Pool,
+		MysqlInterpolateParams: config.MysqlInterpolateParams,
 	}
 }
 
@@ -68,6 +70,9 @@ func (cd ConnectionDetails) opts() string {
 		"parseTime": "True",
 		"loc":       "Local",
 		"timeout":   cd.Timeout,
+	}
+	if cd.MysqlInterpolateParams {
+		options["interpolateParams"] = "true"
 	}
 
 	var opts []string

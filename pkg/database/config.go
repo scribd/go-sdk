@@ -23,6 +23,11 @@ type Config struct {
 	MaxOpenConnections    int           `mapstructure:"max_open_connections"`
 	ConnectionMaxIdleTime time.Duration `mapstructure:"connection_max_idle_time"`
 	ConnectionMaxLifetime time.Duration `mapstructure:"connection_max_lifetime"`
+
+	// Performance settings
+	DisableDefaultGormTransaction bool `mapstructure:"disable_default_gorm_transaction"`
+	CachePreparedStatements       bool `mapstructure:"cache_prepared_statements"`
+	MysqlInterpolateParams        bool `mapstructure:"mysql_interpolate_params"`
 }
 
 // NewConfig returns a new Config instance.

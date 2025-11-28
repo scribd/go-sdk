@@ -22,6 +22,7 @@ func TestNewConnectionDetails(t *testing.T) {
 	assert.Equal(t, details.Encoding, "utf8mb4_unicode_ci")
 	assert.Equal(t, details.Timeout, config.Timeout)
 	assert.Equal(t, details.Pool, config.Pool)
+	assert.Equal(t, details.MysqlInterpolateParams, config.MysqlInterpolateParams)
 }
 
 func TestString(t *testing.T) {
@@ -34,12 +35,13 @@ func TestString(t *testing.T) {
 		{
 			name: "WithAllAttributesPresent",
 			config: &Config{
-				Host:     "192.168.1.1",
-				Port:     8080,
-				Username: "john",
-				Password: "doe",
-				Database: "microlith",
-				Timeout:  "10s",
+				Host:                   "192.168.1.1",
+				Port:                   8080,
+				Username:               "john",
+				Password:               "doe",
+				Database:               "microlith",
+				Timeout:                "10s",
+				MysqlInterpolateParams: true,
 			},
 			connectionString: "john:doe@tcp(192.168.1.1:8080)/microlith",
 			optionsString:    "timeout=10s",
@@ -118,12 +120,13 @@ func TestStringWithoutDB(t *testing.T) {
 
 func TestOpts(t *testing.T) {
 	cases := []struct {
-		name      string
-		details   ConnectionDetails
-		timeout   string
-		charset   string
-		parseTime string
-		loc       string
+		name              string
+		details           ConnectionDetails
+		timeout           string
+		charset           string
+		parseTime         string
+		loc               string
+		interpolateParams bool
 	}{
 		{
 			name: "WithPresentTimeout",
@@ -145,6 +148,24 @@ func TestOpts(t *testing.T) {
 			parseTime: "parseTime=True",
 			loc:       "loc=Local",
 		},
+		{
+			name:      "WithMysqlInterpolateParams",
+			timeout:   "timeout=1s",
+			charset:   "charset=utf8",
+			parseTime: "parseTime=True",
+			loc:       "loc=Local",
+			details: ConnectionDetails{
+				MysqlInterpolateParams: true,
+			},
+			interpolateParams: true,
+		},
+		{
+			name:      "WithNoMysqlInterpolateParams",
+			timeout:   "timeout=1s",
+			charset:   "charset=utf8",
+			parseTime: "parseTime=True",
+			loc:       "loc=Local",
+		},
 	}
 
 	for _, c := range cases {
@@ -155,6 +176,12 @@ func TestOpts(t *testing.T) {
 			assert.Contains(t, got, c.charset)
 			assert.Contains(t, got, c.parseTime)
 			assert.Contains(t, got, c.loc)
+
+			if c.interpolateParams {
+				assert.Contains(t, got, "interpolateParams=true")
+			} else {
+				assert.NotContains(t, got, "interpolateParams=true")
+			}
 		})
 	}
 }
