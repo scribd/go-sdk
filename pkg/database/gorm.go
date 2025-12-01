@@ -6,9 +6,9 @@ import (
 	"fmt"
 
 	"github.com/DATA-DOG/go-txdb"
+	sqltrace "github.com/DataDog/dd-trace-go/contrib/database/sql/v2"
+	gormtrace "github.com/DataDog/dd-trace-go/contrib/gorm.io/gorm.v1/v2"
 	mysqldriver "github.com/go-sql-driver/mysql"
-	sqltrace "gopkg.in/DataDog/dd-trace-go.v1/contrib/database/sql"
-	gormtrace "gopkg.in/DataDog/dd-trace-go.v1/contrib/gorm.io/gorm.v1"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -32,7 +32,7 @@ func NewConnection(config *Config, environment, appName string) (*gorm.DB, error
 
 	serviceName := fmt.Sprintf("%s-mysql", appName)
 
-	sqltrace.Register(driverName, d, sqltrace.WithServiceName(serviceName))
+	sqltrace.Register(driverName, d, sqltrace.WithService(serviceName))
 	sqlDB, err := sqltrace.Open(driverName, connectionString)
 	if err != nil {
 		return nil, err
@@ -50,7 +50,7 @@ func NewConnection(config *Config, environment, appName string) (*gorm.DB, error
 		gormConfig.PrepareStmt = true
 	}
 
-	db, err := gormtrace.Open(dialector, gormConfig, gormtrace.WithServiceName(serviceName))
+	db, err := gormtrace.Open(dialector, gormConfig, gormtrace.WithService(serviceName))
 	if err != nil {
 		return nil, err
 	}

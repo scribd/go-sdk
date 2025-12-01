@@ -3,7 +3,7 @@ package instrumentation
 import (
 	"time"
 
-	"gopkg.in/DataDog/dd-trace-go.v1/profiler"
+	"github.com/DataDog/dd-trace-go/v2/profiler"
 )
 
 // Profiler wraps DataDog profiles exporter.

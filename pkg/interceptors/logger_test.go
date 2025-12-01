@@ -9,6 +9,7 @@ import (
 	"net"
 	"testing"
 
+	"github.com/DataDog/dd-trace-go/v2/ddtrace/mocktracer"
 	grpc_testing "github.com/grpc-ecosystem/go-grpc-middleware/testing"
 	mwitkow_testproto "github.com/grpc-ecosystem/go-grpc-middleware/testing/testproto"
 	"github.com/stretchr/testify/assert"
@@ -16,7 +17,6 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/test/bufconn"
-	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/mocktracer"
 
 	sdklogger "github.com/scribd/go-sdk/pkg/logger"
 )

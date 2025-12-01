@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/DataDog/dd-trace-go/v2/ddtrace/ext"
+	"github.com/DataDog/dd-trace-go/v2/ddtrace/mocktracer"
 	"github.com/stretchr/testify/assert"
 	"github.com/twmb/franz-go/pkg/kgo"
-	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/ext"
-	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/mocktracer"
 )
 
 type (
@@ -141,7 +141,7 @@ func TestNewClient(t *testing.T) {
 	}
 
 	// consume
-	for _, s := range []mocktracer.Span{spans[4], spans[6]} {
+	for _, s := range []*mocktracer.Span{spans[4], spans[6]} {
 		assert.Equal(t, "kafka.consume", s.OperationName())
 		assert.Equal(t, "kafka", s.Tag(ext.ServiceName))
 		assert.Equal(t, "Consume Topic test", s.Tag(ext.ResourceName))

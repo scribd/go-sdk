@@ -4,10 +4,9 @@ import (
 	"context"
 	"math"
 
+	"github.com/DataDog/dd-trace-go/v2/ddtrace/ext"
+	"github.com/DataDog/dd-trace-go/v2/ddtrace/tracer"
 	"github.com/twmb/franz-go/pkg/kgo"
-	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace"
-	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/ext"
-	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer"
 )
 
 type (
@@ -22,7 +21,7 @@ type (
 	Client struct {
 		KafkaClient
 		cfg  *config
-		prev ddtrace.Span
+		prev *tracer.Span
 	}
 
 	FetchesRecordIter struct {
@@ -56,7 +55,7 @@ func WrapClient(c KafkaClient, opts ...Option) *Client {
 	}
 }
 
-func (c *Client) startProducerSpan(ctx context.Context, msg *kgo.Record) ddtrace.Span {
+func (c *Client) startProducerSpan(ctx context.Context, msg *kgo.Record) *tracer.Span {
 	opts := []tracer.StartSpanOption{
 		tracer.ServiceName(c.cfg.producerServiceName),
 		tracer.ResourceName("Produce Topic " + msg.Topic),
@@ -82,7 +81,7 @@ func (c *Client) startProducerSpan(ctx context.Context, msg *kgo.Record) ddtrace
 	return span
 }
 
-func (c *Client) startConsumerSpan(ctx context.Context, msg *kgo.Record) ddtrace.Span {
+func (c *Client) startConsumerSpan(ctx context.Context, msg *kgo.Record) *tracer.Span {
 	opts := []tracer.StartSpanOption{
 		tracer.ServiceName(c.cfg.consumerServiceName),
 		tracer.ResourceName("Consume Topic " + msg.Topic),
@@ -123,7 +122,7 @@ func (c *Client) Produce(ctx context.Context, msg *kgo.Record, fn func(record *k
 
 // ProduceSync calls the underlying *kgo.Client.ProduceSync and traces all results.
 func (c *Client) ProduceSync(ctx context.Context, msgs ...*kgo.Record) kgo.ProduceResults {
-	spans := make([]ddtrace.Span, len(msgs))
+	spans := make([]*tracer.Span, len(msgs))
 	for i := range msgs {
 		spans[i] = c.startProducerSpan(ctx, msgs[i])
 	}
@@ -215,7 +214,7 @@ func (fp *FetchPartition) ConsumeRecord(rec *kgo.Record) {
 	}
 }
 
-func finishSpan(span ddtrace.Span, partition int32, offset int64, err error) {
+func finishSpan(span *tracer.Span, partition int32, offset int64, err error) {
 	span.SetTag("partition", partition)
 	span.SetTag("offset", offset)
 	span.Finish(tracer.WithError(err))
