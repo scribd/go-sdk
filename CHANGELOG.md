@@ -1,3 +1,12 @@
+# [1.46.0](https://github.com/scribd/go-sdk/compare/v1.45.0...v1.46.0) (2025-12-02)
+
+
+### Features
+
+* **database:** Add performance related configuration settings ([9dc579b](https://github.com/scribd/go-sdk/commit/9dc579bf9bc54a5f5e36fe9586c741b8038437a4))
+* Remove aws-sdk-go v1 ([fbee091](https://github.com/scribd/go-sdk/commit/fbee091fc97c3c305e4d13aef46c34b5b98e7560))
+* Upgrade dd-trace-go to v2 ([96b89ec](https://github.com/scribd/go-sdk/commit/96b89ec1b10f1a52e518e64d6a32b2a751ea36bf))
+
 # [1.45.0](https://github.com/scribd/go-sdk/compare/v1.44.0...v1.45.0) (2025-10-30)
 
 
