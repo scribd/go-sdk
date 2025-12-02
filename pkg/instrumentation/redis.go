@@ -3,8 +3,8 @@ package instrumentation
 import (
 	"fmt"
 
+	redistrace "github.com/DataDog/dd-trace-go/contrib/redis/go-redis.v9/v2"
 	"github.com/redis/go-redis/v9"
-	redistrace "gopkg.in/DataDog/dd-trace-go.v1/contrib/redis/go-redis.v9"
 )
 
 const (
@@ -14,5 +14,5 @@ const (
 func InstrumentRedis(client redis.UniversalClient, applicationName string) {
 	serviceName := fmt.Sprintf("%s-%s", applicationName, redisServiceNameSuffix)
 
-	redistrace.WrapClient(client, redistrace.WithServiceName(serviceName))
+	redistrace.WrapClient(client, redistrace.WithService(serviceName))
 }

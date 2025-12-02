@@ -9,10 +9,10 @@ import (
 	"sync"
 	"testing"
 
+	http2 "github.com/DataDog/dd-trace-go/contrib/net/http/v2"
+	"github.com/DataDog/dd-trace-go/v2/ddtrace/mocktracer"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	http2 "gopkg.in/DataDog/dd-trace-go.v1/contrib/net/http"
-	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/mocktracer"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 

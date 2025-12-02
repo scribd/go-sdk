@@ -3,8 +3,8 @@ package instrumentation
 import (
 	"fmt"
 
-	ddmux "gopkg.in/DataDog/dd-trace-go.v1/contrib/gorilla/mux"
-	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer"
+	ddmux "github.com/DataDog/dd-trace-go/contrib/gorilla/mux/v2"
+	"github.com/DataDog/dd-trace-go/v2/ddtrace/tracer"
 )
 
 const (
@@ -16,8 +16,6 @@ const (
 // Tracer is not exactly a "wrapper" because the tracer is a
 // private/global entity in the tracer library and it's not directly
 // accessible.
-// - https://godoc.org/gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer#Start
-// - https://github.com/DataDog/dd-trace-go/blob/v1.19.0/ddtrace/tracer/tracer.go
 //
 // Tracer specifies an implementation of the Datadog tracer which allows
 // starting and propagating spans.
@@ -65,12 +63,12 @@ func NewTracer(config *Config, options ...tracer.StartOption) *Tracer {
 }
 
 // Start starts the current tracer.
-func (t *Tracer) Start() {
+func (t *Tracer) Start() error {
 	if !t.Enabled {
-		return
+		return nil
 	}
 
-	tracer.Start(t.Options...)
+	return tracer.Start(t.Options...)
 }
 
 // Stop stops the current tracer.
@@ -88,7 +86,7 @@ func (t *Tracer) Stop() {
 // Returning a Router is part of the Tracer API to ensure a single entry-point
 // for the instrumentation features.
 func (t *Tracer) Router() *ddmux.Router {
-	return ddmux.NewRouter(ddmux.WithServiceName(t.globalServiceName))
+	return ddmux.NewRouter(ddmux.WithService(t.globalServiceName))
 }
 
 func globalServiceName(serviceName string) string {

@@ -1,8 +1,8 @@
 package kafka
 
 import (
+	"github.com/DataDog/dd-trace-go/v2/ddtrace/tracer"
 	"github.com/twmb/franz-go/pkg/kgo"
-	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer"
 )
 
 type (

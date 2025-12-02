@@ -10,12 +10,12 @@ import (
 	"path"
 	"testing"
 
+	"github.com/DataDog/dd-trace-go/v2/ddtrace/mocktracer"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/test/bufconn"
-	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/mocktracer"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 
