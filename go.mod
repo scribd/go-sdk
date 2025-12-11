@@ -14,7 +14,7 @@ require (
 	github.com/DataDog/dd-trace-go/contrib/net/http/v2 v2.4.0
 	github.com/DataDog/dd-trace-go/contrib/redis/go-redis.v9/v2 v2.4.0
 	github.com/DataDog/dd-trace-go/v2 v2.4.0
-	github.com/aws/aws-sdk-go-v2 v1.38.3
+	github.com/aws/aws-sdk-go-v2 v1.41.0
 	github.com/aws/aws-sdk-go-v2/config v1.31.6
 	github.com/aws/aws-sdk-go-v2/credentials v1.18.10
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.87.3
@@ -22,7 +22,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/sfn v1.39.2
 	github.com/aws/aws-sdk-go-v2/service/sqs v1.42.3
 	github.com/aws/aws-sdk-go-v2/service/sts v1.38.2
-	github.com/aws/smithy-go v1.23.0
+	github.com/aws/smithy-go v1.24.0
 	github.com/getsentry/sentry-go v0.35.1
 	github.com/go-kit/kit v0.13.0
 	github.com/go-kit/log v0.2.1
