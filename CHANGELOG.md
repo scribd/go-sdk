@@ -1,3 +1,20 @@
+# [1.47.0](https://github.com/scribd/go-sdk/compare/v1.46.0...v1.47.0) (2025-12-11)
+
+
+### Features
+
+* Bump aws/aws-sdk-go-v2 to v1.41.0 ([36e72ac](https://github.com/scribd/go-sdk/commit/36e72ac961b0448fa9eadbd7d16dc098e29530e8))
+* Bump aws/aws-sdk-go-v2/config to v1.32.5 ([36ea982](https://github.com/scribd/go-sdk/commit/36ea982fc23405b556e832fd3d6e62548ea00e9f))
+* Bump aws/aws-sdk-go-v2/service/s3 to v1.93.2 ([5f4f78b](https://github.com/scribd/go-sdk/commit/5f4f78bca59ce6c6dee3adae861aca2e4066499b))
+* Bump aws/aws-sdk-go-v2/service/sagemakerruntime to v1.38.7 ([a6d99c5](https://github.com/scribd/go-sdk/commit/a6d99c56b9afd978c8a3d4a74728e63820f3f714))
+* Bump aws/aws-sdk-go-v2/service/sfn to v1.40.5 ([785211e](https://github.com/scribd/go-sdk/commit/785211ee148fc929f4ee3e83f1244d12a69662f9))
+* Bump aws/aws-sdk-go-v2/service/sqs to v1.42.20 ([c5a251e](https://github.com/scribd/go-sdk/commit/c5a251ed971974ea4e41d3a19340d13f5ad53005))
+* Bump getsentry/sentry-go to v0.40.0 ([33eacfb](https://github.com/scribd/go-sdk/commit/33eacfb64fd52b6b4eb67344215d7141451dc427))
+* Bump google.golang.org/grpc to v1.77.0 ([1c62c68](https://github.com/scribd/go-sdk/commit/1c62c688c9b5c7afb9e203631fd47a5dbd261989))
+* Bump gorm.io/gorm to v1.31.1 ([7f4576a](https://github.com/scribd/go-sdk/commit/7f4576acaa013cc158161aaade934634b82ceb11))
+* Bump redis/go-redis/v9 to v9.17.2 ([243362e](https://github.com/scribd/go-sdk/commit/243362ef9dc82040ab23fc9e4e6ee71cfc682241))
+* Bump twmb/franz-go to v1.20.5 ([7ec2bc4](https://github.com/scribd/go-sdk/commit/7ec2bc4e553caa57833d14bf7e451e78bdc763ce))
+
 # [1.46.0](https://github.com/scribd/go-sdk/compare/v1.45.0...v1.46.0) (2025-12-02)
 
 
