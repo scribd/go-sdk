@@ -101,8 +101,8 @@ github.com/aws/aws-sdk-go-v2/service/kinesis v1.33.3 h1:brQCC27V/e3wGeJ0JFh5InpH
 github.com/aws/aws-sdk-go-v2/service/kinesis v1.33.3/go.mod h1:dJngkoVMrq0K7QvRkdRZYM4NUp6cdWa2GBdpm8zoY8U=
 github.com/aws/aws-sdk-go-v2/service/s3 v1.93.2 h1:U3ygWUhCpiSPYSHOrRhb3gOl9T5Y3kB8k5Vjs//57bE=
 github.com/aws/aws-sdk-go-v2/service/s3 v1.93.2/go.mod h1:79S2BdqCJpScXZA2y+cpZuocWsjGjJINyXnOsf5DTz8=
-github.com/aws/aws-sdk-go-v2/service/sagemakerruntime v1.37.2 h1:j0qL96iK1v1M7WjhvBXAwlK/EDJDbLXEA0FqKDM7dtE=
-github.com/aws/aws-sdk-go-v2/service/sagemakerruntime v1.37.2/go.mod h1:jaxPhJpNEDlKOqRU0mmBhS80z97bgub6LsI25f9auFQ=
+github.com/aws/aws-sdk-go-v2/service/sagemakerruntime v1.38.7 h1:PSRYAgHJqCwynn/O0pD0EbeEtCtP+2kEY40JRwrTJpw=
+github.com/aws/aws-sdk-go-v2/service/sagemakerruntime v1.38.7/go.mod h1:qV8nB9eTdVdZwpyIj6jcywPO1++Ymr0couUK99NdF0U=
 github.com/aws/aws-sdk-go-v2/service/sfn v1.39.2 h1:DFD1m7vwn3fYSYY20fgn5YUOMew2PteGaOoWr22PAZg=
 github.com/aws/aws-sdk-go-v2/service/sfn v1.39.2/go.mod h1:Ji1ckIimHIgoJJ4xqw+KYHgeiyx/ZIjVjiXOFDCCwvw=
 github.com/aws/aws-sdk-go-v2/service/signin v1.0.4 h1:HpI7aMmJ+mm1wkSHIA2t5EaFFv5EFYXePW30p1EIrbQ=
