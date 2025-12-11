@@ -20,7 +20,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.93.2
 	github.com/aws/aws-sdk-go-v2/service/sagemakerruntime v1.38.7
 	github.com/aws/aws-sdk-go-v2/service/sfn v1.40.5
-	github.com/aws/aws-sdk-go-v2/service/sqs v1.42.3
+	github.com/aws/aws-sdk-go-v2/service/sqs v1.42.20
 	github.com/aws/aws-sdk-go-v2/service/sts v1.41.5
 	github.com/aws/smithy-go v1.24.0
 	github.com/getsentry/sentry-go v0.35.1
