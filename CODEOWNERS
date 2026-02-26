@@ -4,12 +4,12 @@
 # requests.
 #
 # Rules should follow the standard of a file matching pattern followed by a
-# team name, e.g. @scribd/service-foundations. Do not use broad teams, such as
+# team name, e.g. @scribd/developer-tooling. Do not use broad teams, such as
 # "Engineering", for code ownership.
 #
 # All lines starting with a `#` are comments and will be ignored.
 #
 # Order is important. The last matching pattern wins.
 
-# Service Foundations parent ownership
-*    @scribd/service-foundations
+# Developer Tooling parent ownership
+*    @scribd/developer-tooling
