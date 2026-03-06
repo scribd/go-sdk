@@ -104,11 +104,11 @@ func (lm LoggingMiddleware) Handler(next http.Handler) http.Handler {
 
 		switch {
 		case lrw.StatusCode >= 400 && lrw.StatusCode <= 499:
-			logger.Warnf(message)
+			logger.Warnf("%s", message)
 		case lrw.StatusCode >= 500 && lrw.StatusCode <= 599:
-			logger.Errorf(message)
+			logger.Errorf("%s", message)
 		default:
-			logger.Infof(message)
+			logger.Infof("%s", message)
 		}
 	})
 }
