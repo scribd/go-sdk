@@ -18,7 +18,7 @@ jobs:
       - name: Inject slug/short variables
         # A GitHub Action to expose the slug values of some GitHub ENV variables
         # https://github.com/rlespinasse/github-slug-action
-        uses: rlespinasse/github-slug-action@v3.x
+        uses: rlespinasse/github-slug-action@v5
 
       - name: Set up Docker Buildx
         id: buildx
@@ -54,7 +54,7 @@ jobs:
       - name: Inject slug/short variables
         # A GitHub Action to expose the slug values of some GitHub ENV variables
         # https://github.com/rlespinasse/github-slug-action
-        uses: rlespinasse/github-slug-action@v3.x
+        uses: rlespinasse/github-slug-action@v5
 
       - name: Set up Docker Buildx
         id: buildx
@@ -117,7 +117,7 @@ jobs:
       - name: Inject slug/short variables
         # A GitHub Action to expose the slug values of some GitHub ENV variables
         # https://github.com/rlespinasse/github-slug-action
-        uses: rlespinasse/github-slug-action@v3.x
+        uses: rlespinasse/github-slug-action@v5
 
       - name: Set up Docker Buildx
         id: buildx
