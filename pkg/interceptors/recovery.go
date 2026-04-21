@@ -29,7 +29,7 @@ func RecoveryStreamServerInterceptor() grpc.StreamServerInterceptor {
 }
 
 var recoveryOption = []grpcrecovery.Option{
-	grpcrecovery.WithRecoveryHandlerContext(func(ctx context.Context, rec interface{}) (err error) {
+	grpcrecovery.WithRecoveryHandlerContext(func(ctx context.Context, rec any) (err error) {
 		l, err := sdkloggercontext.Extract(ctx)
 		if err != nil {
 			debug.PrintStack()

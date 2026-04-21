@@ -117,31 +117,31 @@ type logrusLogEntry struct {
 	entry *logrus.Entry
 }
 
-func (l *logrusLogEntry) Tracef(format string, args ...interface{}) {
+func (l *logrusLogEntry) Tracef(format string, args ...any) {
 	l.entry.Tracef(format, args...)
 }
 
-func (l *logrusLogEntry) Debugf(format string, args ...interface{}) {
+func (l *logrusLogEntry) Debugf(format string, args ...any) {
 	l.entry.Debugf(format, args...)
 }
 
-func (l *logrusLogEntry) Infof(format string, args ...interface{}) {
+func (l *logrusLogEntry) Infof(format string, args ...any) {
 	l.entry.Infof(format, args...)
 }
 
-func (l *logrusLogEntry) Warnf(format string, args ...interface{}) {
+func (l *logrusLogEntry) Warnf(format string, args ...any) {
 	l.entry.Warnf(format, args...)
 }
 
-func (l *logrusLogEntry) Errorf(format string, args ...interface{}) {
+func (l *logrusLogEntry) Errorf(format string, args ...any) {
 	l.entry.Errorf(format, args...)
 }
 
-func (l *logrusLogEntry) Fatalf(format string, args ...interface{}) {
+func (l *logrusLogEntry) Fatalf(format string, args ...any) {
 	l.entry.Fatalf(format, args...)
 }
 
-func (l *logrusLogEntry) Panicf(format string, args ...interface{}) {
+func (l *logrusLogEntry) Panicf(format string, args ...any) {
 	l.entry.Panicf(format, args...)
 }
 

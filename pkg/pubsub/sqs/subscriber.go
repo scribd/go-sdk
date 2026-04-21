@@ -51,10 +51,7 @@ func NewSubscriber(c SubscriberConfig) *Subscriber {
 		workers = defaultNumWorkers
 	}
 
-	waitTime := c.SQSConfig.Subscriber.WaitTime
-	if waitTime > maxWaitTime {
-		waitTime = maxWaitTime
-	}
+	waitTime := min(c.SQSConfig.Subscriber.WaitTime, maxWaitTime)
 
 	return &Subscriber{
 		client:      c.SQSClient,

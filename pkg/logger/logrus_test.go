@@ -72,7 +72,7 @@ func logAndAssertTextFields(
 	log(lLogger)
 
 	fields := make(map[string]string)
-	for _, kv := range strings.Split(strings.TrimRight(buffer.String(), "\n"), " ") {
+	for kv := range strings.SplitSeq(strings.TrimRight(buffer.String(), "\n"), " ") {
 		if !strings.Contains(kv, "=") {
 			continue
 		}
@@ -111,7 +111,7 @@ func TestInfoLevelWithJSONFields(t *testing.T) {
 		t,
 		logConfigForTest(withJSON),
 		func(log Logger) {
-			log.Infof(messageContent)
+			log.Infof("test message")
 		},
 		func(fields Fields) {
 			assert.Nil(t, fields["msg"])
@@ -130,7 +130,7 @@ func TestInfoLevelWithTextFields(t *testing.T) {
 		t,
 		logConfigForTest(withoutJSON),
 		func(log Logger) {
-			log.Infof(messageContent)
+			log.Infof("test_message")
 		},
 		func(fields map[string]string) {
 			assert.Empty(t, fields["msg"])
@@ -148,7 +148,6 @@ func TestLevelConfiguration(t *testing.T) {
 		assert.Equal(t, expected, actual)
 	})
 
-	messageContent := "test message"
 	testCases := []struct {
 		name                string
 		config              *Config
@@ -163,7 +162,7 @@ func TestLevelConfiguration(t *testing.T) {
 				ConsoleLevel:      "trace",
 			},
 			log: func(l Logger) {
-				l.Debugf(messageContent)
+				l.Debugf("test message")
 			},
 			withExpectedContent: true,
 		},
@@ -175,7 +174,7 @@ func TestLevelConfiguration(t *testing.T) {
 				ConsoleLevel:      "warn",
 			},
 			log: func(l Logger) {
-				l.Infof(messageContent)
+				l.Infof("test message")
 			},
 			withExpectedContent: false,
 		},

@@ -59,7 +59,7 @@ func (hook *Hook) Fire(entry *logrus.Entry) error {
 	event := &sentry.Event{
 		Level:       levelsMap[entry.Level],
 		Message:     entry.Message,
-		Extra:       map[string]interface{}(entry.Data),
+		Extra:       map[string]any(entry.Data),
 		Tags:        hook.tags,
 		Environment: hook.environment,
 		Release:     hook.release,

@@ -34,7 +34,7 @@ type PublisherRequestFunc func(ctx context.Context, input *sqs.SendMessageInput)
 // subscriber, after invoking the endpoint.
 // use cases eg. : Pipe information from request message, delete msg from queue, etc.
 type SubscriberResponseFunc func(
-	ctx context.Context, cancel context.CancelFunc, message types.Message, resp interface{}) context.Context
+	ctx context.Context, cancel context.CancelFunc, message types.Message, resp any) context.Context
 
 // PublisherResponseFunc may take information from an sqs.SendMessageOutput and
 // fetch response using the Client. SQS is not req-reply out-of-the-box. Responses need to be fetched.

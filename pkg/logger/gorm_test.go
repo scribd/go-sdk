@@ -131,7 +131,7 @@ func TestNewGormLogger(t *testing.T) {
 			gormDB.Exec(sampleQuery)
 
 			if tt.isLogged {
-				var fields map[string]interface{}
+				var fields map[string]any
 				err := json.Unmarshal(buffer.Bytes(), &fields)
 				assert.Nil(t, err)
 

@@ -22,7 +22,7 @@ type RequestFunc func(ctx context.Context, msg *kgo.Record) context.Context
 // SubscriberResponseFunc may take information from a request context and use it to
 // manipulate a Publisher. SubscriberResponseFuncs are only executed in
 // consumers, after invoking the endpoint but prior to publishing a reply.
-type SubscriberResponseFunc func(ctx context.Context, response interface{}) context.Context
+type SubscriberResponseFunc func(ctx context.Context, response any) context.Context
 
 // PublisherResponseFunc may take information from a request context.
 // PublisherResponseFunc are only executed in producers, after a request has been produced.

@@ -65,7 +65,7 @@ func TestLoggerUnaryServerInterceptors(t *testing.T) {
 	_, err = client.Ping(context.Background(), &mwitkow_testproto.PingRequest{Value: "test"})
 	assert.Nil(t, err)
 
-	var fieldsUnary map[string]interface{}
+	var fieldsUnary map[string]any
 	err = json.Unmarshal(buffer.Bytes(), &fieldsUnary)
 	require.Nil(t, err)
 
@@ -125,7 +125,7 @@ func TestLoggerStreamServerInterceptors(t *testing.T) {
 	}
 	assert.Nil(t, err)
 
-	var fieldsStream map[string]interface{}
+	var fieldsStream map[string]any
 	err = json.Unmarshal(buffer.Bytes(), &fieldsStream)
 	require.Nil(t, err)
 
@@ -143,7 +143,7 @@ func getLogger(logLevel string, buf *bytes.Buffer) (sdklogger.Logger, error) {
 	return sdklogger.NewBuilder(config).BuildTestLogger(buf)
 }
 
-func checkLoggerFields(t *testing.T, fields map[string]interface{}) {
+func checkLoggerFields(t *testing.T, fields map[string]any) {
 	assert.NotEmpty(t, fields["message"])
 	assert.Equal(t, "info", fields["level"])
 	assert.NotEmpty(t, fields["timestamp"])
@@ -156,7 +156,7 @@ func checkLoggerFields(t *testing.T, fields map[string]interface{}) {
 	assert.NotEmpty(t, fields["grpc.time_ms"])
 	assert.NotEmpty(t, fields["grpc.request_id"])
 
-	var dd = (fields["dd"]).(map[string]interface{})
+	var dd = (fields["dd"]).(map[string]any)
 
 	assert.NotEmpty(t, dd["trace_id"])
 	assert.NotEmpty(t, dd["span_id"])

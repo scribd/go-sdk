@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"fmt"
 	"net/http"
 	"time"
 
@@ -94,21 +93,25 @@ func (lm LoggingMiddleware) Handler(next http.Handler) http.Handler {
 			},
 		})
 
-		// Format the message in a similar way to Common Log Format
-		message := fmt.Sprintf("%s %s %s %d",
-			r.Method,
-			r.URL.EscapedPath(),
-			r.Proto,
-			lrw.StatusCode,
-		)
-
 		switch {
 		case lrw.StatusCode >= 400 && lrw.StatusCode <= 499:
-			logger.Warnf(message)
+			logger.Warnf("%s %s %s %d",
+				r.Method,
+				r.URL.EscapedPath(),
+				r.Proto,
+				lrw.StatusCode)
 		case lrw.StatusCode >= 500 && lrw.StatusCode <= 599:
-			logger.Errorf(message)
+			logger.Errorf("%s %s %s %d",
+				r.Method,
+				r.URL.EscapedPath(),
+				r.Proto,
+				lrw.StatusCode)
 		default:
-			logger.Infof(message)
+			logger.Infof("%s %s %s %d",
+				r.Method,
+				r.URL.EscapedPath(),
+				r.Proto,
+				lrw.StatusCode)
 		}
 	})
 }

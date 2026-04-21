@@ -81,7 +81,7 @@ func SetPublisherResponseQueueURL(url string) PublisherRequestFunc {
 
 // Endpoint returns a usable endpoint that invokes the remote endpoint.
 func (p Publisher) Endpoint() endpoint.Endpoint {
-	return func(ctx context.Context, request interface{}) (interface{}, error) {
+	return func(ctx context.Context, request any) (any, error) {
 		msgInput := sqs.SendMessageInput{
 			QueueUrl: &p.queueURL,
 		}
@@ -118,7 +118,7 @@ func (p Publisher) Endpoint() endpoint.Endpoint {
 // EncodeJSONRequest is an EncodeRequestFunc that serializes the request as a
 // JSON object and loads it as the MessageBody of the sqs.SendMessageInput.
 // This can be enough for most JSON over SQS communications.
-func EncodeJSONRequest(_ context.Context, msg *sqs.SendMessageInput, request interface{}) error {
+func EncodeJSONRequest(_ context.Context, msg *sqs.SendMessageInput, request any) error {
 	b, err := json.Marshal(request)
 	if err != nil {
 		return err
@@ -131,6 +131,6 @@ func EncodeJSONRequest(_ context.Context, msg *sqs.SendMessageInput, request int
 
 // NoResponseDecode is a DecodeResponseFunc that can be used when no response is needed.
 // It returns nil value and nil error.
-func NoResponseDecode(_ context.Context, _ types.Message) (interface{}, error) {
+func NoResponseDecode(_ context.Context, _ types.Message) (any, error) {
 	return nil, nil
 }

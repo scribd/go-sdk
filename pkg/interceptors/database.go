@@ -14,10 +14,10 @@ import (
 func DatabaseUnaryServerInterceptor(db *gorm.DB) grpc.UnaryServerInterceptor {
 	return func(
 		ctx context.Context,
-		req interface{},
+		req any,
 		info *grpc.UnaryServerInfo,
 		handler grpc.UnaryHandler,
-	) (interface{}, error) {
+	) (any, error) {
 		instrumentedDB := db.WithContext(ctx)
 		newCtx := sdkcontext.ToContext(ctx, instrumentedDB)
 
@@ -28,7 +28,7 @@ func DatabaseUnaryServerInterceptor(db *gorm.DB) grpc.UnaryServerInterceptor {
 // DatabaseStreamServerInterceptor returns a streaming server interceptor that adds gorm.DB to the context.
 func DatabaseStreamServerInterceptor(db *gorm.DB) grpc.StreamServerInterceptor {
 	return func(
-		srv interface{},
+		srv any,
 		stream grpc.ServerStream,
 		info *grpc.StreamServerInfo,
 		handler grpc.StreamHandler,

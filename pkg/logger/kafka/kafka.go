@@ -65,7 +65,7 @@ func (l *KafkaLogger) Level() kgo.LogLevel {
 	return l.levelFn()
 }
 
-func (l *KafkaLogger) Log(level kgo.LogLevel, msg string, keyvals ...interface{}) {
+func (l *KafkaLogger) Log(level kgo.LogLevel, msg string, keyvals ...any) {
 	fields := logger.Fields{}
 	for i := 0; i < len(keyvals); i += 2 {
 		k, v := keyvals[i], keyvals[i+1]
@@ -79,16 +79,17 @@ func (l *KafkaLogger) Log(level kgo.LogLevel, msg string, keyvals ...interface{}
 	}
 
 	logEntry := l.logger.WithFields(fields)
+	args := make([]any, 0)
 
 	switch level {
 	case kgo.LogLevelError:
-		logEntry.Errorf(msg)
+		logEntry.Errorf(msg, args...)
 	case kgo.LogLevelWarn:
-		logEntry.Warnf(msg)
+		logEntry.Warnf(msg, args...)
 	case kgo.LogLevelInfo:
-		logEntry.Infof(msg)
+		logEntry.Infof(msg, args...)
 	case kgo.LogLevelDebug:
-		logEntry.Debugf(msg)
+		logEntry.Debugf(msg, args...)
 	default:
 		// do nothing
 	}

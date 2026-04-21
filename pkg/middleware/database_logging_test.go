@@ -92,7 +92,7 @@ func TestNewDatabaseLoggingMiddleware(t *testing.T) {
 
 	// test concurrent calls to the handler
 	wg.Add(2)
-	for i := 0; i < 2; i++ {
+	for range 2 {
 		go func() {
 			defer wg.Done()
 
@@ -108,12 +108,12 @@ func TestNewDatabaseLoggingMiddleware(t *testing.T) {
 	wg.Wait()
 
 	// read first log entry
-	var fields map[string]interface{}
+	var fields map[string]any
 	dec := json.NewDecoder(bytes.NewReader(buffer.Bytes()))
 	err = dec.Decode(&fields)
 	require.Nil(t, err)
 
-	dbFields, ok := (fields["sql"]).(map[string]interface{})
+	dbFields, ok := (fields["sql"]).(map[string]any)
 	assert.True(t, ok, "%s not found in log fields", "trace")
 	assert.NotEmpty(t, dbFields)
 

@@ -93,7 +93,7 @@ func TestDatabaseLoggingUnaryServerInterceptor(t *testing.T) {
 	assert.Nil(t, err)
 
 	// read first log entry
-	var fieldsUnary map[string]interface{}
+	var fieldsUnary map[string]any
 	dec := json.NewDecoder(bytes.NewReader(buffer.Bytes()))
 	err = dec.Decode(&fieldsUnary)
 	require.Nil(t, err)
@@ -177,7 +177,7 @@ func TestDatabaseLoggingStreamServerInterceptors(t *testing.T) {
 	assert.Nil(t, err)
 
 	// read first log entry
-	var fieldsStream map[string]interface{}
+	var fieldsStream map[string]any
 	dec := json.NewDecoder(bytes.NewReader(buffer.Bytes()))
 	err = dec.Decode(&fieldsStream)
 	require.Nil(t, err)
@@ -185,10 +185,10 @@ func TestDatabaseLoggingStreamServerInterceptors(t *testing.T) {
 	checkGormLoggerFields(t, fieldsStream)
 }
 
-func checkGormLoggerFields(t *testing.T, fields map[string]interface{}) {
+func checkGormLoggerFields(t *testing.T, fields map[string]any) {
 	assert.NotEmpty(t, fields["sql"])
 
-	dbFields, ok := (fields["sql"]).(map[string]interface{})
+	dbFields, ok := (fields["sql"]).(map[string]any)
 	assert.True(t, ok, "%s not found in log fields", "trace")
 	assert.NotEmpty(t, dbFields)
 

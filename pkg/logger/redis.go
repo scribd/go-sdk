@@ -18,7 +18,7 @@ func NewRedisLogger(l Logger) *RedisLogger {
 	return &RedisLogger{l}
 }
 
-func (r *RedisLogger) Printf(ctx context.Context, format string, v ...interface{}) {
+func (r *RedisLogger) Printf(ctx context.Context, format string, v ...any) {
 	logContext := instrumentation.TraceLogs(ctx)
 
 	r.logger.WithFields(Fields{

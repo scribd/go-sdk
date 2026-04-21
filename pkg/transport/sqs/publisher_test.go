@@ -79,8 +79,8 @@ func TestBadEncode(t *testing.T) {
 	pub := NewPublisher(
 		mock,
 		queueURL,
-		func(context.Context, *sqs.SendMessageInput, interface{}) error { return errors.New("err!") },
-		func(context.Context, types.Message) (response interface{}, err error) { return struct{}{}, nil },
+		func(context.Context, *sqs.SendMessageInput, any) error { return errors.New("err!") },
+		func(context.Context, types.Message) (response any, err error) { return struct{}{}, nil },
 	)
 	errChan := make(chan error, 1)
 	var err error
@@ -118,8 +118,8 @@ func TestBadDecode(t *testing.T) {
 	pub := NewPublisher(
 		mock,
 		queueURL,
-		func(context.Context, *sqs.SendMessageInput, interface{}) error { return nil },
-		func(context.Context, types.Message) (response interface{}, err error) {
+		func(context.Context, *sqs.SendMessageInput, any) error { return nil },
+		func(context.Context, types.Message) (response any, err error) {
 			return struct{}{}, errors.New("err!")
 		},
 		PublisherAfter(func(
@@ -177,7 +177,7 @@ func TestSuccessfulPublisher(t *testing.T) {
 		mock,
 		queueURL,
 		EncodeJSONRequest,
-		func(_ context.Context, msg types.Message) (interface{}, error) {
+		func(_ context.Context, msg types.Message) (any, error) {
 			response := testRes{}
 			if unmarshallErr := json.Unmarshal([]byte(*msg.Body), &response); unmarshallErr != nil {
 				return nil, unmarshallErr
@@ -195,7 +195,7 @@ func TestSuccessfulPublisher(t *testing.T) {
 	)
 	var res testRes
 	var ok bool
-	resChan := make(chan interface{}, 1)
+	resChan := make(chan any, 1)
 	errChan := make(chan error, 1)
 	go func() {
 		r, pubErr := pub.Endpoint()(context.Background(), mockReq)

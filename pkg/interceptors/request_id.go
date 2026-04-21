@@ -18,10 +18,10 @@ var RequestIDKey = "x-request-id"
 func RequestIDUnaryServerInterceptor() grpc.UnaryServerInterceptor {
 	return func(
 		ctx context.Context,
-		req interface{},
+		req any,
 		info *grpc.UnaryServerInfo,
 		handler grpc.UnaryHandler,
-	) (interface{}, error) {
+	) (any, error) {
 		requestID := handleRequestID(ctx)
 
 		newCtx := requestid.ToContext(ctx, requestID)
@@ -32,7 +32,7 @@ func RequestIDUnaryServerInterceptor() grpc.UnaryServerInterceptor {
 
 func RequestIDStreamServerInterceptor() grpc.StreamServerInterceptor {
 	return func(
-		srv interface{},
+		srv any,
 		stream grpc.ServerStream,
 		info *grpc.StreamServerInfo,
 		handler grpc.StreamHandler,

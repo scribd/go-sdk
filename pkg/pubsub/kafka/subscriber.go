@@ -179,8 +179,7 @@ func (s *Subscriber) stopConsumers(lost map[string][]int32) {
 				delete(s.consumers, topic)
 			}
 			close(pc.quit)
-			wg.Add(1)
-			go func() { <-pc.done; wg.Done() }()
+			wg.Go(func() { <-pc.done })
 		}
 	}
 }

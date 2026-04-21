@@ -130,7 +130,7 @@ func TestNewClient(t *testing.T) {
 	assert.Len(t, spans, 7)
 
 	// produce
-	for i := 0; i < 4; i++ {
+	for i := range 4 {
 		s := spans[i]
 		assert.Equal(t, "kafka.produce", s.OperationName())
 		assert.Equal(t, "kafka", s.Tag(ext.ServiceName))

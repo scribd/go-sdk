@@ -14,10 +14,10 @@ import (
 func MetricsUnaryServerInterceptor(metrics sdkmetrics.Metrics) grpc.UnaryServerInterceptor {
 	return func(
 		ctx context.Context,
-		req interface{},
+		req any,
 		info *grpc.UnaryServerInfo,
 		handler grpc.UnaryHandler,
-	) (interface{}, error) {
+	) (any, error) {
 		newCtx := sdkcontext.ToContext(ctx, metrics)
 		return handler(newCtx, req)
 	}
@@ -26,7 +26,7 @@ func MetricsUnaryServerInterceptor(metrics sdkmetrics.Metrics) grpc.UnaryServerI
 // MetricsStreamServerInterceptor returns a streaming server interceptor that adds sdkmetrics.Metrics to the context.
 func MetricsStreamServerInterceptor(metrics sdkmetrics.Metrics) grpc.StreamServerInterceptor {
 	return func(
-		srv interface{},
+		srv any,
 		stream grpc.ServerStream,
 		info *grpc.StreamServerInfo,
 		handler grpc.StreamHandler,
