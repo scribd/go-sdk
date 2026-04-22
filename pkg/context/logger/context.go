@@ -3,6 +3,7 @@ package logger
 import (
 	"context"
 	"fmt"
+	"maps"
 
 	grpcctxtags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
 
@@ -26,9 +27,7 @@ func AddFields(ctx context.Context, fields sdklogger.Fields) {
 	if !ok || l == nil {
 		return
 	}
-	for k, v := range fields {
-		l.fields[k] = v
-	}
+	maps.Copy(l.fields, fields)
 }
 
 // Extract takes the call-scoped sdklogger.Logger from the context.
@@ -43,14 +42,10 @@ func Extract(ctx context.Context) (sdklogger.Logger, error) {
 
 	// Add grpcctxtags tags metadata until now.
 	tags := grpcctxtags.Extract(ctx)
-	for k, v := range tags.Values() {
-		fields[k] = v
-	}
+	maps.Copy(fields, tags.Values())
 
 	// Add sdklogger fields added until now.
-	for k, v := range l.fields {
-		fields[k] = v
-	}
+	maps.Copy(fields, l.fields)
 
 	return l.logger.WithFields(fields), nil
 }

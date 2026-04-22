@@ -58,7 +58,7 @@ func (c *Config) String(key string) string {
 }
 
 // StringMap returns a key's value as map[string]interface{}.
-func (c *Config) StringMap(key string) map[string]interface{} {
+func (c *Config) StringMap(key string) map[string]any {
 	return c.vConf.GetStringMap(key)
 }
 
@@ -83,7 +83,7 @@ func (c *Config) Duration(key string) time.Duration {
 }
 
 // Set sets a value to a key.
-func (c *Config) Set(key string, value interface{}) {
+func (c *Config) Set(key string, value any) {
 	c.vConf.Set(key, value)
 }
 
@@ -93,6 +93,6 @@ func (c *Config) IsSet(key string) bool {
 }
 
 // AllSettings returns all settings as map.
-func (c *Config) AllSettings() map[string]interface{} {
+func (c *Config) AllSettings() map[string]any {
 	return c.vConf.AllSettings()
 }

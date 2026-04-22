@@ -68,9 +68,9 @@ func TestSubscriberDeleteBefore(t *testing.T) {
 		}
 	})
 	subscriber := NewSubscriber(mock,
-		func(context.Context, interface{}) (interface{}, error) { return struct{}{}, nil },
-		func(context.Context, types.Message) (interface{}, error) { return nil, nil },
-		func(context.Context, *sqs.SendMessageInput, interface{}) error { return nil },
+		func(context.Context, any) (any, error) { return struct{}{}, nil },
+		func(context.Context, types.Message) (any, error) { return nil, nil },
+		func(context.Context, *sqs.SendMessageInput, any) error { return nil },
 		queueURL,
 		errEncoder,
 		SubscriberDeleteMessageBefore(),
@@ -127,9 +127,9 @@ func TestSubscriberBadDecode(t *testing.T) {
 		}
 	})
 	subscriber := NewSubscriber(mock,
-		func(context.Context, interface{}) (interface{}, error) { return struct{}{}, nil },
-		func(context.Context, types.Message) (interface{}, error) { return nil, errors.New(testErrMessage) },
-		func(context.Context, *sqs.SendMessageInput, interface{}) error { return nil },
+		func(context.Context, any) (any, error) { return struct{}{}, nil },
+		func(context.Context, types.Message) (any, error) { return nil, errors.New(testErrMessage) },
+		func(context.Context, *sqs.SendMessageInput, any) error { return nil },
 		queueURL,
 		errEncoder,
 	)
@@ -185,9 +185,9 @@ func TestSubscriberBadEndpoint(t *testing.T) {
 		}
 	})
 	subscriber := NewSubscriber(mock,
-		func(context.Context, interface{}) (interface{}, error) { return struct{}{}, errors.New(testErrMessage) },
-		func(context.Context, types.Message) (interface{}, error) { return nil, nil },
-		func(context.Context, *sqs.SendMessageInput, interface{}) error { return nil },
+		func(context.Context, any) (any, error) { return struct{}{}, errors.New(testErrMessage) },
+		func(context.Context, types.Message) (any, error) { return nil, nil },
+		func(context.Context, *sqs.SendMessageInput, any) error { return nil },
 		queueURL,
 		errEncoder,
 	)
@@ -236,7 +236,7 @@ func TestSubscriberSuccess(t *testing.T) {
 		EncodeJSONResponse,
 		queueURL,
 		SubscriberAfter(func(
-			ctx context.Context, cancel context.CancelFunc, msg types.Message, resp interface{}) context.Context {
+			ctx context.Context, cancel context.CancelFunc, msg types.Message, resp any) context.Context {
 			_, err = mock.Publish(context.Background(), &sqs.SendMessageInput{
 				MessageBody: msg.Body,
 			})
@@ -348,7 +348,7 @@ func TestSubscriberAfter(t *testing.T) {
 		EncodeJSONResponse,
 		queueURL,
 		SubscriberAfter(func(
-			ctx context.Context, cancel context.CancelFunc, msg types.Message, resp interface{}) context.Context {
+			ctx context.Context, cancel context.CancelFunc, msg types.Message, resp any) context.Context {
 			_, pubErr := mock.Publish(ctx, &sqs.SendMessageInput{
 				MessageBody:       msg.Body,
 				MessageAttributes: msg.MessageAttributes,
@@ -397,7 +397,7 @@ func decodeSubscriberError(receiveOutput *sqs.ReceiveMessageOutput) (sqsError, e
 	return receivedError, err
 }
 
-func testEndpoint(ctx context.Context, request interface{}) (interface{}, error) {
+func testEndpoint(ctx context.Context, request any) (any, error) {
 	req, ok := request.(testReq)
 	if !ok {
 		return nil, errTypeAssertion
@@ -413,13 +413,13 @@ func testEndpoint(ctx context.Context, request interface{}) (interface{}, error)
 	return res, nil
 }
 
-func testReqDecoderfunc(_ context.Context, msg types.Message) (interface{}, error) {
+func testReqDecoderfunc(_ context.Context, msg types.Message) (any, error) {
 	var obj testReq
 	err := json.Unmarshal([]byte(*msg.Body), &obj)
 	return obj, err
 }
 
-func decodeResponse(receiveOutput *sqs.ReceiveMessageOutput) (interface{}, error) {
+func decodeResponse(receiveOutput *sqs.ReceiveMessageOutput) (any, error) {
 	if len(receiveOutput.Messages) != 1 {
 		return nil, fmt.Errorf("Error : received %d messages instead of 1", len(receiveOutput.Messages))
 	}

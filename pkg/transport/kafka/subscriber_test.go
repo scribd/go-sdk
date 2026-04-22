@@ -15,8 +15,8 @@ func TestSubscriberBadDecode(t *testing.T) {
 	errCh := make(chan error, 1)
 
 	sub := NewSubscriber(
-		func(context.Context, interface{}) (interface{}, error) { return struct{}{}, nil },
-		func(context.Context, *kgo.Record) (interface{}, error) { return nil, errors.New("err!") },
+		func(context.Context, any) (any, error) { return struct{}{}, nil },
+		func(context.Context, *kgo.Record) (any, error) { return nil, errors.New("err!") },
 		SubscriberErrorEncoder(createTestErrorEncoder(errCh)),
 	)
 
@@ -40,8 +40,8 @@ func TestSubscriberBadEndpoint(t *testing.T) {
 	errCh := make(chan error, 1)
 
 	sub := NewSubscriber(
-		func(context.Context, interface{}) (interface{}, error) { return nil, errors.New("err!") },
-		func(context.Context, *kgo.Record) (interface{}, error) { return struct{}{}, nil },
+		func(context.Context, any) (any, error) { return nil, errors.New("err!") },
+		func(context.Context, *kgo.Record) (any, error) { return struct{}{}, nil },
 		SubscriberErrorEncoder(createTestErrorEncoder(errCh)),
 	)
 
@@ -70,7 +70,7 @@ func TestSubscriberSuccess(t *testing.T) {
 	sub := NewSubscriber(
 		testEndpoint,
 		testReqDecoder,
-		SubscriberAfter(func(ctx context.Context, response interface{}) context.Context {
+		SubscriberAfter(func(ctx context.Context, response any) context.Context {
 			res := response.(testRes)
 			if res.A != 2 {
 				t.Errorf("got wrong result: %d", res.A)
@@ -94,13 +94,13 @@ func createTestErrorEncoder(ch chan error) ErrorEncoder {
 	}
 }
 
-func testReqDecoder(_ context.Context, m *kgo.Record) (interface{}, error) {
+func testReqDecoder(_ context.Context, m *kgo.Record) (any, error) {
 	var obj testReq
 	err := json.Unmarshal(m.Value, &obj)
 	return obj, err
 }
 
-func testEndpoint(_ context.Context, request interface{}) (interface{}, error) {
+func testEndpoint(_ context.Context, request any) (any, error) {
 	req, ok := request.(testReq)
 	if !ok {
 		return nil, errors.New("type assertion error")

@@ -19,10 +19,10 @@ import (
 func DatabaseLoggingUnaryServerInterceptor() grpc.UnaryServerInterceptor {
 	return func(
 		ctx context.Context,
-		req interface{},
+		req any,
 		_ *grpc.UnaryServerInfo,
 		handler grpc.UnaryHandler,
-	) (interface{}, error) {
+	) (any, error) {
 		db, err := sdkdatabasecontext.Extract(ctx)
 		if err != nil {
 			return nil, err
@@ -50,7 +50,7 @@ func DatabaseLoggingUnaryServerInterceptor() grpc.UnaryServerInterceptor {
 // meta-information using the logger.
 func DatabaseLoggingStreamServerInterceptor() grpc.StreamServerInterceptor {
 	return func(
-		srv interface{},
+		srv any,
 		stream grpc.ServerStream,
 		_ *grpc.StreamServerInfo,
 		handler grpc.StreamHandler,

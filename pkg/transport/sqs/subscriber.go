@@ -137,7 +137,7 @@ func SubscriberDeleteMessageBefore() SubscriberOption {
 func SubscriberDeleteMessageAfter() SubscriberOption {
 	return func(s *Subscriber) {
 		deleteAfter := func(
-			ctx context.Context, cancel context.CancelFunc, msg types.Message, _ interface{}) context.Context {
+			ctx context.Context, cancel context.CancelFunc, msg types.Message, _ any) context.Context {
 			if err := deleteMessage(ctx, s.sqsClient, s.queueURL, msg); err != nil {
 				s.errorHandler.Handle(ctx, err)
 				s.errorEncoder(ctx, err, msg, s.sqsClient)
@@ -231,7 +231,7 @@ func deleteMessage(ctx context.Context, sqsClient SQSClient, queueURL string, ms
 }
 
 // EncodeJSONResponse marshals response as json and loads it into an sqs.SendMessageInput MessageBody.
-func EncodeJSONResponse(_ context.Context, input *sqs.SendMessageInput, response interface{}) error {
+func EncodeJSONResponse(_ context.Context, input *sqs.SendMessageInput, response any) error {
 	payload, err := json.Marshal(response)
 	if err != nil {
 		return err

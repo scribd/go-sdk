@@ -27,15 +27,15 @@ func (g gormLogger) LogMode(logger.LogLevel) logger.Interface {
 	return g
 }
 
-func (g gormLogger) Info(ctx context.Context, msg string, args ...interface{}) {
+func (g gormLogger) Info(ctx context.Context, msg string, args ...any) {
 	g.logger.Infof(msg, args...)
 }
 
-func (g gormLogger) Warn(ctx context.Context, msg string, args ...interface{}) {
+func (g gormLogger) Warn(ctx context.Context, msg string, args ...any) {
 	g.logger.Warnf(msg, args...)
 }
 
-func (g gormLogger) Error(ctx context.Context, msg string, args ...interface{}) {
+func (g gormLogger) Error(ctx context.Context, msg string, args ...any) {
 	g.logger.WithError(fmt.Errorf(msg, args...)).Errorf(gormLoggerMsg)
 }
 
@@ -59,6 +59,6 @@ func (g gormLogger) Trace(ctx context.Context, begin time.Time, fc func() (strin
 	l.Tracef(gormLoggerMsg)
 }
 
-func (g gormLogger) ParamsFilter(ctx context.Context, sql string, params ...interface{}) (string, []interface{}) {
+func (g gormLogger) ParamsFilter(ctx context.Context, sql string, params ...any) (string, []any) {
 	return sql, nil
 }

@@ -76,8 +76,8 @@ func TestBadEncode(t *testing.T) {
 	pub := NewPublisher(
 		h,
 		"test",
-		func(context.Context, *kgo.Record, interface{}) error { return errors.New(errString) },
-		func(context.Context, *kgo.Record) (response interface{}, err error) { return struct{}{}, nil },
+		func(context.Context, *kgo.Record, any) error { return errors.New(errString) },
+		func(context.Context, *kgo.Record) (response any, err error) { return struct{}{}, nil },
 	)
 	errChan := make(chan error, 1)
 	var err error
@@ -108,8 +108,8 @@ func TestBadDecode(t *testing.T) {
 	pub := NewPublisher(
 		h,
 		"test",
-		func(context.Context, *kgo.Record, interface{}) error { return nil },
-		func(context.Context, *kgo.Record) (response interface{}, err error) {
+		func(context.Context, *kgo.Record, any) error { return nil },
+		func(context.Context, *kgo.Record) (response any, err error) {
 			return struct{}{}, errors.New(errString)
 		},
 	)
@@ -147,8 +147,8 @@ func TestPublisherTimeout(t *testing.T) {
 	pub := NewPublisher(
 		h,
 		"test",
-		func(context.Context, *kgo.Record, interface{}) error { return nil },
-		func(context.Context, *kgo.Record) (response interface{}, err error) {
+		func(context.Context, *kgo.Record, any) error { return nil },
+		func(context.Context, *kgo.Record) (response any, err error) {
 			return struct{}{}, nil
 		},
 		PublisherTimeout(50*time.Millisecond),
@@ -196,7 +196,7 @@ func TestSuccessfulPublisher(t *testing.T) {
 	)
 	var res testRes
 	var ok bool
-	resChan := make(chan interface{}, 1)
+	resChan := make(chan any, 1)
 	errChan := make(chan error, 1)
 	go func() {
 		res, pubErr := pub.Endpoint()(context.Background(), mockReq)
@@ -249,8 +249,8 @@ func TestAsyncPublisher(t *testing.T) {
 	pub := NewPublisher(
 		h,
 		"test",
-		func(context.Context, *kgo.Record, interface{}) error { return nil },
-		func(ctx context.Context, rec *kgo.Record) (response interface{}, err error) {
+		func(context.Context, *kgo.Record, any) error { return nil },
+		func(ctx context.Context, rec *kgo.Record) (response any, err error) {
 			val := ctx.Value(contextValue).(string)
 			assert.Equal(t, contextValue, val)
 
@@ -290,8 +290,8 @@ func TestSetRequestID(t *testing.T) {
 	pub := NewPublisher(
 		h,
 		"test",
-		func(context.Context, *kgo.Record, interface{}) error { return nil },
-		func(context.Context, *kgo.Record) (response interface{}, err error) {
+		func(context.Context, *kgo.Record, any) error { return nil },
+		func(context.Context, *kgo.Record) (response any, err error) {
 			return struct{}{}, nil
 		},
 		PublisherBefore(SetRequestID()),
@@ -329,8 +329,8 @@ func TestSetLogger(t *testing.T) {
 	pub := NewPublisher(
 		h,
 		"test",
-		func(context.Context, *kgo.Record, interface{}) error { return nil },
-		func(context.Context, *kgo.Record) (response interface{}, err error) {
+		func(context.Context, *kgo.Record, any) error { return nil },
+		func(context.Context, *kgo.Record) (response any, err error) {
 			return struct{}{}, nil
 		},
 		PublisherBefore(SetLogger(l)),
@@ -355,18 +355,18 @@ func TestSetLogger(t *testing.T) {
 	_, err = pub.Endpoint()(context.Background(), mockReq)
 	require.Nil(t, err)
 
-	var fields map[string]interface{}
+	var fields map[string]any
 	err = json.Unmarshal(buffer.Bytes(), &fields)
 	require.Nil(t, err)
 
 	assert.NotEmpty(t, fields["pubsub"])
 	assert.NotEmpty(t, fields["dd"])
 
-	var pubsub = (fields["pubsub"]).(map[string]interface{})
+	var pubsub = (fields["pubsub"]).(map[string]any)
 	assert.NotNil(t, pubsub["request_id"])
 }
 
-func testReqEncoder(_ context.Context, m *kgo.Record, request interface{}) error {
+func testReqEncoder(_ context.Context, m *kgo.Record, request any) error {
 	req, ok := request.(testReq)
 	if !ok {
 		return errors.New("type assertion failure")
@@ -379,11 +379,11 @@ func testReqEncoder(_ context.Context, m *kgo.Record, request interface{}) error
 	return nil
 }
 
-func testResMessageDecoder(_ context.Context, m *kgo.Record) (interface{}, error) {
+func testResMessageDecoder(_ context.Context, m *kgo.Record) (any, error) {
 	return testResDecoder(m.Value)
 }
 
-func testResDecoder(b []byte) (interface{}, error) {
+func testResDecoder(b []byte) (any, error) {
 	var obj testRes
 	err := json.Unmarshal(b, &obj)
 	return obj, err

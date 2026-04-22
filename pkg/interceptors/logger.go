@@ -2,7 +2,6 @@ package interceptors
 
 import (
 	"context"
-	"fmt"
 	"path"
 	"time"
 
@@ -21,10 +20,10 @@ import (
 func LoggerUnaryServerInterceptor(logger sdklogger.Logger) grpc.UnaryServerInterceptor {
 	return func(
 		ctx context.Context,
-		req interface{},
+		req any,
 		info *grpc.UnaryServerInfo,
 		handler grpc.UnaryHandler,
-	) (interface{}, error) {
+	) (any, error) {
 		startTime := time.Now()
 		newCtx := newLoggerForCall(ctx, logger, info.FullMethod, startTime)
 
@@ -39,7 +38,7 @@ func LoggerUnaryServerInterceptor(logger sdklogger.Logger) grpc.UnaryServerInter
 // LoggerStreamServerInterceptor returns a streaming server interceptor that adds the sdklogger.Logger to the context.
 func LoggerStreamServerInterceptor(logger sdklogger.Logger) grpc.StreamServerInterceptor {
 	return func(
-		srv interface{},
+		srv any,
 		stream grpc.ServerStream,
 		info *grpc.StreamServerInfo,
 		handler grpc.StreamHandler,
@@ -110,24 +109,23 @@ func log(ctx context.Context, err error, startTime time.Time) {
 		"grpc.time_ms": float32(time.Since(startTime).Nanoseconds()/1000) / 1000,
 	}
 
-	msg := fmt.Sprintf("finished gRPC call with code %s", code.String())
 	l, extractErr := sdkcontext.Extract(ctx)
 	if extractErr == nil {
 		l = l.WithFields(fields)
 
 		switch level {
 		case sdklogger.Debug:
-			l.Debugf(msg)
+			l.Debugf("finished gRPC call with code %s", code.String())
 		case sdklogger.Info:
-			l.Infof(msg)
+			l.Infof("finished gRPC call with code %s", code.String())
 		case sdklogger.Warn:
-			l.Warnf(msg)
+			l.Warnf("finished gRPC call with code %s", code.String())
 		case sdklogger.Error:
-			l.Errorf(msg)
+			l.Errorf("finished gRPC call with code %s", code.String())
 		case sdklogger.Fatal:
-			l.Fatalf(msg)
+			l.Fatalf("finished gRPC call with code %s", code.String())
 		case sdklogger.Panic:
-			l.Panicf(msg)
+			l.Panicf("finished gRPC call with code %s", code.String())
 		}
 	}
 }

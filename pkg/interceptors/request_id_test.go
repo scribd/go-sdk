@@ -23,14 +23,14 @@ func TestRequestIDUnaryServerInterceptor(t *testing.T) {
 	tests := []struct {
 		name    string
 		set     func() context.Context
-		handler func(ctx context.Context, req interface{}) (interface{}, error)
+		handler func(ctx context.Context, req any) (any, error)
 	}{
 		{
 			name: "without request ID",
 			set: func() context.Context {
 				return context.Background()
 			},
-			handler: func(ctx context.Context, req interface{}) (interface{}, error) {
+			handler: func(ctx context.Context, req any) (any, error) {
 				requestID, err := requestid.Extract(ctx)
 				assert.NoError(t, err)
 
@@ -47,7 +47,7 @@ func TestRequestIDUnaryServerInterceptor(t *testing.T) {
 
 				return metadata.NewIncomingContext(ctx, md)
 			},
-			handler: func(ctx context.Context, req interface{}) (interface{}, error) {
+			handler: func(ctx context.Context, req any) (any, error) {
 				requestID, err := requestid.Extract(ctx)
 				assert.NoError(t, err)
 
@@ -77,11 +77,11 @@ func (ss *testServerStream) Context() context.Context {
 	return ss.ctx
 }
 
-func (ss *testServerStream) SendMsg(m interface{}) error {
+func (ss *testServerStream) SendMsg(m any) error {
 	return nil
 }
 
-func (ss *testServerStream) RecvMsg(m interface{}) error {
+func (ss *testServerStream) RecvMsg(m any) error {
 	return nil
 }
 
@@ -98,14 +98,14 @@ func TestRequestIDStreamServerInterceptor(t *testing.T) {
 	tests := []struct {
 		name    string
 		set     func() context.Context
-		handler func(srv interface{}, stream grpc.ServerStream) error
+		handler func(srv any, stream grpc.ServerStream) error
 	}{
 		{
 			name: "without request id",
 			set: func() context.Context {
 				return context.Background()
 			},
-			handler: func(srv interface{}, stream grpc.ServerStream) error {
+			handler: func(srv any, stream grpc.ServerStream) error {
 				requestID, err := requestid.Extract(stream.Context())
 				assert.NoError(t, err)
 
@@ -122,7 +122,7 @@ func TestRequestIDStreamServerInterceptor(t *testing.T) {
 
 				return metadata.NewIncomingContext(ctx, md)
 			},
-			handler: func(srv interface{}, stream grpc.ServerStream) error {
+			handler: func(srv any, stream grpc.ServerStream) error {
 				requestID, err := requestid.Extract(stream.Context())
 				assert.NoError(t, err)
 

@@ -82,7 +82,7 @@ func PublisherTimeout(timeout time.Duration) PublisherOption {
 
 // Endpoint returns a usable endpoint that invokes message publishing.
 func (p Publisher) Endpoint() endpoint.Endpoint {
-	return func(ctx context.Context, request interface{}) (interface{}, error) {
+	return func(ctx context.Context, request any) (any, error) {
 		ctx, cancel := context.WithTimeout(ctx, p.timeout)
 		defer cancel()
 
@@ -168,7 +168,7 @@ func AsyncDelivererCtx(ctx context.Context, pub Publisher, msg *kgo.Record) (*kg
 // EncodeJSONRequest is an EncodeRequestFunc that serializes the request as a
 // JSON object to the Message value.
 // Many services can use it as a sensible default.
-func EncodeJSONRequest(_ context.Context, msg *kgo.Record, request interface{}) error {
+func EncodeJSONRequest(_ context.Context, msg *kgo.Record, request any) error {
 	rawJSON, err := json.Marshal(request)
 	if err != nil {
 		return err
@@ -200,6 +200,6 @@ func (d detach) Err() error {
 	return nil
 }
 
-func (d detach) Value(key interface{}) interface{} {
+func (d detach) Value(key any) any {
 	return d.ctx.Value(key)
 }

@@ -357,7 +357,7 @@ func TestSubscriber_RevokePartition(t *testing.T) {
 
 func getAssigns(numPartitions int) map[string][]int32 {
 	assigns := make(map[string][]int32)
-	for i := 0; i < numPartitions; i++ {
+	for i := range numPartitions {
 		assigns["test"] = append(assigns["test"], int32(i))
 	}
 	return assigns
@@ -375,11 +375,11 @@ func generateFetches(partitions int) kgo.Fetches {
 	}
 
 	numRecords := 100 / partitions
-	for i := 0; i < partitions; i++ {
+	for i := range partitions {
 		records := make([]*kgo.Record, numRecords)
-		for j := 0; j < numRecords; j++ {
+		for j := range numRecords {
 			records[j] = &kgo.Record{
-				Value: []byte(fmt.Sprintf("test %d", j)),
+				Value: fmt.Appendf(nil, "test %d", j),
 			}
 		}
 

@@ -33,19 +33,19 @@ const (
 // SDK Logger.
 type Logger interface {
 	// Panicf logs a message at level Panic.
-	Panicf(format string, args ...interface{})
+	Panicf(format string, args ...any)
 	// Fatalf logs a message at level Fatal.
-	Fatalf(format string, args ...interface{})
+	Fatalf(format string, args ...any)
 	// Errorf logs a message at level Error.
-	Errorf(format string, args ...interface{})
+	Errorf(format string, args ...any)
 	// Warnf logs a message at level Warning.
-	Warnf(format string, args ...interface{})
+	Warnf(format string, args ...any)
 	// Infof logs a message at level Info.
-	Infof(format string, args ...interface{})
+	Infof(format string, args ...any)
 	// Debugf logs a message at level Debug.
-	Debugf(format string, args ...interface{})
+	Debugf(format string, args ...any)
 	// Trace logs a message at level Trace.
-	Tracef(format string, args ...interface{})
+	Tracef(format string, args ...any)
 	// WithFields creates an entry from the logger and adds multiple
 	// fields to it. This is simply a helper for `WithField`,
 	// invoking it once for each field.
