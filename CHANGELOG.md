@@ -1,3 +1,12 @@
+# [1.48.0](https://github.com/scribd/go-sdk/compare/v1.47.0...v1.48.0) (2026-04-22)
+
+
+### Features
+
+* Bump delve to v1.26.2 ([fe45416](https://github.com/scribd/go-sdk/commit/fe4541667c04f826efdd8ffc7508d286a6ee8c28))
+* Bump goimports to v0.44.0 ([2fe005a](https://github.com/scribd/go-sdk/commit/2fe005af869372ad8443747accd03c4d6f6825a2))
+* Bump golangci-lint to v2.11.4 ([9efc8a7](https://github.com/scribd/go-sdk/commit/9efc8a7c262d1e7af02d03661dd164cf064a5794))
+
 # [1.47.0](https://github.com/scribd/go-sdk/compare/v1.46.0...v1.47.0) (2025-12-11)
 
 
