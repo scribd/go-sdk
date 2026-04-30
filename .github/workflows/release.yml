@@ -23,7 +23,7 @@ jobs:
            persist-credentials: false
 
       - name: Semantic Release
-        uses: cycjimmy/semantic-release-action@v6
+        uses: cycjimmy/semantic-release-action@v5
         with:
           semantic_version: 24.0.0
           extra_plugins: |
