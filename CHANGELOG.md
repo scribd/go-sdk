@@ -1,3 +1,10 @@
+# [1.49.0](https://github.com/scribd/go-sdk/compare/v1.48.0...v1.49.0) (2026-06-04)
+
+
+### Features
+
+* DEVPLAT-6523 bump dependencies (Go 1.26.4, sentry-go, minor/patch upgrades) ([c5c86df](https://github.com/scribd/go-sdk/commit/c5c86dfd91ad435b693981de29255601260c5430)), closes [#164](https://github.com/scribd/go-sdk/issues/164)
+
 # [1.48.0](https://github.com/scribd/go-sdk/compare/v1.47.0...v1.48.0) (2026-04-22)
 
 
