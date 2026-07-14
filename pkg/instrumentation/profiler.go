@@ -49,7 +49,12 @@ func NewProfiler(config *Config, options ...profiler.Option) *Profiler {
 	}
 
 	return &Profiler{
-		enabled: config.Enabled,
+		// Profiler runs when instrumentation is enabled and profiling is not
+		// opted out. ProfilerEnabled defaults to true (see NewConfig), so this
+		// preserves the previous behavior (profiler on wherever Enabled is on)
+		// while allowing a service to keep tracing but disable the profiler via
+		// profiler_enabled: false.
+		enabled: config.Enabled && config.ProfilerEnabled,
 		start:   profiler.Start,
 		stop:    profiler.Stop,
 		options: options,
