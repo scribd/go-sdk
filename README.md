@@ -1579,6 +1579,24 @@ func main() {
 ### Profiling
 
 You can send `pprof` samples to DataDog by enabling the profiler.
+
+The profiler is **on by default** wherever instrumentation is enabled, gated by
+its own `profiler_enabled` setting (opt-out). To run tracing without the
+profiler — for example to avoid continuous-profiler per-host usage in
+non-production — set `profiler_enabled: false` for that environment:
+
+```yaml
+# config/settings/datadog.yml
+production:
+  enabled: true # tracing + profiler on (default)
+development:
+  enabled: true
+  profiler_enabled: false # tracing on, profiler off
+```
+
+It can also be disabled via the environment variable
+`APP_DATADOG_PROFILER_ENABLED=false`.
+
 Under the hood the DataDog profiler will continuously take heap, CPU and mutex profiles, [every 1 minute by default](https://godoc.org/gopkg.in/DataDog/dd-trace-go.v1/profiler#pkg-constants).
 The [default CPU profile duration is 15 seconds](https://godoc.org/gopkg.in/DataDog/dd-trace-go.v1/profiler#pkg-constants). Keep in mind that the profiler introduces overhead when it is being executed.
 The default DataDog configuration, which go-sdk uses by default, is following [good practices](https://groups.google.com/g/golang-nuts/c/e6lB8ENbIw8?pli=1).

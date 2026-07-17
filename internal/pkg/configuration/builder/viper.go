@@ -73,16 +73,19 @@ func (vb *ViperBuilder) Build() (*viper.Viper, error) {
 	vb.vConf.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	vb.vConf.AutomaticEnv()
 
+	// Apply defaults before binding env vars so that keys which only have a
+	// default (and are not present in the config file) are still included in
+	// AllKeys() below and therefore get BindEnv'd — otherwise they could not be
+	// overridden via an environment variable.
+	for key, val := range vb.defaults {
+		vb.vConf.SetDefault(key, val)
+	}
+
 	allKeys := vb.vConf.AllKeys()
 	for _, k := range allKeys {
 		if err := vb.vConf.BindEnv(strings.ToUpper(k)); err != nil {
 			return nil, fmt.Errorf("could not configure %s for ENV %s", k, env)
 		}
-
-	}
-
-	for key, val := range vb.defaults {
-		vb.vConf.SetDefault(key, val)
 	}
 
 	return vb.vConf, nil

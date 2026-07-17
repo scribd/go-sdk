@@ -62,6 +62,9 @@ func TestNewConfigWithAppRoot(t *testing.T) {
 
 			assert.Equal(t, c.Enabled, tc.enabled)
 			assert.Equal(t, c.CodeHotspotsEnabled, tc.enabled)
+			// ProfilerEnabled is opt-out: it defaults to true even though the
+			// config file does not set it.
+			assert.True(t, c.ProfilerEnabled)
 			assert.Equal(t, c.ServiceVersion, "")
 		})
 	}
@@ -93,6 +96,13 @@ func TestNewConfigWithAppRootAndOverwriteFromEnvTheEnableFlag(t *testing.T) {
 					value: "false",
 					check: func(c *Config) bool {
 						return !c.CodeHotspotsEnabled
+					},
+				},
+				{
+					key:   "APP_DATADOG_PROFILER_ENABLED",
+					value: "false",
+					check: func(c *Config) bool {
+						return !c.ProfilerEnabled
 					},
 				},
 				{
