@@ -1,3 +1,10 @@
+# [1.50.0](https://github.com/scribd/go-sdk/compare/v1.49.0...v1.50.0) (2026-07-17)
+
+
+### Features
+
+* **instrumentation:** add profiler_enabled to gate the continuous profiler ([7959a51](https://github.com/scribd/go-sdk/commit/7959a51f2ac3bf5b72cb3e7c314fda9e683836de))
+
 # [1.49.0](https://github.com/scribd/go-sdk/compare/v1.48.0...v1.49.0) (2026-06-04)
 
 
