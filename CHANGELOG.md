@@ -1,3 +1,10 @@
+## [1.50.1](https://github.com/scribd/go-sdk/compare/v1.50.0...v1.50.1) (2026-08-03)
+
+
+### Bug Fixes
+
+* **aws:** Set HTTP client MaxIdleConns as well ([460d0bc](https://github.com/scribd/go-sdk/commit/460d0bcf7c0aa51d95356ec5efbd2b1021d0948b))
+
 # [1.50.0](https://github.com/scribd/go-sdk/compare/v1.49.0...v1.50.0) (2026-07-17)
 
 
