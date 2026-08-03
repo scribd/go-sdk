@@ -107,6 +107,7 @@ func TestBuilder(t *testing.T) {
 
 				httpTransport := opts.HTTPClient.(*http.Client).Transport.(*http.Transport)
 				assert.Equal(t, httpTransport.MaxIdleConnsPerHost, 100)
+				assert.Equal(t, httpTransport.MaxIdleConns, 100)
 			},
 		}, {
 			name: "S3 service with static credentials",
@@ -161,6 +162,7 @@ func TestBuilder(t *testing.T) {
 
 				httpTransport := opts.HTTPClient.(*http.Client).Transport.(*http.Transport)
 				assert.Equal(t, httpTransport.MaxIdleConnsPerHost, 100)
+				assert.Equal(t, httpTransport.MaxIdleConns, 100)
 			},
 		},
 		{
@@ -286,4 +288,20 @@ func TestBuilder(t *testing.T) {
 			tc.fn(t)
 		})
 	}
+}
+
+func TestCreateHttpClient(t *testing.T) {
+	// A value above the http.DefaultTransport total of 100 would previously
+	// be capped by the transport-wide MaxIdleConns limit.
+	httpClient := createHttpClient(&HTTPClient{MaxIdleConns: 256})
+
+	httpTransport := httpClient.Transport.(*http.Transport)
+	assert.Equal(t, httpTransport.MaxIdleConns, 256)
+	assert.Equal(t, httpTransport.MaxIdleConnsPerHost, 256)
+
+	// Unset config keeps the http.DefaultTransport limits.
+	defaultTransport := http.DefaultTransport.(*http.Transport)
+	httpTransport = createHttpClient(&HTTPClient{}).Transport.(*http.Transport)
+	assert.Equal(t, httpTransport.MaxIdleConns, defaultTransport.MaxIdleConns)
+	assert.Equal(t, httpTransport.MaxIdleConnsPerHost, defaultTransport.MaxIdleConnsPerHost)
 }
