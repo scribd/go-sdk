@@ -11,7 +11,7 @@ import (
 type (
 	HTTPClient struct {
 		// MaxIdleConns, if non-zero, controls the maximum idle
-		// (keep-alive) connections to keep per-host.
+		// (keep-alive) connections to keep, both per-host and in total.
 		MaxIdleConns int `mapstructure:"max_idle_conns"`
 	}
 

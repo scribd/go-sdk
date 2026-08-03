@@ -1143,10 +1143,10 @@ common: &common
 
 Common configuration contains the following options:
 
-| Setting                    | Description                                            | YAML variable    | Environment variable (ENV)           | Type   | Possible Values |
-|----------------------------|--------------------------------------------------------|------------------|--------------------------------------|--------|-----------------|
-| Region                     | AWS region to use                                      | `region`         | `APP_AWS_REGION`                     | string | us-west-2       |
-| HTTP client max idle conns | Maximum number of idle connections in the HTTP client. | `max_idle_conns` | `APP_AWS_HTTP_CLIENT_MAX_IDLE_CONNS` | int    | 100             |
+| Setting                    | Description                                                                                                                                                | YAML variable    | Environment variable (ENV)           | Type   | Possible Values |
+|----------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------|--------------------------------------|--------|-----------------|
+| Region                     | AWS region to use                                                                                                                                          | `region`         | `APP_AWS_REGION`                     | string | us-west-2       |
+| HTTP client max idle conns | Maximum number of idle connections in the HTTP client, applied both per-host and in total. If not set (0), the Go `http.DefaultTransport` limits are used. | `max_idle_conns` | `APP_AWS_HTTP_CLIENT_MAX_IDLE_CONNS` | int    | 100             |
 
 #### AWS Service configuration
 

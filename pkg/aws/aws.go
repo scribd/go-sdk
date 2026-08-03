@@ -145,7 +145,10 @@ func createHttpClient(cfg *HTTPClient) *http.Client {
 	defaultTransport := defaultRoundTripper.(*http.Transport)
 
 	httpTransport := defaultTransport.Clone()
-	httpTransport.MaxIdleConnsPerHost = cfg.MaxIdleConns
+	if cfg.MaxIdleConns > 0 {
+		httpTransport.MaxIdleConnsPerHost = cfg.MaxIdleConns
+		httpTransport.MaxIdleConns = cfg.MaxIdleConns
+	}
 
 	return &http.Client{Transport: httpTransport}
 }
