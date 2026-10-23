@@ -39,7 +39,7 @@ type (
 		Topic string `mapstructure:"topic"`
 		// GroupId the Kafka consumer group id
 		GroupId string `mapstructure:"group_id"`
-		// Enabled whether the subscriber id enabled or not
+		// Enabled whether the subscriber is enabled or not
 		Enabled bool `mapstructure:"enabled"`
 		// MetricsEnabled controls if metrics publishing is enabled or not
 		MetricsEnabled bool `mapstructure:"metrics_enabled"`

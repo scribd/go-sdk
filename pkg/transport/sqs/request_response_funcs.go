@@ -24,7 +24,7 @@ type SubscriberRequestFunc func(
 	ctx context.Context, cancel context.CancelFunc, message types.Message) context.Context
 
 // PublisherRequestFunc may take information from a producer request and put it into a
-// request context, or add some informations to SendMessageInput. In Publishers,
+// request context, or add some information to SendMessageInput. In Publishers,
 // RequestFuncs are executed prior to publishing the message but after encoding.
 // use cases eg. in Publisher : enforce some message attributes to SendMessageInput.
 type PublisherRequestFunc func(ctx context.Context, input *sqs.SendMessageInput) context.Context

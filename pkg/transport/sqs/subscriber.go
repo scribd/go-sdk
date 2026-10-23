@@ -117,7 +117,7 @@ func SubscriberSetContextTimeout(timeout time.Duration) SubscriberOption {
 }
 
 // SubscriberDeleteMessageBefore returns a SubscriberOption that appends a function
-// that delete the message from queue to the list of subscriber's before functions.
+// that deletes the message from queue to the list of subscriber's before functions.
 func SubscriberDeleteMessageBefore() SubscriberOption {
 	return func(s *Subscriber) {
 		deleteBefore := func(ctx context.Context, cancel context.CancelFunc, msg types.Message) context.Context {
@@ -133,7 +133,7 @@ func SubscriberDeleteMessageBefore() SubscriberOption {
 }
 
 // SubscriberDeleteMessageAfter returns a SubscriberOption that appends a function
-// that delete a message from queue to the list of subscriber's after functions.
+// that deletes a message from queue to the list of subscriber's after functions.
 func SubscriberDeleteMessageAfter() SubscriberOption {
 	return func(s *Subscriber) {
 		deleteAfter := func(
@@ -198,7 +198,7 @@ type ErrorEncoder func(ctx context.Context, err error, req types.Message, sqsCli
 // SubscriberFinalizerFunc can be used to perform work at the end of a request
 // from a producer, after the response has been written to the producer. The
 // principal intended use is for request logging.
-// Can also be used to delete messages once fully proccessed.
+// Can also be used to delete messages once fully processed.
 type SubscriberFinalizerFunc func(ctx context.Context, msg types.Message)
 
 // DefaultErrorEncoder simply ignores the message.
